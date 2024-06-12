@@ -10,7 +10,6 @@ import AppKit
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var window: NSWindow!
     static var workspace: URL = getDefaultWorkspaceURL()
     static let userDefaultKey = "FaceClusterToolkit-Workspace"
     
@@ -19,6 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Initialise GPU environment
+        let _ = GPUManager()
+        
         if let workspaceURL = UserDefaults.standard.url(forKey: AppDelegate.userDefaultKey) {
             AppDelegate.workspace = workspaceURL
         } else {

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		860FD4542C0FBA4300AA4B39 /* Facenet512.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */; };
 		86555F512C0E011C0046A7C8 /* VideoPreviewToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86555F502C0E011C0046A7C8 /* VideoPreviewToolbar.swift */; };
+		86608E772C149C0900580E7E /* MTCNN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86608E762C149C0900580E7E /* MTCNN.swift */; };
+		86608E792C14A11A00580E7E /* MTCNN_Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86608E782C14A11A00580E7E /* MTCNN_Utils.swift */; };
 		866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66662C0B1735009C356F /* FaceClusterApp.swift */; };
 		866D66692C0B1735009C356F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66682C0B1735009C356F /* ContentView.swift */; };
 		866D666B2C0B1736009C356F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 866D666A2C0B1736009C356F /* Assets.xcassets */; };
@@ -20,11 +22,14 @@
 		866D66942C0B28FC009C356F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66932C0B28FC009C356F /* AppDelegate.swift */; };
 		866D66982C0B505C009C356F /* MediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66972C0B505C009C356F /* MediaManager.swift */; };
 		8687FC312C0CDC4900E97258 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8687FC302C0CDC4900E97258 /* Localizable.xcstrings */; };
+		8694A7752C14F19800758AE8 /* pnet_cm72.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7742C14F19800758AE8 /* pnet_cm72.mlpackage */; };
+		8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7772C15B4A100758AE8 /* GPUManager.swift */; };
+		8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7792C15BBBD00758AE8 /* ImageUtils.swift */; };
 		86C3D3EB2C0E48DA00704629 /* FaceRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */; };
-		86C610932C125D340049697F /* facenet512_with_custom_scale_layer.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610922C125D340049697F /* facenet512_with_custom_scale_layer.mlmodel */; };
-		86C610972C125DA80049697F /* pnet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610942C125DA70049697F /* pnet.mlmodel */; };
-		86C610982C125DA80049697F /* rnet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610952C125DA70049697F /* rnet.mlmodel */; };
-		86C610992C125DA80049697F /* onet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610962C125DA80049697F /* onet.mlmodel */; };
+		86C610932C125D340049697F /* Facenet512_CustomScale.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */; };
+		86C610972C125DA80049697F /* PNet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610942C125DA70049697F /* PNet.mlmodel */; };
+		86C610982C125DA80049697F /* RNet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610952C125DA70049697F /* RNet.mlmodel */; };
+		86C610992C125DA80049697F /* ONet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610962C125DA80049697F /* ONet.mlmodel */; };
 		86C6109B2C1260550049697F /* xcode.gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 86C6109A2C1260550049697F /* xcode.gitignore */; };
 		86C6109D2C1260D20049697F /* readme.md in Resources */ = {isa = PBXBuildFile; fileRef = 86C6109C2C1260D20049697F /* readme.md */; };
 		86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C9CCA52C0F0DA600B33BFE /* ProgressBar.swift */; };
@@ -52,6 +57,8 @@
 /* Begin PBXFileReference section */
 		860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Facenet512.mlmodel; sourceTree = "<group>"; };
 		86555F502C0E011C0046A7C8 /* VideoPreviewToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewToolbar.swift; sourceTree = "<group>"; };
+		86608E762C149C0900580E7E /* MTCNN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTCNN.swift; sourceTree = "<group>"; };
+		86608E782C14A11A00580E7E /* MTCNN_Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTCNN_Utils.swift; sourceTree = "<group>"; };
 		866D66632C0B1735009C356F /* FaceCluster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceCluster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		866D66662C0B1735009C356F /* FaceClusterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceClusterApp.swift; sourceTree = "<group>"; };
 		866D66682C0B1735009C356F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -67,11 +74,14 @@
 		866D66932C0B28FC009C356F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		866D66972C0B505C009C356F /* MediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaManager.swift; sourceTree = "<group>"; };
 		8687FC302C0CDC4900E97258 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		8694A7742C14F19800758AE8 /* pnet_cm72.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = pnet_cm72.mlpackage; sourceTree = "<group>"; };
+		8694A7772C15B4A100758AE8 /* GPUManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUManager.swift; sourceTree = "<group>"; };
+		8694A7792C15BBBD00758AE8 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceRectangle.swift; sourceTree = "<group>"; };
-		86C610922C125D340049697F /* facenet512_with_custom_scale_layer.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = facenet512_with_custom_scale_layer.mlmodel; sourceTree = "<group>"; };
-		86C610942C125DA70049697F /* pnet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = pnet.mlmodel; sourceTree = "<group>"; };
-		86C610952C125DA70049697F /* rnet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = rnet.mlmodel; sourceTree = "<group>"; };
-		86C610962C125DA80049697F /* onet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = onet.mlmodel; sourceTree = "<group>"; };
+		86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Facenet512_CustomScale.mlmodel; sourceTree = "<group>"; };
+		86C610942C125DA70049697F /* PNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PNet.mlmodel; sourceTree = "<group>"; };
+		86C610952C125DA70049697F /* RNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = RNet.mlmodel; sourceTree = "<group>"; };
+		86C610962C125DA80049697F /* ONet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ONet.mlmodel; sourceTree = "<group>"; };
 		86C6109A2C1260550049697F /* xcode.gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = xcode.gitignore; sourceTree = "<group>"; };
 		86C6109C2C1260D20049697F /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		86C9CCA52C0F0DA600B33BFE /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
@@ -108,10 +118,13 @@
 			isa = PBXGroup;
 			children = (
 				860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */,
-				86C610922C125D340049697F /* facenet512_with_custom_scale_layer.mlmodel */,
-				86C610962C125DA80049697F /* onet.mlmodel */,
-				86C610942C125DA70049697F /* pnet.mlmodel */,
-				86C610952C125DA70049697F /* rnet.mlmodel */,
+				86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */,
+				8694A7742C14F19800758AE8 /* pnet_cm72.mlpackage */,
+				86608E762C149C0900580E7E /* MTCNN.swift */,
+				86608E782C14A11A00580E7E /* MTCNN_Utils.swift */,
+				86C610962C125DA80049697F /* ONet.mlmodel */,
+				86C610942C125DA70049697F /* PNet.mlmodel */,
+				86C610952C125DA70049697F /* RNet.mlmodel */,
 			);
 			path = ML;
 			sourceTree = "<group>";
@@ -141,6 +154,7 @@
 		866D66652C0B1735009C356F /* FaceCluster */ = {
 			isa = PBXGroup;
 			children = (
+				8694A7762C15B44B00758AE8 /* Shaders */,
 				860FD4522C0FBA0A00AA4B39 /* ML */,
 				866D66962C0B5050009C356F /* Media */,
 				866D66952C0B501A009C356F /* UI */,
@@ -197,8 +211,17 @@
 			children = (
 				866D66972C0B505C009C356F /* MediaManager.swift */,
 				86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */,
+				8694A7792C15BBBD00758AE8 /* ImageUtils.swift */,
 			);
 			path = Media;
+			sourceTree = "<group>";
+		};
+		8694A7762C15B44B00758AE8 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				8694A7772C15B4A100758AE8 /* GPUManager.swift */,
+			);
+			path = Shaders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -338,18 +361,23 @@
 				860FD4542C0FBA4300AA4B39 /* Facenet512.mlmodel in Sources */,
 				86E63D602C0B58B200C683F2 /* VideoPreview.swift in Sources */,
 				866D66942C0B28FC009C356F /* AppDelegate.swift in Sources */,
+				8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */,
+				8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */,
 				86C3D3EB2C0E48DA00704629 /* FaceRectangle.swift in Sources */,
-				86C610932C125D340049697F /* facenet512_with_custom_scale_layer.mlmodel in Sources */,
+				86C610932C125D340049697F /* Facenet512_CustomScale.mlmodel in Sources */,
 				866D66692C0B1735009C356F /* ContentView.swift in Sources */,
+				86608E772C149C0900580E7E /* MTCNN.swift in Sources */,
+				86608E792C14A11A00580E7E /* MTCNN_Utils.swift in Sources */,
 				86555F512C0E011C0046A7C8 /* VideoPreviewToolbar.swift in Sources */,
 				866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */,
 				866D66922C0B2536009C356F /* FileImporter.swift in Sources */,
 				866D66982C0B505C009C356F /* MediaManager.swift in Sources */,
-				86C610972C125DA80049697F /* pnet.mlmodel in Sources */,
+				86C610972C125DA80049697F /* PNet.mlmodel in Sources */,
 				86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */,
+				8694A7752C14F19800758AE8 /* pnet_cm72.mlpackage in Sources */,
 				86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */,
-				86C610992C125DA80049697F /* onet.mlmodel in Sources */,
-				86C610982C125DA80049697F /* rnet.mlmodel in Sources */,
+				86C610992C125DA80049697F /* ONet.mlmodel in Sources */,
+				86C610982C125DA80049697F /* RNet.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

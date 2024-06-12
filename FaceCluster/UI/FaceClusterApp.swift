@@ -15,6 +15,7 @@ struct FaceClusterApp: App {
         WindowGroup {
             ContentView(app: self)
                 .frame(minWidth: 360, maxWidth: .infinity, minHeight: 320, maxHeight: .infinity, alignment: .center)
+                .navigationTitle("MacOS Face Clustering Toolkit")
             //.fixedSize()
         }
         .windowResizability(.contentSize)

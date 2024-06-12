@@ -56,7 +56,7 @@ class MediaManager {
         return generator
     }
     
-    func generateFrameSeuqnce(extractValue: Double, extractUnit: ExtractionUnit, context: ContentView?) async throws {
+    func generateFrameSeuqnce(extractValue: Double, extractUnit: ExtractionUnit, context: ContentView?, downsample: Float, useMTCNN: Bool=false) async throws {
         cv = context
         cv?.pbInfo = "Analysing video asset"
         processedImages = 0
@@ -69,11 +69,11 @@ class MediaManager {
         let generator = MediaManager.getNativeFrameExtractor(asset: video, frameDuration: frameDuration, timescale: timescale)
         let extractInterval: CMTime
         if(extractUnit == .frame) {
-            extractInterval = CMTimeMakeWithSeconds(frameDuration * extractValue, preferredTimescale: timescale)
+            extractInterval = CMTimeMakeWithSeconds(frameDuration * extractValue, preferredTimescale: timescale + 1)
         } else {
             extractInterval = CMTimeMakeWithSeconds(extractValue, preferredTimescale: timescale)
         }
-        framesExpected = Int(duration.seconds / extractInterval.seconds) + 1
+        framesExpected = Int(duration.seconds / extractInterval.seconds) + (extractUnit == .frame ? 0 : 1)
         print("\(framesExpected) frames expected.")
         
         var timeCursor: CMTime = CMTimeMakeWithSeconds(0.0, preferredTimescale: timescale)
@@ -99,9 +99,19 @@ class MediaManager {
                 //let image = try await fetchTask.value
                 //timeoutTask.cancel()
                 
-                let image: CGImage = try await generator.image(at: timeCursor).image
+                let source: CGImage = try await generator.image(at: timeCursor).image
+                let image: CGImage
+                if(downsample < 0.999) {
+                    image = ImageUtils.resizeCG(image: source, scale: Double(downsample))!
+                } else {
+                    image = source
+                }
                 print(processedImages)
-                FaceRectangle.detectFacesNative(in: image)
+                if(useMTCNN) {
+                    FaceRectangle.detectFacesMTCNN(in: image)
+                } else {
+                    FaceRectangle.detectFacesNative(in: image)
+                }
             } catch {
                 addProcessedImage()
                 print("Failed to analyse frame at position \(timeCursor.seconds) second")
@@ -119,6 +129,24 @@ class MediaManager {
         print("Time lapse \(timeLapse)")
         
         cv?.state = 3
+    }
+    
+    func getInfo(display: VideoPreview) {
+        let video = self.getVideoAsset()
+        
+        Task {
+            guard let track = try? await video.load(.tracks).first else {
+                display.fps = -0.0
+                display.dimension = CGSize.zero
+                return
+            }
+            let fps = (try? await track.load(.nominalFrameRate)) ?? 0
+            let dimension = (try? await track.load(.naturalSize)) ?? CGSize.zero
+            print(fps * 100)
+            display.fps = Float(round(100 * fps) / 100)
+            display.dimension = dimension
+            return
+        }
     }
     
 }

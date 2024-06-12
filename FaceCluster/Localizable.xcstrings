@@ -44,7 +44,24 @@
       }
     },
     "df" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "df"
+          }
+        }
+      }
+    },
+    "Downsample:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帧缩放:"
+          }
+        }
+      }
     },
     "Exit " : {
       "localizations" : {
@@ -58,6 +75,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出"
+          }
+        }
+      }
+    },
+    "Failed to initialise ONet model for MTCNN pipeline" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTCNN管线初始化加载ONet模型失败"
+          }
+        }
+      }
+    },
+    "Failed to initialise PNet model for MTCNN pipeline" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTCNN管线初始化加载PNet模型失败"
+          }
+        }
+      }
+    },
+    "Failed to initialise RNet model for MTCNN pipeline" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTCNN管线初始化加载RNet模型失败"
           }
         }
       }
@@ -144,6 +191,36 @@
         }
       }
     },
+    "MacOS Face Clustering Toolkit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MacOS视频面部分析工具"
+          }
+        }
+      }
+    },
+    "Model:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "脸部检测:"
+          }
+        }
+      }
+    },
+    "MTCNN" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTCNN"
+          }
+        }
+      }
+    },
     "Process" : {
       "localizations" : {
         "en" : {
@@ -156,6 +233,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "处理视频"
+          }
+        }
+      }
+    },
+    "Resolution" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分辨率"
+          }
+        }
+      }
+    },
+    "Resolution 0x0, 24 fps" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分辨率 0x0, 24 fps"
           }
         }
       }
@@ -177,7 +274,14 @@
       }
     },
     "Terminate" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "终止"
+          }
+        }
+      }
     },
     "Video Preview Frame" : {
       "localizations" : {
@@ -191,6 +295,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "视频预览范围"
+          }
+        }
+      }
+    },
+    "Vision" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vision"
           }
         }
       }
