@@ -43,22 +43,15 @@
         }
       }
     },
+    "Bottom bar" : {
+
+    },
     "df" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "df"
-          }
-        }
-      }
-    },
-    "Downsample:" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "帧缩放:"
           }
         }
       }
@@ -79,12 +72,18 @@
         }
       }
     },
+    "Failed to allocate memory for rendering face network. Please reduce the network size." : {
+
+    },
+    "Failed to initialise Metal 3 environment." : {
+
+    },
     "Failed to initialise ONet model for MTCNN pipeline" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MTCNN管线初始化加载ONet模型失败"
+            "value" : "不能初始化MTCNN管线的ONet模型"
           }
         }
       }
@@ -94,7 +93,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MTCNN管线初始化加载PNet模型失败"
+            "value" : "不能初始化MTCNN管线的PNet模型"
           }
         }
       }
@@ -104,7 +103,17 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MTCNN管线初始化加载RNet模型失败"
+            "value" : "不能初始化MTCNN管线的RNet模型"
+          }
+        }
+      }
+    },
+    "Failed to load PNet model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能加载PNet模型"
           }
         }
       }
@@ -121,6 +130,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "帧"
+          }
+        }
+      }
+    },
+    "Frame scaling:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图像缩放："
           }
         }
       }
@@ -201,22 +220,22 @@
         }
       }
     },
-    "Model:" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "脸部检测:"
-          }
-        }
-      }
-    },
     "MTCNN" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "MTCNN"
+          }
+        }
+      }
+    },
+    "No face images found in all extracted video frames.\nRedirecting to the import menu." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在提取的视频关键帧中未识别出有效面部图像。程序将返回加载界面。"
           }
         }
       }
@@ -233,6 +252,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "处理视频"
+          }
+        }
+      }
+    },
+    "Redirect" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回"
           }
         }
       }
@@ -282,6 +311,19 @@
           }
         }
       }
+    },
+    "There are too many folder created for video %@ in the workspace. Please clear the workspace before processing." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频工作目录中已经创建了过多%@的结果文件。请在继续前清理视频工作目录。"
+          }
+        }
+      }
+    },
+    "Toolbar" : {
+
     },
     "Video Preview Frame" : {
       "localizations" : {

@@ -11,7 +11,7 @@ import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     static var workspace: URL = getDefaultWorkspaceURL()
-    static let userDefaultKey = "FaceClusterToolkit-Workspace"
+    private static let userDefaultKey = "FaceClusterToolkit-Workspace"
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             AppDelegate.updateWorkspaceURL(newURL: AppDelegate.getDefaultWorkspaceURL())
         }
         
-        if(!checkIfDirectoryExists(url: AppDelegate.workspace)) {
+        if(!AppDelegate.checkIfDirectoryExists(url: AppDelegate.workspace)) {
             print("Creating workspace")
             createDirectory(dir: AppDelegate.workspace)
         }
@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    private func checkIfDirectoryExists(url: URL) -> Bool {
+    public static func checkIfDirectoryExists(url: URL) -> Bool {
         do {
             return (try url.resourceValues(forKeys: [URLResourceKey.isDirectoryKey]).isDirectory ?? false)
         } catch {

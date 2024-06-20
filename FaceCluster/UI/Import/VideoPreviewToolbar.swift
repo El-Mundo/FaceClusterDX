@@ -29,20 +29,21 @@ func getFrameSequence(vp: VideoPreview, vt: VPToolbarView) {
     }
 }
 
-func getUnitName(unit: ExtractionUnit) -> String {
-    if(unit == .frame) {
-        return String(localized: "frame")
-    } else if(unit == .second) {
-        return String(localized: "second")
-    }
-    return String(describing: unit)
-}
-
 func getUnitName(unit: FaceModel) -> String {
     if(unit == .Native) {
         return String(localized: "Vision")
     } else if(unit == .MTCNN) {
         return String(localized: "MTCNN")
+    }
+    return String(describing: unit)
+}
+
+
+func getUnitName(unit: ExtractionUnit) -> String {
+    if(unit == .frame) {
+        return String(localized: "frame")
+    } else if(unit == .second) {
+        return String(localized: "second")
     }
     return String(describing: unit)
 }
@@ -81,7 +82,7 @@ struct VPToolbarView: View {
     
     @State private var frameHint = ""
     
-    let toolbarMinHeight: CGFloat = 32, toolbarMinWidth: CGFloat = 760
+    let toolbarMinHeight: CGFloat = 32, toolbarMinWidth: CGFloat = 640
     let padding: CGFloat = 20
     
     let context: VideoPreview?
@@ -109,7 +110,7 @@ struct VPToolbarView: View {
                 extractValue = checkFrameExtractValue(val: extractValue, uni: extractUnit)
             }
             
-            Text("Downsample:")
+            Text("Frame scaling:")
             TextField("", value: $downsampleFactor, format: .percent)
                 .frame(width: 48)
                 .onSubmit {
@@ -118,7 +119,7 @@ struct VPToolbarView: View {
                 .padding(.trailing, 12)
                 .padding(.leading, -6)
             
-            Text("Model:")
+            /*Text("Model:")
             Picker("", selection: $faceModel) {
                 ForEach(FaceModel.allCases, id: \.self) {type in
                     Text(getUnitName(unit: type))
@@ -127,10 +128,7 @@ struct VPToolbarView: View {
             .pickerStyle(.menu)
             .frame(width: 86, alignment: .leading)
             .padding(.leading, -12)
-            .padding(.trailing, 12)
-            .onSubmit {
-                extractValue = checkFrameExtractValue(val: extractValue, uni: extractUnit)
-            }
+            .padding(.trailing, 12)*/
             
             Button(action: {getFrameSequence(vp: context!, vt: self)}, label: {
                 Text("Process")

@@ -8,6 +8,7 @@
 import Foundation
 import Metal
 import AppKit
+import MetalKit
 
 class GPUManager {
     public static var instance: GPUManager?
@@ -33,6 +34,10 @@ class GPUManager {
         GPUManager.instance = self
     }
     
+    func getMTLDevice() -> MTLDevice? {
+        return metalDevice
+    }
+    
     func renderToBuffer(_ image: CIImage, to buffer: CVPixelBuffer?) {
         if(buffer != nil) {
             ciContext.render(image, to: buffer!)
@@ -52,6 +57,46 @@ class GPUManager {
     
     func ciImageToCG(image: CIImage, rect: CGRect) -> CGImage? {
         return ciContext.createCGImage(image, from: rect)
+    }
+    
+    func fillPixelBufferWithCIImage(in image: CIImage, out buffer: CVPixelBuffer, targetSize: CGSize) {
+        let scaleX = targetSize.width / image.extent.size.width
+        let scaleY = targetSize.height / image.extent.size.height
+        let scale = min(scaleX, scaleY)
+
+        let resizedImage = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        
+        ciContext.render(resizedImage, to: buffer, bounds: CGRect(origin: CGPoint.zero, size: targetSize), colorSpace: CGColorSpaceCreateDeviceRGB())
+    }
+    
+    func createPixelBuffer(size: CGSize) -> CVPixelBuffer? {
+        let attributes: [CFString: Any] = [
+            kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue!,
+            kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue!,
+            kCVPixelBufferWidthKey: size.width,
+            kCVPixelBufferHeightKey: size.height,
+            kCVPixelBufferPixelFormatTypeKey: Int(kCVPixelFormatType_32ARGB)
+        ]
+        var pixelBuffer : CVPixelBuffer?
+        let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(size.width), Int(size.height), kCVPixelFormatType_32ARGB, attributes as CFDictionary, &pixelBuffer)
+
+        guard (status == kCVReturnSuccess) else {
+            return nil
+        }
+
+        return pixelBuffer
+    }
+    
+    func createTexture(from image: CGImage) -> MTLTexture? {
+        if(self.useCPU || metalDevice == nil) {
+            return nil
+        }
+        let textureLoader = MTKTextureLoader(device: self.metalDevice!)
+        let options: [MTKTextureLoader.Option: Any] = [
+            .SRGB: false,
+            .origin: MTKTextureLoader.Origin.topLeft
+        ]
+        return try? textureLoader.newTexture(cgImage: image, options: options)
     }
     
 }
