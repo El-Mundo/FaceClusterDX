@@ -15,8 +15,10 @@ class Face: Codable {
     
     var network: FaceNetwork? = nil
     var texture: MTLTexture? = nil
+    var path: URL?
     var textureId: Int = -8
     var displayPos: DoublePoint = DoublePoint(x: 0, y: 0)
+    var clusterIndex: Int = -1
     
     enum CodingKeys: String, CodingKey {
         case detectedAttributes
@@ -32,6 +34,7 @@ class Face: Codable {
         //let data = try! NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
         let data = try! JSONEncoder().encode(self)
         try data.write(to: fileURL)
+        self.path = fileURL
         //print("Data was saved in \(fileURL).")
         
         if(self.thumbnail != nil) {
@@ -96,6 +99,37 @@ class Face: Codable {
         return SavableFace(detectedAttributes: self.detectedAttributes, attributes: self.attributes)
     }*/
     
+    func createDescription() -> String {
+        let frame = detectedAttributes.frameIdentifier
+        guard var pathShort = path?.path(percentEncoded: false) else {
+            return "Frame: \(frame)\nSaved at:"
+        }
+        pathShort = pathShort.count > 48 ? "...".appending(String(pathShort.suffix(47))) : pathShort
+        let roundedX = round(displayPos.x * 100) / 100
+        let roundedY = round(displayPos.y * 100) / 100
+        return "Frame: \(frame)\nSaved at: \(pathShort)\nAttribute: \(network?.layoutKey ?? "")\nValue: \(roundedX), \(roundedY)"
+    }
+    
+    func createAttribute<T: FaceAttribute>(for: T.Type, key: String, value: any FaceAttribute) -> Bool {
+        if let t = value as? T {
+            attributes.updateValue(t, forKey: key)
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func forceUpdateAttribute<T: FaceAttribute>(for: T.Type, key: String, value: any FaceAttribute) {
+        attributes.updateValue(value, forKey: key)
+    }
+    
+}
+
+extension Face {
+    func updateDisplayPosition(newPosition: DoublePoint) {
+        self.displayPos = newPosition
+        network?.requestPositionUpdate(face: self, updatedPosition: newPosition)
+    }
 }
 
 /*class SavableFace: NSSecureCoding {

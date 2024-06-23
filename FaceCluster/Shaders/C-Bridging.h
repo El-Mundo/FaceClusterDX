@@ -20,9 +20,9 @@ typedef NSInteger EnumBackingType;
 
 typedef NS_ENUM(EnumBackingType, BufferIndex)
 {
-    BufferIndexObject = 0,
+    BufferIndexObject     = 0,
     BufferIndexFaceCount  = 1,
-    BufferIndexUniforms      = 2
+    BufferIndexUniforms   = 2
 };
 
 typedef NS_ENUM(EnumBackingType, FaceNetworkConstants)
@@ -32,13 +32,25 @@ typedef NS_ENUM(EnumBackingType, FaceNetworkConstants)
 
 typedef NS_ENUM(EnumBackingType, TextureIndex)
 {
-    TextureIndexColor    = 0,
+    TextureIndexColor    = 0
 };
 
 typedef struct
 {
-    matrix_float4x4 projectionMatrix;
-    matrix_float4x4 modelViewMatrix;
+    //matrix_float4x4 projectionMatrix;
+    //matrix_float4x4 modelViewMatrix;
+    simd_float2 camera;
+    float scale;
+    float aspect;
+    simd_float2 mousePos;
+    bool multipleSelect;
+    int32_t selectedFaceIndex;
+    float selectRadius;
 } Uniforms;
+
+typedef struct {
+    bool paired;
+    simd_uint2 index;
+} PairedDistance;
 
 #endif /* C_Bridging_h */

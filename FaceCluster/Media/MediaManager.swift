@@ -17,7 +17,6 @@ struct MediaAttributes: Codable {
     let interval: Double
     let downsample: Float
     let created: Date
-    let faces: Int
     let model: String
 }
 
@@ -122,6 +121,9 @@ class MediaManager {
         framesExpected = Int(duration.seconds / extractInterval.seconds) + (extractUnit == .frame ? 0 : 1)
         print("\(framesExpected) frames expected.")
         
+        faceNetwork?.media = MediaAttributes(path: self.importedURL, interval: extractInterval.seconds, downsample: downsample, created: Date.now, model: "Vision")
+        faceNetwork?.saveMetadata()
+        
         var timeCursor: CMTime = CMTimeMakeWithSeconds(0.0, preferredTimescale: timescale)
         let startTime: Date = Date.now
         
@@ -190,8 +192,6 @@ class MediaManager {
         if(faceTotal < 1) {
             cv?.state = 4
         } else {
-            faceNetwork?.media = MediaAttributes(path: self.importedURL, interval: extractInterval.seconds, downsample: downsample, created: Date.now, faces: faceTotal, model: "Vision")
-            faceNetwork?.saveMetadata()
             cv?.state = 5
         }
     }

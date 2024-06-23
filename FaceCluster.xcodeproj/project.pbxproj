@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		860FD4542C0FBA4300AA4B39 /* Facenet512.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */; };
 		8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */; };
 		864E63FF2C22EBA30070EC5E /* NetworkEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864E63FE2C22EBA30070EC5E /* NetworkEditor.swift */; };
 		864E64012C22EE070070EC5E /* NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864E64002C22EE070070EC5E /* NetworkView.swift */; };
@@ -26,20 +25,24 @@
 		866D66922C0B2536009C356F /* FileImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66912C0B2536009C356F /* FileImporter.swift */; };
 		866D66942C0B28FC009C356F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66932C0B28FC009C356F /* AppDelegate.swift */; };
 		866D66982C0B505C009C356F /* MediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66972C0B505C009C356F /* MediaManager.swift */; };
+		86715F832C26140F00732FAA /* Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86715F822C26140F00732FAA /* Editor.swift */; };
 		8687FC312C0CDC4900E97258 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8687FC302C0CDC4900E97258 /* Localizable.xcstrings */; };
 		8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7772C15B4A100758AE8 /* GPUManager.swift */; };
 		8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7792C15BBBD00758AE8 /* ImageUtils.swift */; };
+		86BA0A1E2C26CC03007BEAB3 /* Facenet512.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A1D2C26CC03007BEAB3 /* Facenet512.mlpackage */; };
+		86BA0A202C272F56007BEAB3 /* FacenetWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A1F2C272F56007BEAB3 /* FacenetWrapper.swift */; };
+		86BA0A222C27312E007BEAB3 /* ComputeShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A212C27312E007BEAB3 /* ComputeShader.metal */; };
 		86BFB5232C1F7D67007EDA8A /* ONet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB51E2C1F7D67007EDA8A /* ONet.mlmodel */; };
 		86BFB5242C1F7D67007EDA8A /* RNet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB51F2C1F7D67007EDA8A /* RNet.mlmodel */; };
 		86BFB5252C1F7D67007EDA8A /* MTCNN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB5202C1F7D67007EDA8A /* MTCNN.swift */; };
 		86BFB5262C1F7D67007EDA8A /* MTCNN_Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB5212C1F7D67007EDA8A /* MTCNN_Utils.swift */; };
 		86BFB5272C1F7D67007EDA8A /* PNet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB5222C1F7D67007EDA8A /* PNet.mlmodel */; };
 		86C3D3EB2C0E48DA00704629 /* FaceRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */; };
-		86C610932C125D340049697F /* Facenet512_CustomScale.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */; };
 		86C6109B2C1260550049697F /* xcode.gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 86C6109A2C1260550049697F /* xcode.gitignore */; };
 		86C6109D2C1260D20049697F /* readme.md in Resources */ = {isa = PBXBuildFile; fileRef = 86C6109C2C1260D20049697F /* readme.md */; };
 		86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C9CCA52C0F0DA600B33BFE /* ProgressBar.swift */; };
 		86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C9CCA72C0F269600B33BFE /* FacePreview.swift */; };
+		86DCF3FD2C285FA70093EC3F /* FaceCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */; };
 		86E63D602C0B58B200C683F2 /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */; };
 /* End PBXBuildFile section */
 
@@ -61,7 +64,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Facenet512.mlmodel; sourceTree = "<group>"; };
 		8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAttribute.swift; sourceTree = "<group>"; };
 		864E63FE2C22EBA30070EC5E /* NetworkEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkEditor.swift; sourceTree = "<group>"; };
 		864E64002C22EE070070EC5E /* NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkView.swift; sourceTree = "<group>"; };
@@ -85,20 +87,24 @@
 		866D66912C0B2536009C356F /* FileImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileImporter.swift; sourceTree = "<group>"; };
 		866D66932C0B28FC009C356F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		866D66972C0B505C009C356F /* MediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaManager.swift; sourceTree = "<group>"; };
+		86715F822C26140F00732FAA /* Editor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editor.swift; sourceTree = "<group>"; };
 		8687FC302C0CDC4900E97258 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		8694A7772C15B4A100758AE8 /* GPUManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUManager.swift; sourceTree = "<group>"; };
 		8694A7792C15BBBD00758AE8 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
+		86BA0A1D2C26CC03007BEAB3 /* Facenet512.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Facenet512.mlpackage; sourceTree = "<group>"; };
+		86BA0A1F2C272F56007BEAB3 /* FacenetWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacenetWrapper.swift; sourceTree = "<group>"; };
+		86BA0A212C27312E007BEAB3 /* ComputeShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ComputeShader.metal; sourceTree = "<group>"; };
 		86BFB51E2C1F7D67007EDA8A /* ONet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ONet.mlmodel; sourceTree = "<group>"; };
 		86BFB51F2C1F7D67007EDA8A /* RNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = RNet.mlmodel; sourceTree = "<group>"; };
 		86BFB5202C1F7D67007EDA8A /* MTCNN.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTCNN.swift; sourceTree = "<group>"; };
 		86BFB5212C1F7D67007EDA8A /* MTCNN_Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTCNN_Utils.swift; sourceTree = "<group>"; };
 		86BFB5222C1F7D67007EDA8A /* PNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PNet.mlmodel; sourceTree = "<group>"; };
 		86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceRectangle.swift; sourceTree = "<group>"; };
-		86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Facenet512_CustomScale.mlmodel; sourceTree = "<group>"; };
 		86C6109A2C1260550049697F /* xcode.gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = xcode.gitignore; sourceTree = "<group>"; };
 		86C6109C2C1260D20049697F /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		86C9CCA52C0F0DA600B33BFE /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		86C9CCA72C0F269600B33BFE /* FacePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePreview.swift; sourceTree = "<group>"; };
+		86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceCluster.swift; sourceTree = "<group>"; };
 		86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,8 +137,8 @@
 			isa = PBXGroup;
 			children = (
 				8664337F2C20690A00792590 /* MTCNN */,
-				860FD4532C0FBA4300AA4B39 /* Facenet512.mlmodel */,
-				86C610922C125D340049697F /* Facenet512_CustomScale.mlmodel */,
+				86BA0A1D2C26CC03007BEAB3 /* Facenet512.mlpackage */,
+				86BA0A1F2C272F56007BEAB3 /* FacenetWrapper.swift */,
 			);
 			path = ML;
 			sourceTree = "<group>";
@@ -142,6 +148,7 @@
 			children = (
 				864E63FE2C22EBA30070EC5E /* NetworkEditor.swift */,
 				864E64002C22EE070070EC5E /* NetworkView.swift */,
+				86715F822C26140F00732FAA /* Editor.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -161,7 +168,6 @@
 		866433802C209E8400792590 /* Import */ = {
 			isa = PBXGroup;
 			children = (
-				866D66682C0B1735009C356F /* ContentView.swift */,
 				866D66912C0B2536009C356F /* FileImporter.swift */,
 				86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */,
 				86555F502C0E011C0046A7C8 /* VideoPreviewToolbar.swift */,
@@ -185,6 +191,7 @@
 				866433832C209F5400792590 /* Face.swift */,
 				866433852C20A8DA00792590 /* FaceNetwork.swift */,
 				8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */,
+				86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */,
 			);
 			path = Faces;
 			sourceTree = "<group>";
@@ -259,6 +266,7 @@
 				866433802C209E8400792590 /* Import */,
 				866D66662C0B1735009C356F /* FaceClusterApp.swift */,
 				866D66932C0B28FC009C356F /* AppDelegate.swift */,
+				866D66682C0B1735009C356F /* ContentView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -280,6 +288,7 @@
 				8694A7772C15B4A100758AE8 /* GPUManager.swift */,
 				864E64022C231C300070EC5E /* NetworkRender.metal */,
 				864E64042C231C700070EC5E /* C-Bridging.h */,
+				86BA0A212C27312E007BEAB3 /* ComputeShader.metal */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -418,32 +427,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				860FD4542C0FBA4300AA4B39 /* Facenet512.mlmodel in Sources */,
 				86E63D602C0B58B200C683F2 /* VideoPreview.swift in Sources */,
 				86BFB5262C1F7D67007EDA8A /* MTCNN_Utils.swift in Sources */,
 				866D66942C0B28FC009C356F /* AppDelegate.swift in Sources */,
+				86DCF3FD2C285FA70093EC3F /* FaceCluster.swift in Sources */,
 				8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */,
 				8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */,
 				8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */,
 				864E64062C234C060070EC5E /* GLMatrix.swift in Sources */,
 				86C3D3EB2C0E48DA00704629 /* FaceRectangle.swift in Sources */,
-				86C610932C125D340049697F /* Facenet512_CustomScale.mlmodel in Sources */,
 				864E64012C22EE070070EC5E /* NetworkView.swift in Sources */,
 				866D66692C0B1735009C356F /* ContentView.swift in Sources */,
+				86BA0A1E2C26CC03007BEAB3 /* Facenet512.mlpackage in Sources */,
 				864E64032C231C300070EC5E /* NetworkRender.metal in Sources */,
 				86BFB5272C1F7D67007EDA8A /* PNet.mlmodel in Sources */,
 				86555F512C0E011C0046A7C8 /* VideoPreviewToolbar.swift in Sources */,
 				86BFB5232C1F7D67007EDA8A /* ONet.mlmodel in Sources */,
 				866433842C209F5400792590 /* Face.swift in Sources */,
 				864E63FF2C22EBA30070EC5E /* NetworkEditor.swift in Sources */,
+				86BA0A202C272F56007BEAB3 /* FacenetWrapper.swift in Sources */,
 				866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */,
 				866D66922C0B2536009C356F /* FileImporter.swift in Sources */,
 				866D66982C0B505C009C356F /* MediaManager.swift in Sources */,
 				86BFB5242C1F7D67007EDA8A /* RNet.mlmodel in Sources */,
 				86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */,
 				86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */,
+				86BA0A222C27312E007BEAB3 /* ComputeShader.metal in Sources */,
 				86BFB5252C1F7D67007EDA8A /* MTCNN.swift in Sources */,
 				866433862C20A8DA00792590 /* FaceNetwork.swift in Sources */,
+				86715F832C26140F00732FAA /* Editor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

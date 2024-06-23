@@ -14,7 +14,10 @@ class GPUManager {
     public static var instance: GPUManager?
     
     let metalDevice: MTLDevice?
+    let metalCommandQueue: MTLCommandQueue?
     var useCPU = false
+    
+    let computeClusterPipeline: MTLComputePipelineState?
     
     private let ciContext: CIContext
     
@@ -27,8 +30,12 @@ class GPUManager {
         
         if(!useCPU && metalDevice != nil) {
             ciContext = CIContext(mtlDevice: metalDevice!)
+            metalCommandQueue = metalDevice!.makeCommandQueue()
+            computeClusterPipeline = GPUManager.initialiseComputePipeline(metalDevice: metalDevice, functionName: "pointsEuclidean")
         } else {
             ciContext = CIContext()
+            metalCommandQueue = nil
+            computeClusterPipeline = nil
         }
         
         GPUManager.instance = self
@@ -97,6 +104,21 @@ class GPUManager {
             .origin: MTKTextureLoader.Origin.topLeft
         ]
         return try? textureLoader.newTexture(cgImage: image, options: options)
+    }
+    
+    private static func initialiseComputePipeline(metalDevice: MTLDevice?, functionName: String) -> MTLComputePipelineState? {
+        guard let defaultLibrary = metalDevice?.makeDefaultLibrary(),
+              let kernelFunction = defaultLibrary.makeFunction(name: functionName) else {
+            return nil
+        }
+        
+        do {
+            let cps = try metalDevice?.makeComputePipelineState(function: kernelFunction)
+            return cps
+        } catch {
+            print(error)
+            return nil
+        }
     }
     
 }

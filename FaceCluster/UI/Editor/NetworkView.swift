@@ -15,6 +15,8 @@ struct NetworkView: NSViewRepresentable {
     let depthPixelFormat = MTLPixelFormat.depth32Float_stencil8
     let colourPixelFormat = MTLPixelFormat.bgra8Unorm
     let mtlSampleCount = 1
+    let farPlane: Float = 99
+    var context: NetworkEditor?
     
     func makeNSView(context: NSViewRepresentableContext<NetworkView>) -> CustomizedMetalView {
         let mtkView = CustomizedMetalView()
@@ -29,6 +31,10 @@ struct NetworkView: NSViewRepresentable {
         mtkView.sampleCount = mtlSampleCount
         mtkView.mouseDraggedFunction = mouseDragged
         mtkView.mouseWheelFunction = mouseWheel
+        mtkView.mouseMove = mouseMove
+        mtkView.mouseExit = mouseExited
+        mtkView.mouseDownFunc = mouseDownFunc
+        mtkView.mouseUpFunc = mouseUpFunc
         
         return mtkView
     }
@@ -43,14 +49,47 @@ struct NetworkView: NSViewRepresentable {
     
     typealias NSViewType = CustomizedMetalView
     static var camera = SIMD3<Float>(0, 0, -5)
+    static var mouse = SIMD2<Float>(0, 0)
+    static var mouseDown: Bool = false
+    static var pMouseDown: Bool = false
+    static var pMousePos = SIMD2<Float>(0, 0)
+    
+    static var allowMultipleSelection = true
+    static var allowEditing = false
+    static var selectRadius: Float = 2
     
     func mouseDragged(with event: NSEvent) {
-        NetworkView.camera.x = NetworkView.camera.x + Float(event.deltaX) * 0.02
-        NetworkView.camera.y = NetworkView.camera.y + Float(event.deltaY) * -0.02
+        //NetworkView.camera.x = NetworkView.camera.x - Float(event.deltaX) * 0.02
+        //NetworkView.camera.y = NetworkView.camera.y - Float(event.deltaY) * -0.02
+        let loc = event.locationInWindow
+        NetworkView.mouse = SIMD2<Float>(Float(loc.x), Float(loc.y - 24))
+    }
+    
+    func mouseExited(with event: NSEvent) {
+        NetworkView.mouseDown = false
+    }
+    
+    func mouseDownFunc(with event: NSEvent) {
+        NetworkView.mouseDown = true
+    }
+    
+    func mouseUpFunc(with event: NSEvent) {
+        NetworkView.mouseDown = false
     }
     
     func mouseWheel(with event: NSEvent) {
-        NetworkView.camera.z = NetworkView.camera.z + Float(event.scrollingDeltaY) * 0.02
+        var z = NetworkView.camera.z + Float(event.scrollingDeltaY) * 0.02
+        if(z > -1) {
+            z = -1
+        } else if(z < -farPlane) {
+            z = -farPlane
+        }
+        NetworkView.camera.z = z
+    }
+    
+    func mouseMove(with event: NSEvent, view: MTKView) {
+        let loc = event.locationInWindow
+        NetworkView.mouse = SIMD2<Float>(Float(loc.x), Float(loc.y - 24))
     }
     
     class Coordinator: NSObject, MTKViewDelegate {
@@ -70,11 +109,18 @@ struct NetworkView: NSViewRepresentable {
         var faceObjBuffer: MTLBuffer?
         var faceObjPtr: UnsafeMutablePointer<SIMD2<Float>>?
         var pipelineState: MTLRenderPipelineState
+        var mousePipeline: MTLRenderPipelineState
         var depthState: MTLDepthStencilState
-        var debugTexture: MTLTexture?
+        //var debugTexture: MTLTexture?
         var textureDescriptor: MTLTextureDescriptor
         var arrayTextures: [MTLTexture] = []
         var textureSliceSize: Int
+        var aspectRatio: Float = 1
+        
+        var pointDistanceBuffer: MTLBuffer?
+        
+        var movedFaces = [FaceSelection]()
+        var mouseTexture: MTLTexture?
         
         init(_ parent: NetworkView) {
             self.parent = parent
@@ -82,12 +128,16 @@ struct NetworkView: NSViewRepresentable {
                 fatalError(String(localized: "Failed to initialise Metal 3 environment."))
             }
             self.metalDevice = md
-            self.metalCommandQueue = metalDevice.makeCommandQueue()!
+            guard let mq = GPUManager.instance?.metalCommandQueue else {
+                fatalError(String(localized: "Failed to initialise Metal 3 environment."))
+            }
+            self.metalCommandQueue = mq
             
             guard let buffer = self.metalDevice.makeBuffer(length: alignedUniformsSize, options:[MTLResourceOptions.storageModeShared]) else { fatalError(String(localized: "Failed to initialise Metal 3 environment.")) }
             dynamicUniformBuffer = buffer
             uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
             self.pipelineState = try! NetworkView.Coordinator.buildFaceMeshletRenderPipelineState(metalDevice: metalDevice, parent: parent)!
+            self.mousePipeline = try! NetworkView.Coordinator.buildMouseRenderPipelineState(metalDevice: metalDevice, parent: parent)!
             
             let depthStateDescriptor = MTLDepthStencilDescriptor()
             depthStateDescriptor.depthCompareFunction = MTLCompareFunction.less
@@ -108,6 +158,16 @@ struct NetworkView: NSViewRepresentable {
             if(net != nil) {
                 setNetwork(network: net!)
             }
+            NetworkView.camera = SIMD3<Float>(0, 0, -5)
+            NetworkView.mouse = SIMD2<Float>(0, 0)
+            NetworkView.mouseDown = false
+            NetworkView.pMouseDown = false
+            NetworkView.pMousePos = SIMD2<Float>(0, 0)
+            NetworkView.allowEditing = false
+            NetworkView.allowMultipleSelection = false
+            NetworkView.selectRadius = 2.0
+            
+            self.mouseTexture =  try! loadBundledTexture(name: "rectangle1")
         }
         
         func setNetwork(network: FaceNetwork) {
@@ -121,7 +181,16 @@ struct NetworkView: NSViewRepresentable {
                 fatalError(String(localized: "Failed to allocate memory for rendering face network. Please reduce the network size."))
             }
             
-            for i in 0..<network.faces.count {
+            let n = network.faces.count
+            let half = (n % 2 == 0) ? (n / 2) : ((n + 1) / 2)
+            let threadCount = half * n
+            guard let cptBuffer = self.metalDevice.makeBuffer(length: MemoryLayout<PairedDistance>.stride * threadCount, options:[MTLResourceOptions.storageModeShared]) else {
+                fatalError(String(localized: "Failed to allocate memory for rendering face network. Please reduce the network size."))
+            }
+            pointDistanceBuffer = cptBuffer
+            
+            
+            for i in 0..<n {
                 let face = network.faces[i]
                 let tag = network.layoutKey
                 let pos = face.attributes[tag]
@@ -136,14 +205,22 @@ struct NetworkView: NSViewRepresentable {
                 }
                 faceObjPtr![i] = simd_float2(x: Float(face.displayPos.x), y: Float(face.displayPos.y))
             }
-            debugTexture = try? DEBUG_loadDebugTexture()
+            //debugTexture = try? loadBundledTexture(name: "img")
             loadImagesIntoTexture()
+            
+            NetworkEditor.networkDisplayed = network
         }
         
         func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-            let aspect = Float(size.width) / Float(size.height)
+            aspectRatio = Float(size.width) / Float(size.height)
             //print(aspect)
-            projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
+            projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(60), aspectRatio:aspectRatio, nearZ: 0.1, farZ: parent.farPlane + 1)
+        }
+        
+        struct FaceSelection {
+            var locRelToMouse: SIMD2<Float>
+            var face: Face
+            var index: Int
         }
         
         func draw(in view: MTKView) {
@@ -159,13 +236,12 @@ struct NetworkView: NSViewRepresentable {
                 return
             }
             
-            uniforms[0].projectionMatrix = projectionMatrix
+            //uniforms[0].projectionMatrix = projectionMatrix
             let pos = NetworkView.camera
+            uniforms[0].camera = SIMD2<Float>(pos.x, pos.y)
 
-            //let modelMatrix = matrix4x4_rotation(radians: rotate.y, axis: rotationAxis)
-            let modelMatrix = matrix4x4_translation(0, 0, 0)
-            let viewMatrix = matrix4x4_translation(pos.x, pos.y, pos.z)
-            uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
+            uniforms[0].scale = -1/pos.z
+            uniforms[0].aspect = aspectRatio
             
             let renderPassDescriptor = view.currentRenderPassDescriptor
             if let renderPassDescriptor = renderPassDescriptor, let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
@@ -174,13 +250,99 @@ struct NetworkView: NSViewRepresentable {
                 
                 renderEncoder.setCullMode(.none)
                 renderEncoder.setFrontFacing(.counterClockwise)
-                renderEncoder.setRenderPipelineState(pipelineState)
                 renderEncoder.setDepthStencilState(depthState)
                 var bi = 0
                 
+                let r = parent.context?.radius ?? 2
+                if(r < 0.999 || !allowEditing) {
+                    allowMultipleSelection = false
+                } else {
+                    allowMultipleSelection = true
+                    selectRadius = r
+                }
+                let w = Float(view.bounds.width)
+                let h = Float(view.bounds.height)
+                let ndcX = 2.0 * (mouse.x / w) - 1.0
+                let ndcY = 1.0 - 2.0 * (mouse.y / h)
+                let ndcPos = SIMD3<Float>(ndcX, ndcY, 0)
+                let scale = uniforms[0].scale
+                let mouseInFrameY = -ndcPos.y / scale + pos.y
+                let mouseInFrameX = ndcPos.x / scale * aspectRatio + pos.x
+                //print(mouseInFrameX, mouseInFrameY)
+                uniforms[0].mousePos = SIMD2<Float>(mouseInFrameX, mouseInFrameY)
+                uniforms[0].selectRadius = NetworkView.selectRadius
+                
+                var selectedFace: Face? = nil
+                var selectedIndex: Int = -1
+                var selectedRelPos: SIMD2<Float>? = nil
+                
+                var selectedFaces = [FaceSelection]()
+                if(!allowEditing || !mouseDown) {
+                    for i in (0..<faceNetwork.faces.count).reversed() {
+                        let face = faceNetwork.faces[i]
+                        // CPU version
+                        let size: Float = allowMultipleSelection ? 0.5 * NetworkView.selectRadius : 0.5
+                        let faceX = Float(face.displayPos.x)
+                        let faceY = Float(face.displayPos.y)
+                        let inMouse = mouseInFrameX > faceX - size && mouseInFrameY > faceY - size && mouseInFrameX < faceX + size && mouseInFrameY < faceY + size;
+                        
+                        if(inMouse) {
+                            let relPos = SIMD2<Float>(x: Float(face.displayPos.x) - mouseInFrameX, y: Float(face.displayPos.y) - mouseInFrameY)
+                            selectedFace = face
+                            selectedIndex = i
+                            selectedRelPos = relPos
+                            
+                            selectedFaces.append(FaceSelection(locRelToMouse: relPos, face: face, index: i))
+                        }
+                    }
+                    
+                    if(!mouseDown && pMouseDown) {
+                        for movedFace in movedFaces {
+                            let _ = faceNetwork.requestUpdateFiles(updatedFace: movedFace.face)
+                        }
+                    }
+                    
+                    movedFaces = [FaceSelection]()
+                    if(!NetworkView.allowMultipleSelection && selectedFace != nil) {
+                        movedFaces = [FaceSelection(locRelToMouse: selectedRelPos!, face: selectedFace!, index: selectedIndex)]
+                    } else {
+                        movedFaces = selectedFaces
+                    }
+                }
+                if(!NetworkView.allowMultipleSelection) {
+                    parent.context?.faceInfo = selectedFace?.createDescription() ?? ""
+                } else {
+                    parent.context?.faceInfo = ""
+                }
+                uniforms[0].multipleSelect = NetworkView.allowMultipleSelection
+                uniforms[0].selectedFaceIndex = Int32(selectedIndex)
+                
+                // print(mouseDown)
+                
+                if(NetworkView.mouseDown) {
+                    if(NetworkView.allowEditing) {
+                        for face in movedFaces {
+                            let tx = mouseInFrameX + face.locRelToMouse.x
+                            let ty = mouseInFrameY + face.locRelToMouse.y
+                            faceObjPtr?[face.index].x = tx
+                            faceObjPtr?[face.index].y = ty
+                            face.face.updateDisplayPosition(newPosition: DoublePoint(x: Double(tx), y: Double(ty)))
+                        }
+                    } else {
+                        let mouseStep = mouse - pMousePos
+                        camera.x -= mouseStep.x * 0.005 / scale
+                        camera.y -= mouseStep.y * 0.005 / scale
+                    }
+                }
+                
+                if(allowMultipleSelection) {
+                    drawMouse(encoder: renderEncoder, mouseX: mouseInFrameX, mouseY: mouseInFrameY)
+                }
+                
+                renderEncoder.setRenderPipelineState(pipelineState)
+                renderEncoder.setObjectBuffer(faceObjBuffer, offset: 0, index: BufferIndex.object.rawValue)
+                renderEncoder.setObjectBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                 for textureBatch in self.arrayTextures {
-                    renderEncoder.setObjectBuffer(faceObjBuffer, offset: 0, index: BufferIndex.object.rawValue)
-                    renderEncoder.setObjectBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setObjectBuffer(self.createFaceCountBuffer(batchIndex: bi), offset: 0, index: BufferIndex.faceCount.rawValue)
                     renderEncoder.setFragmentTexture(textureBatch, index: TextureIndex.color.rawValue)
                     renderEncoder.drawMeshThreads(MTLSize(width: faceNetwork.faces.count, height: 1, depth: 1),
@@ -197,6 +359,22 @@ struct NetworkView: NSViewRepresentable {
                 }
             }
             commandBuffer.commit()
+            
+            pMouseDown = mouseDown
+            pMousePos = mouse
+            NetworkEditor.networkDisplayedFacemapBuffer = self.faceObjBuffer
+            NetworkEditor.networkDisplayedPointDistanceBuffer = self.pointDistanceBuffer
+        }
+        
+        func drawMouse(encoder: MTLRenderCommandEncoder, mouseX: Float, mouseY: Float) {
+            encoder.pushDebugGroup("Mouse")
+            encoder.setRenderPipelineState(mousePipeline)
+            let mousePosition = [mouseX, mouseY]
+            encoder.setVertexBytes(mousePosition, length: MemoryLayout<Float>.stride * 2, index: 1)
+            encoder.setVertexBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: 2)
+            encoder.setFragmentTexture(mouseTexture, index: 0)
+            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+            encoder.popDebugGroup()
         }
         
         static func buildFaceMeshletRenderPipelineState(metalDevice: MTLDevice, parent: NetworkView) throws -> MTLRenderPipelineState? {
@@ -225,6 +403,26 @@ struct NetworkView: NSViewRepresentable {
             return state
         }
         
+        static func buildMouseRenderPipelineState(metalDevice: MTLDevice, parent: NetworkView) throws -> MTLRenderPipelineState? {
+            let pipelineDescriptor = MTLRenderPipelineDescriptor()
+            guard let library = metalDevice.makeDefaultLibrary() else {
+                return nil
+            }
+            let vertexFunction = library.makeFunction(name: "mouseVertex")
+            let fragmentFunction = library.makeFunction(name: "mouseFragment")
+            pipelineDescriptor.vertexFunction = vertexFunction
+            pipelineDescriptor.fragmentFunction = fragmentFunction
+            pipelineDescriptor.colorAttachments[0].pixelFormat = parent.colourPixelFormat
+            pipelineDescriptor.depthAttachmentPixelFormat = parent.depthPixelFormat
+            pipelineDescriptor.stencilAttachmentPixelFormat = parent.depthPixelFormat
+            
+            let a: MTLPipelineOption = MTLPipelineOption()
+            let state: MTLRenderPipelineState
+            (state, _) = try metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor, options: a)
+            
+            return state
+        }
+        
         func createFaceCountBuffer(batchIndex: Int) -> MTLBuffer? {
             guard let buffer = metalDevice.makeBuffer(length: MemoryLayout<UInt>.stride, options: [.storageModeShared]) else {
                 return nil
@@ -235,13 +433,23 @@ struct NetworkView: NSViewRepresentable {
             return buffer
         }
         
-        func DEBUG_loadDebugTexture() throws -> MTLTexture {
+        func createMouseRenderBuffer() -> MTLBuffer? {
+            guard let buffer = metalDevice.makeBuffer(length: MemoryLayout<UInt>.stride, options: [.storageModeShared]) else {
+                return nil
+            }
+            let faceCountMem = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: UInt.self, capacity:2)
+            faceCountMem[0] = UInt(0)
+            faceCountMem[1] = UInt(0)
+            return buffer
+        }
+        
+        func loadBundledTexture(name: String) throws -> MTLTexture {
             let textureLoader = MTKTextureLoader(device: metalDevice)
             let textureLoaderOptions = [
                 MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
                 MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
             ]
-            return try textureLoader.newTexture(name: "img", scaleFactor: 1.0, bundle: nil, options: textureLoaderOptions)
+            return try textureLoader.newTexture(name: name, scaleFactor: 1.0, bundle: nil, options: textureLoaderOptions)
         }
         
         static func createArrayTextureDescriptor(device: MTLDevice, size: CGSize, layers: Int, pixelFormat: MTLPixelFormat) -> MTLTextureDescriptor? {
@@ -322,17 +530,44 @@ class CustomizedMetalView: MTKView {
     var camera: SIMD3<Float> = SIMD3<Float>(0, 0, 0)
     var mouseDraggedFunction: (NSEvent) -> Void = {_ in }
     var mouseWheelFunction: (NSEvent) -> Void = {_ in }
+    var mouseExit: (NSEvent) -> Void = {_ in }
+    var mouseMove: (NSEvent, MTKView) -> Void = {_,_  in }
+    var mouseDownFunc: (NSEvent) -> Void = {_ in }
+    var mouseUpFunc: (NSEvent) -> Void = {_ in }
+    override var acceptsFirstResponder: Bool {get{return true}}
+    
+    override func updateTrackingAreas() {
+         let area = NSTrackingArea(rect: self.bounds,
+                                   options: [NSTrackingArea.Options.activeAlways,
+                                             NSTrackingArea.Options.mouseMoved,
+                                             NSTrackingArea.Options.enabledDuringMouseDrag],
+                                   owner: self,
+                                   userInfo: nil)
+         self.addTrackingArea(area)
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        mouseExit(event)
+    }
+    
+    override func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        mouseMove(event, self)
+    }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        print("Mouse down at location: \(event.locationInWindow)")
+        //print("Mouse down at location: \(event.locationInWindow)")
         // Handle mouse down event
+        mouseDownFunc(event)
     }
 
     override func mouseUp(with event: NSEvent) {
         super.mouseUp(with: event)
-        print("Mouse up at location: \(event.locationInWindow)")
+        //print("Mouse up at location: \(event.locationInWindow)")
         // Handle mouse up event
+        mouseUpFunc(event)
     }
 
     override func mouseDragged(with event: NSEvent) {
@@ -344,25 +579,25 @@ class CustomizedMetalView: MTKView {
 
     override func rightMouseDown(with event: NSEvent) {
         super.rightMouseDown(with: event)
-        print("Right mouse down at location: \(event.locationInWindow)")
+        //print("Right mouse down at location: \(event.locationInWindow)")
         // Handle right mouse down event
     }
 
     override func rightMouseUp(with event: NSEvent) {
         super.rightMouseUp(with: event)
-        print("Right mouse up at location: \(event.locationInWindow)")
+        //print("Right mouse up at location: \(event.locationInWindow)")
         // Handle right mouse up event
     }
 
     override func otherMouseDown(with event: NSEvent) {
         super.otherMouseDown(with: event)
-        print("Other mouse button down at location: \(event.locationInWindow)")
+        //print("Other mouse button down at location: \(event.locationInWindow)")
         // Handle other mouse button down event
     }
 
     override func otherMouseUp(with event: NSEvent) {
         super.otherMouseUp(with: event)
-        print("Other mouse button up at location: \(event.locationInWindow)")
+        //print("Other mouse button up at location: \(event.locationInWindow)")
         // Handle other mouse button up event
     }
     

@@ -19,6 +19,15 @@ extension FaceAttribute {
     }
 }
 
+enum AttributeType {
+    case Point
+    case Integer
+    case Decimal
+    case Vector
+    case IntVector
+    case String
+}
+
 struct FacePoint: FaceAttribute {
     typealias type = DoublePoint
     var key: String
@@ -96,15 +105,6 @@ class SavableFaceAttribute: NSObject, NSSecureCoding {
     var key: String
     
     let vKey = "value", kKey = "key", tKey = "type"
-    
-    enum AttributeType {
-        case Point
-        case Integer
-        case Decimal
-        case Vector
-        case IntVector
-        case String
-    }
     
     init(a: any FaceAttribute, type: AttributeType) {
         self.value = a.value

@@ -44,7 +44,34 @@
       }
     },
     "Bottom bar" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部菜单"
+          }
+        }
+      }
+    },
+    "Cluster" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聚合"
+          }
+        }
+      }
+    },
+    "CPU mode not supported yet." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU未支持"
+          }
+        }
+      }
     },
     "df" : {
       "localizations" : {
@@ -72,11 +99,35 @@
         }
       }
     },
+    "Faces" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面部检测"
+          }
+        }
+      }
+    },
     "Failed to allocate memory for rendering face network. Please reduce the network size." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能为初始化GPU脸部渲染管线分配内存。请减少网络所包含的脸部。"
+          }
+        }
+      }
     },
     "Failed to initialise Metal 3 environment." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能初始化Metal 3。"
+          }
+        }
+      }
     },
     "Failed to initialise ONet model for MTCNN pipeline" : {
       "localizations" : {
@@ -230,12 +281,32 @@
         }
       }
     },
+    "Network" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络试图"
+          }
+        }
+      }
+    },
     "No face images found in all extracted video frames.\nRedirecting to the import menu." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "在提取的视频关键帧中未识别出有效面部图像。程序将返回加载界面。"
+          }
+        }
+      }
+    },
+    "Overview" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "概览"
           }
         }
       }
@@ -302,6 +373,16 @@
         }
       }
     },
+    "Selected face:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前面部图像："
+          }
+        }
+      }
+    },
     "Terminate" : {
       "localizations" : {
         "zh-Hans" : {
@@ -321,9 +402,6 @@
           }
         }
       }
-    },
-    "Toolbar" : {
-
     },
     "Video Preview Frame" : {
       "localizations" : {
