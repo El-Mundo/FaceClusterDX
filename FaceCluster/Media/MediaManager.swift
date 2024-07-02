@@ -13,7 +13,7 @@ import AVFoundation
 let THUMBNAIL_SIZE: Int = 64
 
 struct MediaAttributes: Codable {
-    let path: URL
+    let path: String
     let interval: Double
     let downsample: Float
     let created: Date
@@ -33,6 +33,7 @@ class MediaManager {
     private var framesExpected = 1
     
     private var faceNetwork: FaceNetwork? = nil
+    public static var importMessage = ""
     
     init(importedURL: URL, isVideo: Bool) {
         self.importedURL = importedURL
@@ -70,14 +71,15 @@ class MediaManager {
                     continue
                 }
                 
-                let iw = Double(frameImg.width)
+                /*let iw = Double(frameImg.width)
                 let ih = Double(frameImg.height)
                 let ox = faceDet.box[0] * iw
                 let oy = faceDet.box[1] * -ih + ih
                 let o = CGPoint(x: max(0, ox), y: max(0, oy))
-                let w = CGSize(width: min(iw-1, faceDet.box[2] * iw), height: min(ih-1, faceDet.box[3] * -ih))
+                let w = CGSize(width: min(iw-1, faceDet.box[2] * iw), height: min(ih-1, faceDet.box[3] * -ih))*/
                 
-                var thumbnail = ImageUtils.cropCGImage(frameImg, toRect: CGRect(origin: o, size: w))
+                //var thumbnail = ImageUtils.cropCGImage(frameImg, toRect: CGRect(origin: o, size: w))
+                var thumbnail = ImageUtils.cropCGImageNormalised(frameImg, normalisedBox: faceDet.box)
                 if(thumbnail != nil) {
                     //thumbnail = ImageUtils.resizeCG(image: thumbnail!, scale: (thumbnailSize/Double((max(thumbnail!.width, thumbnail!.height)))))
                     thumbnail = ImageUtils.resizeCGExactly(thumbnail!, size: CGSize(width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE))
@@ -103,7 +105,7 @@ class MediaManager {
         let videoName = self.importedURL.lastPathComponent
         //videoName = (videoName as NSString).deletingPathExtension
         let saveURL = self.getSaveParentDirectory(name: videoName)!
-        faceNetwork = FaceNetwork(savedPath: saveURL)
+        faceNetwork = FaceNetwork(savedPath: saveURL, attributes: [SavableAttribute(name: "Position", type: .Point)])
         
         let video = self.getVideoAsset()
         let saveImageURL = saveURL.appending(path: "frames/")
@@ -120,8 +122,9 @@ class MediaManager {
         }
         framesExpected = Int(duration.seconds / extractInterval.seconds) + (extractUnit == .frame ? 0 : 1)
         print("\(framesExpected) frames expected.")
+        MediaManager.importMessage += String(localized: "\(framesExpected) frames expected." ) + "\n"
         
-        faceNetwork?.media = MediaAttributes(path: self.importedURL, interval: extractInterval.seconds, downsample: downsample, created: Date.now, model: "Vision")
+        faceNetwork?.media = MediaAttributes(path: self.importedURL.lastPathComponent, interval: extractInterval.seconds, downsample: downsample, created: Date.now, model: "Vision")
         faceNetwork?.saveMetadata()
         
         var timeCursor: CMTime = CMTimeMakeWithSeconds(0.0, preferredTimescale: timescale)
@@ -169,11 +172,13 @@ class MediaManager {
                 let saved = ImageUtils.saveImageAsJPG(image, at: saveImageURL.appending(path: "\(identifier).jpg"))
                 if(!saved) {
                     print("Failed to save thumbnail for frame \(identifier)")
+                    MediaManager.importMessage += String(localized: "Failed to save thumbnail for frame \(identifier)") + "\n"
                 }
             } catch {
                 addProcessedImage(faces: [], identifier: String(index), isError: true)
                 print("Failed to analyse frame at position \(timeCursor.seconds) second")
                 print(error)
+                MediaManager.importMessage += String(localized: "Failed to analyse frame at position \(timeCursor.seconds) second" ) + "\n"
             }
             
             timeCursor = CMTimeAdd(timeCursor, extractInterval)
@@ -185,9 +190,11 @@ class MediaManager {
         
         let timeLapse = Date.now.timeIntervalSince(startTime)
         print("Time lapse \(timeLapse)")
+        MediaManager.importMessage += String(localized: "Time lapse \(timeLapse)") + "\n"
         
         let faceTotal: Int = faceNetwork?.faces.count ?? 0
         print(faceTotal, "faces detected from the video")
+        MediaManager.importMessage +=  String(localized: "\(faceTotal) faces detected from the video") + "\n\n"
         
         if(faceTotal < 1) {
             cv?.state = 4

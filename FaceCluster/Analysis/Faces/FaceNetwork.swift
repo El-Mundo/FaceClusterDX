@@ -17,10 +17,13 @@ class FaceNetwork {
     var textures: [MTLTexture] = []
     var clusters = [String: FaceCluster]()
     
-    init(faces: [Face] = [Face](), savedPath: URL, media: MediaAttributes?=nil) {
+    var attributes: [SavableAttribute]
+    
+    init(faces: [Face] = [Face](), savedPath: URL, media: MediaAttributes?=nil, attributes: [SavableAttribute]) {
         self.faces = faces
         self.savedPath = savedPath
         self.media = media
+        self.attributes = attributes
     }
     
     public func saveMetadata() {
@@ -52,7 +55,8 @@ class FaceNetwork {
                 try face.save(fileURL: fileURL)
                 total += 1
             } catch {
-                print("Failed to save data in binary format: \(error)")
+                let info = String("Failed to save data in json format: ").appending(String(describing: error))
+                print(info)
             }
         }
         
@@ -77,11 +81,15 @@ class FaceNetwork {
                 try updatedFace.save(fileURL: path)
                 return true
             } catch {
+                let msg = String(localized: "Failed to save face update for ").appending(updatedFace.path?.lastPathComponent ?? "").appending("\n\(error)")
                 print(error)
+                networkEditorInstance?.console += msg + "\n"
                 return false
             }
         } else {
-            print("Cannot update face because it is not part")
+            let info = String(localized: "Cannot update face because it is not part of the active network.")
+            print(info)
+            networkEditorInstance?.console += info + "\n"
             return false
         }
     }
@@ -133,12 +141,15 @@ class FaceNetwork {
         let time = Date.now
         var pairs = [PairedDistance]()
         
+        networkEditorInstance?.console += String(localized: "Calculating face distances...\n")
+        networkEditorInstance?.context?.freezeNetworkView = true
+        
         if(!(GPUManager.instance?.useCPU ?? false)) {
             var buffer0: MTLBuffer?
             if(faceMapBuffer == nil) {
-                guard let buffer = GPUManager.instance!.metalDevice?.makeBuffer(length: MemoryLayout<SIMD2<Float>>.stride * n, options:[MTLResourceOptions.storageModeShared]) else { return }
+                guard let buffer = GPUManager.instance!.metalDevice?.makeBuffer(length: MemoryLayout<FaceMap>.stride * n, options:[MTLResourceOptions.storageModeShared]) else { return }
                 buffer0 = buffer
-                let points: UnsafeMutablePointer<SIMD2<Float>> = UnsafeMutableRawPointer(buffer0!.contents()).bindMemory(to:SIMD2<Float>.self, capacity: n)
+                let points: UnsafeMutablePointer<FaceMap> = UnsafeMutableRawPointer(buffer0!.contents()).bindMemory(to:FaceMap.self, capacity: n)
                 writeDisplayPointsToBuffer(ptr: points, n: n)
             } else {
                 //print("Reading buffer from render pipeline")
@@ -159,7 +170,7 @@ class FaceNetwork {
                   let cps = GPUManager.instance?.computeClusterPipeline,
                   let commandBuffer = commandQueue.makeCommandBuffer(),
                   let computeEncoder = commandBuffer.makeComputeCommandEncoder() else {
-                fatalError("Failed to create command buffer or encoder")
+                fatalError(String(localized: "Failed to create command buffer or encoder"))
             }
             
             computeEncoder.setComputePipelineState(cps)
@@ -211,7 +222,10 @@ class FaceNetwork {
         
         self.arrangeClusters()
         
-        print("Time lapse", Date.now.timeIntervalSince(time))
+        let t = Date.now.timeIntervalSince(time)
+        print("Time lapse", t)
+        networkEditorInstance?.context?.freezeNetworkView = false
+        networkEditorInstance?.console += String(localized: "Clustered faces, time lapse:").appending(String(describing: t)) + "\n\n"
     }
     
     private func arrangeClusters() {
@@ -221,19 +235,99 @@ class FaceNetwork {
             if(face.clusterIndex >= 0) {
                 let key = "#\(face.clusterIndex)"
                 let c = clusters[key] ?? FaceCluster(faces: [], name: key)
+                face.clusterName = key
                 c.faces.append(face)
                 clusters.updateValue(c, forKey: key)
+            } else {
+                face.clusterName = nil
             }
+            
+            face.clusterIndex = -1
+        }
+        
+        saveClusters()
+    }
+    
+    private func saveClusters() {
+        FaceClusterSavable.container = self
+        var ss = [FaceClusterSavable]()
+        for cluster in clusters.values {
+            let s = FaceClusterSavable(cluster: cluster)
+            ss.append(s)
+        }
+        do {
+            let data = try JSONEncoder().encode(ss)
+            try data.write(to: savedPath.appending(path: "clusters.json"))
+        } catch {
+            networkEditorInstance?.console += String(localized: "Failed to save clusters.\n").appending("\(error)") + "\n\n"
+            print(error)
         }
     }
     
-    func writeDisplayPointsToBuffer(ptr: UnsafeMutablePointer<SIMD2<Float>>, n: Int) {
+    func writeDisplayPointsToBuffer(ptr: UnsafeMutablePointer<FaceMap>, n: Int) {
         for i in 0..<n {
             let face = faces[i]
             let dp = face.displayPos
             let fp = SIMD2<Float>(Float(dp.x), Float(dp.y))
-            ptr[i] = fp
+            let faceMap = FaceMap(pos: fp, disabled: face.disabled)
+            ptr[i] = faceMap
         }
     }
         
+}
+
+extension FaceNetwork {
+    func generateConvexHull(usePolygon: Bool) -> [SIMD2<UInt32>] {
+        self.updateFaceIndices()
+        var vertices = [SIMD2<UInt32>]()
+        var cIndex: UInt32 = 0
+        for cluster in clusters.values {
+            if(cluster.faces.count >= (usePolygon ? 3 : 2)) {
+                if(usePolygon) {
+                    vertices.append(contentsOf: cluster.generateConvexHull(indexInNet: cIndex))
+                }else {
+                    vertices.append(contentsOf: cluster.generateLines(indexInNet: cIndex))
+                }
+                cIndex += 1
+            }
+        }
+        return vertices
+    }
+    
+    func updateFaceIndices() {
+        var i = 0
+        for face in faces {
+            face.indexInNet = i
+            i += 1
+        }
+    }
+    
+    func getAlignedImageArray() -> [(CGImage?, Face)] {
+        var images = [(CGImage?, Face)]()
+        let fa = FaceAlignment()
+        if(faces.count < 1) {
+            return []
+        }
+        
+        let sortedFaces = faces.sorted(by: {
+            $0.detectedAttributes.frameIdentifier < $1.detectedAttributes.frameIdentifier
+        })
+        var frameIdentifier = sortedFaces[0].detectedAttributes.frameIdentifier
+        var frameImage = sortedFaces[0].getFrameAsImage()
+        
+        for face in sortedFaces {
+            let id = face.detectedAttributes.frameIdentifier
+            if(id != frameIdentifier) {
+                frameImage = face.getFrameAsImage()
+                frameIdentifier = id
+            }
+            
+            if(face.disabled || frameImage == nil) {
+                continue
+            }
+            images.append((fa.align(frameImage!, face: face.detectedAttributes, size: CGSize(width: 160, height: 160)), face))
+        }
+        
+        return images
+    }
 }

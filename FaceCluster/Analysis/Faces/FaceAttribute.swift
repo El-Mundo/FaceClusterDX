@@ -7,19 +7,26 @@
 
 import Foundation
 
+let FA_PreservedFields: [String] = [
+    "Face Box", "Confidence", "Landmarks", "Face Rotation",
+    "Cluster", "Frame", "Path", "Deactivated"
+]
+
+struct SavableAttribute: Codable {
+    var name: String
+    let type: AttributeType
+}
+
 protocol FaceAttribute: Codable {
     associatedtype type
     var value: type {get set}
     var key: String {get set}
+    
+    mutating func fromString(string: String) -> Bool
+    func toString() -> String
 }
 
-extension FaceAttribute {
-    func toString() -> String {
-        return String(describing: value)
-    }
-}
-
-enum AttributeType {
+enum AttributeType: Codable {
     case Point
     case Integer
     case Decimal
@@ -37,6 +44,24 @@ struct FacePoint: FaceAttribute {
         self.value = value
         self.key = key
     }
+    
+    mutating func fromString(string: String) -> Bool {
+        let content = string.replacingOccurrences(of: "(", with: "").replacingOccurrences(of: ")", with: "").replacingOccurrences(of: " ", with: "")
+        let axis = content.split(separator: ",")
+        if(axis.count < 2) {
+            return false
+        } else {
+            guard let x = Double(axis[0]), let y = Double(axis[1]) else {
+                return false
+            }
+            self.value = DoublePoint(x: x, y: y)
+            return true
+        }
+    }
+    
+    func toString() -> String {
+        return "(\(value.x), \(value.y))"
+    }
 }
 
 struct FaceVector: FaceAttribute {
@@ -49,6 +74,34 @@ struct FaceVector: FaceAttribute {
         self.value = value
         self.key = key
         self.names = names
+    }
+    
+    
+    mutating func fromString(string: String) -> Bool {
+        let content = string.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "").replacingOccurrences(of: " ", with: "")
+        let values = content.split(separator: ",")
+        var newValues = [Double]()
+        for value in values {
+            guard let v = Double(value) else {
+                return false
+            }
+            newValues.append(v)
+        }
+        self.value = newValues
+        return true
+    }
+    
+    func toString() -> String {
+        var string = "["
+        for v in value {
+            string.append("\(v), ")
+        }
+        if(string.hasSuffix(", ")) {
+            string.removeLast()
+            string.removeLast()
+        }
+        string.append("]")
+        return string
     }
 }
 
@@ -63,6 +116,33 @@ struct FaceIntegerVector: FaceAttribute {
         self.key = key
         self.names = names
     }
+    
+    mutating func fromString(string: String) -> Bool {
+        let content = string.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "").replacingOccurrences(of: " ", with: "")
+        let values = content.split(separator: ",")
+        var newValues = [Int]()
+        for value in values {
+            guard let v = Int(value) else {
+                return false
+            }
+            newValues.append(v)
+        }
+        self.value = newValues
+        return true
+    }
+    
+    func toString() -> String {
+        var string = "["
+        for v in value {
+            string.append("\(v), ")
+        }
+        if(string.hasSuffix(", ")) {
+            string.removeLast()
+            string.removeLast()
+        }
+        string.append("]")
+        return string
+    }
 }
 
 struct FaceInteger: FaceAttribute {
@@ -73,6 +153,18 @@ struct FaceInteger: FaceAttribute {
     init(_ value: Int, for key: String) {
         self.value = value
         self.key = key
+    }
+    
+    mutating func fromString(string: String) -> Bool {
+        guard let value = Int(string) else {
+            return false
+        }
+        self.value = value
+        return true
+    }
+    
+    func toString() -> String {
+        return "\(value)"
     }
 }
 
@@ -85,6 +177,18 @@ struct FaceDecimal: FaceAttribute {
         self.value = value
         self.key = key
     }
+    
+    mutating func fromString(string: String) -> Bool {
+        guard let value = Double(string) else {
+            return false
+        }
+        self.value = value
+        return true
+    }
+    
+    func toString() -> String {
+        return "\(value)"
+    }
 }
 
 struct FaceString: FaceAttribute {
@@ -95,6 +199,15 @@ struct FaceString: FaceAttribute {
     init(_ value: String, for key: String) {
         self.value = value
         self.key = key
+    }
+    
+    mutating func fromString(string: String) -> Bool {
+        self.value = string
+        return true
+    }
+    
+    func toString() -> String {
+        return self.value
     }
 }
 

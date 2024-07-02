@@ -44,9 +44,15 @@ typedef struct
     float aspect;
     simd_float2 mousePos;
     bool multipleSelect;
+    bool showDisabled;
     int32_t selectedFaceIndex;
     float selectRadius;
 } Uniforms;
+
+typedef struct {
+    simd_float2 pos;
+    bool disabled;
+} FaceMap;
 
 typedef struct {
     bool paired;

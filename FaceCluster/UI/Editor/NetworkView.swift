@@ -35,6 +35,8 @@ struct NetworkView: NSViewRepresentable {
         mtkView.mouseExit = mouseExited
         mtkView.mouseDownFunc = mouseDownFunc
         mtkView.mouseUpFunc = mouseUpFunc
+        mtkView.rightMouseFunc = rMouseDown
+        mtkView.rightMouseUpFunc = rMouseUp
         
         return mtkView
     }
@@ -51,12 +53,16 @@ struct NetworkView: NSViewRepresentable {
     static var camera = SIMD3<Float>(0, 0, -5)
     static var mouse = SIMD2<Float>(0, 0)
     static var mouseDown: Bool = false
+    static var rightMouseDown: Bool = false
     static var pMouseDown: Bool = false
+    static var pRMouseDown: Bool = false
     static var pMousePos = SIMD2<Float>(0, 0)
     
     static var allowMultipleSelection = true
     static var allowEditing = false
     static var selectRadius: Float = 2
+    static var showDisabledFaces = true
+    static var clusterUpdateRequested = false
     
     func mouseDragged(with event: NSEvent) {
         //NetworkView.camera.x = NetworkView.camera.x - Float(event.deltaX) * 0.02
@@ -67,6 +73,7 @@ struct NetworkView: NSViewRepresentable {
     
     func mouseExited(with event: NSEvent) {
         NetworkView.mouseDown = false
+        NetworkView.rightMouseDown = false
     }
     
     func mouseDownFunc(with event: NSEvent) {
@@ -85,6 +92,14 @@ struct NetworkView: NSViewRepresentable {
             z = -farPlane
         }
         NetworkView.camera.z = z
+    }
+    
+    func rMouseUp(with event: NSEvent) {
+        NetworkView.rightMouseDown = false
+    }
+    
+    func rMouseDown(with event: NSEvent) {
+        NetworkView.rightMouseDown = true
     }
     
     func mouseMove(with event: NSEvent, view: MTKView) {
@@ -107,7 +122,7 @@ struct NetworkView: NSViewRepresentable {
         
         var dynamicUniformBuffer: MTLBuffer
         var faceObjBuffer: MTLBuffer?
-        var faceObjPtr: UnsafeMutablePointer<SIMD2<Float>>?
+        var faceObjPtr: UnsafeMutablePointer<FaceMap>?
         var pipelineState: MTLRenderPipelineState
         var mousePipeline: MTLRenderPipelineState
         var depthState: MTLDepthStencilState
@@ -116,6 +131,11 @@ struct NetworkView: NSViewRepresentable {
         var arrayTextures: [MTLTexture] = []
         var textureSliceSize: Int
         var aspectRatio: Float = 1
+        var clusterDisplayMode: Int = 1
+        var clusterVertexCount: Int = 0
+        var clusterBuffer: MTLBuffer?
+        var clusterPtr: UnsafeMutablePointer<SIMD2<UInt32>>?
+        var clusterPipeline: MTLRenderPipelineState?
         
         var pointDistanceBuffer: MTLBuffer?
         
@@ -144,7 +164,7 @@ struct NetworkView: NSViewRepresentable {
             depthStateDescriptor.isDepthWriteEnabled = true
             guard let state = metalDevice.makeDepthStencilState(descriptor:depthStateDescriptor) else { fatalError(String(localized: "Failed to initialise Metal 3 environment.")) }
             self.depthState = state
-            
+
             let thumbnail = THUMBNAIL_SIZE
             guard let texDes = Coordinator.createArrayTextureDescriptor(device: metalDevice, size: CGSize(width: thumbnail, height: thumbnail), layers: Int(FACE_TEXTURE_BATCH_SIZE), pixelFormat: parent.colourPixelFormat) else {
                 fatalError(String(localized: "Failed to initialise Metal 3 environment."))
@@ -162,10 +182,14 @@ struct NetworkView: NSViewRepresentable {
             NetworkView.mouse = SIMD2<Float>(0, 0)
             NetworkView.mouseDown = false
             NetworkView.pMouseDown = false
+            NetworkView.rightMouseDown = false
+            NetworkView.pRMouseDown = false
             NetworkView.pMousePos = SIMD2<Float>(0, 0)
             NetworkView.allowEditing = false
             NetworkView.allowMultipleSelection = false
+            NetworkView.showDisabledFaces = true
             NetworkView.selectRadius = 2.0
+            NetworkView.clusterUpdateRequested = false
             
             self.mouseTexture =  try! loadBundledTexture(name: "rectangle1")
         }
@@ -175,8 +199,8 @@ struct NetworkView: NSViewRepresentable {
             let count = network.faces.count
             network.textures.removeAll()
             
-            faceObjBuffer = self.metalDevice.makeBuffer(length: MemoryLayout<SIMD2<Float>>.stride * count, options: [.storageModeShared])
-            faceObjPtr = UnsafeMutableRawPointer(faceObjBuffer!.contents()).bindMemory(to:SIMD2<Float>.self, capacity:count)
+            faceObjBuffer = self.metalDevice.makeBuffer(length: MemoryLayout<FaceMap>.stride * count, options: [.storageModeShared])
+            faceObjPtr = UnsafeMutableRawPointer(faceObjBuffer!.contents()).bindMemory(to:FaceMap.self, capacity:count)
             if(faceObjPtr == nil || faceObjBuffer == nil) {
                 fatalError(String(localized: "Failed to allocate memory for rendering face network. Please reduce the network size."))
             }
@@ -203,7 +227,8 @@ struct NetworkView: NSViewRepresentable {
                     face.textureId = network.textures.count
                     network.textures.append(face.texture!)
                 }
-                faceObjPtr![i] = simd_float2(x: Float(face.displayPos.x), y: Float(face.displayPos.y))
+                faceObjPtr![i].pos = simd_float2(x: Float(face.displayPos.x), y: Float(face.displayPos.y))
+                faceObjPtr![i].disabled = face.disabled
             }
             //debugTexture = try? loadBundledTexture(name: "img")
             loadImagesIntoTexture()
@@ -224,6 +249,9 @@ struct NetworkView: NSViewRepresentable {
         }
         
         func draw(in view: MTKView) {
+            if(networkEditorInstance?.context?.freezeNetworkView ?? false) {
+                return
+            }
             guard let faceNetwork = network else {
                 return
             }
@@ -275,8 +303,10 @@ struct NetworkView: NSViewRepresentable {
                 var selectedFace: Face? = nil
                 var selectedIndex: Int = -1
                 var selectedRelPos: SIMD2<Float>? = nil
+                var frameMoved: Bool = false
                 
                 var selectedFaces = [FaceSelection]()
+                
                 if(!allowEditing || !mouseDown) {
                     for i in (0..<faceNetwork.faces.count).reversed() {
                         let face = faceNetwork.faces[i]
@@ -286,7 +316,7 @@ struct NetworkView: NSViewRepresentable {
                         let faceY = Float(face.displayPos.y)
                         let inMouse = mouseInFrameX > faceX - size && mouseInFrameY > faceY - size && mouseInFrameX < faceX + size && mouseInFrameY < faceY + size;
                         
-                        if(inMouse) {
+                        if(inMouse && (!face.disabled || showDisabledFaces)) {
                             let relPos = SIMD2<Float>(x: Float(face.displayPos.x) - mouseInFrameX, y: Float(face.displayPos.y) - mouseInFrameY)
                             selectedFace = face
                             selectedIndex = i
@@ -300,6 +330,14 @@ struct NetworkView: NSViewRepresentable {
                         for movedFace in movedFaces {
                             let _ = faceNetwork.requestUpdateFiles(updatedFace: movedFace.face)
                         }
+                        frameMoved = true
+                    }
+                    
+                    if(!rightMouseDown && pRMouseDown) {
+                        for movedFace in movedFaces {
+                            disableFace(movedFace)
+                        }
+                        frameMoved = true
                     }
                     
                     movedFaces = [FaceSelection]()
@@ -310,12 +348,13 @@ struct NetworkView: NSViewRepresentable {
                     }
                 }
                 if(!NetworkView.allowMultipleSelection) {
-                    parent.context?.faceInfo = selectedFace?.createDescription() ?? ""
+                    parent.context?.faceInfo = selectedFace?.createDescription() ?? []
                 } else {
-                    parent.context?.faceInfo = ""
+                    parent.context?.faceInfo = []
                 }
                 uniforms[0].multipleSelect = NetworkView.allowMultipleSelection
                 uniforms[0].selectedFaceIndex = Int32(selectedIndex)
+                uniforms[0].showDisabled = NetworkView.showDisabledFaces
                 
                 // print(mouseDown)
                 
@@ -324,8 +363,8 @@ struct NetworkView: NSViewRepresentable {
                         for face in movedFaces {
                             let tx = mouseInFrameX + face.locRelToMouse.x
                             let ty = mouseInFrameY + face.locRelToMouse.y
-                            faceObjPtr?[face.index].x = tx
-                            faceObjPtr?[face.index].y = ty
+                            faceObjPtr?[face.index].pos.x = tx
+                            faceObjPtr?[face.index].pos.y = ty
                             face.face.updateDisplayPosition(newPosition: DoublePoint(x: Double(tx), y: Double(ty)))
                         }
                     } else {
@@ -335,8 +374,10 @@ struct NetworkView: NSViewRepresentable {
                     }
                 }
                 
-                if(allowMultipleSelection) {
-                    drawMouse(encoder: renderEncoder, mouseX: mouseInFrameX, mouseY: mouseInFrameY)
+                if(parent.context?.clusterDisplayMode != self.clusterDisplayMode) {
+                    self.clusterDisplayMode = parent.context?.clusterDisplayMode ?? 2
+                    clusterPipeline = nil
+                    clusterUpdateRequested = true
                 }
                 
                 renderEncoder.setRenderPipelineState(pipelineState)
@@ -352,6 +393,14 @@ struct NetworkView: NSViewRepresentable {
                 }
                 
                 renderEncoder.popDebugGroup()
+                if(clusterPipeline != nil) {
+                    drawClusters(encoder: renderEncoder, requireUpdate: clusterUpdateRequested || frameMoved)
+                } else {
+                    clusterPipeline = try! Coordinator.buildClusterRenderPipelineState(metalDevice: self.metalDevice, parent: self.parent, usePolygon: clusterDisplayMode == 2)
+                }
+                if(allowMultipleSelection) {
+                    drawMouse(encoder: renderEncoder, mouseX: mouseInFrameX, mouseY: mouseInFrameY)
+                }
                 renderEncoder.endEncoding()
                 
                 if let drawable = view.currentDrawable {
@@ -362,8 +411,10 @@ struct NetworkView: NSViewRepresentable {
             
             pMouseDown = mouseDown
             pMousePos = mouse
+            pRMouseDown = rightMouseDown
             NetworkEditor.networkDisplayedFacemapBuffer = self.faceObjBuffer
             NetworkEditor.networkDisplayedPointDistanceBuffer = self.pointDistanceBuffer
+            networkEditorInstance?.camera = camera
         }
         
         func drawMouse(encoder: MTLRenderCommandEncoder, mouseX: Float, mouseY: Float) {
@@ -374,6 +425,37 @@ struct NetworkView: NSViewRepresentable {
             encoder.setVertexBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: 2)
             encoder.setFragmentTexture(mouseTexture, index: 0)
             encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+            encoder.popDebugGroup()
+        }
+        
+        func drawClusters(encoder: MTLRenderCommandEncoder, requireUpdate: Bool) {
+            if(requireUpdate || clusterBuffer == nil) {
+                if(clusterDisplayMode > 0) {
+                    let polygonIndices = network!.generateConvexHull(usePolygon: clusterDisplayMode == 2)
+                    if(polygonIndices.count < clusterDisplayMode + 1) {
+                        return
+                    }
+                    guard let buffer = self.metalDevice.makeBuffer(length: MemoryLayout<SIMD2<UInt32>>.stride * polygonIndices.count, options:[MTLResourceOptions.cpuCacheModeWriteCombined]) else {
+                        networkEditorInstance?.console += String(localized: "Failed to create buffer for cluster rendering\n\n")
+                        return
+                    }
+                    clusterBuffer = buffer
+                    clusterPtr = UnsafeMutableRawPointer(clusterBuffer!.contents()).bindMemory(to:SIMD2<UInt32>.self, capacity:polygonIndices.count)
+                    for i in 0..<polygonIndices.count {
+                        clusterPtr![i] = polygonIndices[i]
+                    }
+                    clusterVertexCount = polygonIndices.count
+                } else {
+                    return
+                }
+                NetworkView.clusterUpdateRequested = false
+            }
+            encoder.pushDebugGroup("Cluster")
+            encoder.setRenderPipelineState(clusterPipeline!)
+            encoder.setVertexBuffer(faceObjBuffer, offset: 0, index: 0)
+            encoder.setVertexBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: 1)
+            encoder.setVertexBuffer(clusterBuffer, offset: 0, index: 2)
+            encoder.drawPrimitives(type: clusterDisplayMode == 2 ? .triangle : .line, vertexStart: 0, vertexCount: clusterVertexCount)
             encoder.popDebugGroup()
         }
         
@@ -393,6 +475,7 @@ struct NetworkView: NSViewRepresentable {
             pipelineDescriptor.fragmentFunction = fragmentFunction
             
             pipelineDescriptor.colorAttachments[0].pixelFormat = parent.colourPixelFormat
+            //enableAlpha(ca: pipelineDescriptor.colorAttachments[0])
             pipelineDescriptor.depthAttachmentPixelFormat = parent.depthPixelFormat
             pipelineDescriptor.stencilAttachmentPixelFormat = parent.depthPixelFormat
             
@@ -415,12 +498,50 @@ struct NetworkView: NSViewRepresentable {
             pipelineDescriptor.colorAttachments[0].pixelFormat = parent.colourPixelFormat
             pipelineDescriptor.depthAttachmentPixelFormat = parent.depthPixelFormat
             pipelineDescriptor.stencilAttachmentPixelFormat = parent.depthPixelFormat
+            enableAlpha(ca: pipelineDescriptor.colorAttachments[0])
             
             let a: MTLPipelineOption = MTLPipelineOption()
             let state: MTLRenderPipelineState
             (state, _) = try metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor, options: a)
             
             return state
+        }
+        
+        static func buildClusterRenderPipelineState(metalDevice: MTLDevice, parent: NetworkView, usePolygon: Bool) throws -> MTLRenderPipelineState? {
+            let pipelineDescriptor = MTLRenderPipelineDescriptor()
+            guard let library = metalDevice.makeDefaultLibrary() else {
+                return nil
+            }
+            let vertexFunction = library.makeFunction(name: usePolygon ? "polygonVertex" : "lineVertex")
+            let fragmentFunction = library.makeFunction(name: usePolygon ? "polygonFragment" : "lineFragment")
+            pipelineDescriptor.vertexFunction = vertexFunction
+            pipelineDescriptor.fragmentFunction = fragmentFunction
+            pipelineDescriptor.colorAttachments[0].pixelFormat = parent.colourPixelFormat
+            pipelineDescriptor.depthAttachmentPixelFormat = parent.depthPixelFormat
+            pipelineDescriptor.stencilAttachmentPixelFormat = parent.depthPixelFormat
+            enableAlpha(ca: pipelineDescriptor.colorAttachments[0])
+            
+            let a: MTLPipelineOption = MTLPipelineOption()
+            let state: MTLRenderPipelineState
+            (state, _) = try metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor, options: a)
+            
+            return state
+        }
+        
+        func disableFace(_ face: FaceSelection) {
+            let v = !faceObjPtr![face.index].disabled
+            faceObjPtr![face.index].disabled = v
+            face.face.setDisabled(disabled: v)
+        }
+        
+        private static func enableAlpha(ca: MTLRenderPipelineColorAttachmentDescriptor) {
+            ca.isBlendingEnabled = true
+            ca.rgbBlendOperation = .add
+            ca.alphaBlendOperation = .add
+            ca.sourceRGBBlendFactor = .destinationAlpha
+            ca.sourceAlphaBlendFactor = .destinationAlpha
+            ca.destinationRGBBlendFactor = .oneMinusSourceAlpha
+            ca.destinationAlphaBlendFactor = .oneMinusBlendAlpha
         }
         
         func createFaceCountBuffer(batchIndex: Int) -> MTLBuffer? {
@@ -522,6 +643,7 @@ struct NetworkView: NSViewRepresentable {
             }
             
             print("\(arrayTextures.count) texture batches created, sized \(FACE_TEXTURE_BATCH_SIZE)")
+            MediaManager.importMessage += String(localized: "\(arrayTextures.count) texture batch(es) created, sized \(FACE_TEXTURE_BATCH_SIZE)") + "\n\n"
         }
     }
 }
@@ -534,6 +656,8 @@ class CustomizedMetalView: MTKView {
     var mouseMove: (NSEvent, MTKView) -> Void = {_,_  in }
     var mouseDownFunc: (NSEvent) -> Void = {_ in }
     var mouseUpFunc: (NSEvent) -> Void = {_ in }
+    var rightMouseFunc: (NSEvent) -> Void = {_ in }
+    var rightMouseUpFunc: (NSEvent) -> Void = {_ in }
     override var acceptsFirstResponder: Bool {get{return true}}
     
     override func updateTrackingAreas() {
@@ -581,12 +705,14 @@ class CustomizedMetalView: MTKView {
         super.rightMouseDown(with: event)
         //print("Right mouse down at location: \(event.locationInWindow)")
         // Handle right mouse down event
+        rightMouseFunc(event)
     }
 
     override func rightMouseUp(with event: NSEvent) {
         super.rightMouseUp(with: event)
         //print("Right mouse up at location: \(event.locationInWindow)")
         // Handle right mouse up event
+        rightMouseUpFunc(event)
     }
 
     override func otherMouseDown(with event: NSEvent) {

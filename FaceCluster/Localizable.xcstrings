@@ -11,6 +11,62 @@
         }
       }
     },
+    "%lld faces detected from the video" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从视频截取了%lld副面部"
+          }
+        }
+      }
+    },
+    "%lld frames expected." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预计截取%lld帧。"
+          }
+        }
+      }
+    },
+    "%lld texture batch(es) created, sized %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld texture batch(es) created, sized %2$lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建了%1$lld个材质组，组围%2$lld"
+          }
+        }
+      }
+    },
+    "Aligned Image" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矫正预览"
+          }
+        }
+      }
+    },
+    "Aligning Display" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "脸部矫正参数"
+          }
+        }
+      }
+    },
     "Analyze every:" : {
       "localizations" : {
         "en" : {
@@ -23,6 +79,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分析间隔："
+          }
+        }
+      }
+    },
+    "Attributes: %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性：%lld"
           }
         }
       }
@@ -53,6 +119,42 @@
         }
       }
     },
+    "Calculating face distances...\n" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "计算脸部距离......"
+          }
+        }
+      }
+    },
+    "Cannot switch mode when generating clusters\n\n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot switch mode when generating clusters."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成面部聚合时不能切换UI界面。"
+          }
+        }
+      }
+    },
+    "Cannot update face because it is not part of the active network." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能更新该面部，因为它不从属于当前编辑中的网络。"
+          }
+        }
+      }
+    },
     "Cluster" : {
       "localizations" : {
         "zh-Hans" : {
@@ -63,12 +165,42 @@
         }
       }
     },
-    "CPU mode not supported yet." : {
+    "Clustered faces, time lapse:" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "CPU未支持"
+            "value" : "脸部聚合完成，用时"
+          }
+        }
+      }
+    },
+    "Clustering distance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聚合距离阈值"
+          }
+        }
+      }
+    },
+    "Clusters: %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面部聚合：%lld"
+          }
+        }
+      }
+    },
+    "Console" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信息"
           }
         }
       }
@@ -79,6 +211,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "df"
+          }
+        }
+      }
+    },
+    "Distance:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "距离："
+          }
+        }
+      }
+    },
+    "Editing %@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editing %1$@ of %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在编辑%2$@面部的%1$@属性 "
           }
         }
       }
@@ -99,12 +257,32 @@
         }
       }
     },
-    "Faces" : {
+    "Export Full Face Images" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "面部检测"
+            "value" : "输出高清面部图像"
+          }
+        }
+      }
+    },
+    "Facenet" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facenet"
+          }
+        }
+      }
+    },
+    "Faces: %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面部：%lld"
           }
         }
       }
@@ -115,6 +293,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不能为初始化GPU脸部渲染管线分配内存。请减少网络所包含的脸部。"
+          }
+        }
+      }
+    },
+    "Failed to analyse frame at position %lf second" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能分析%lf处截取的图像"
+          }
+        }
+      }
+    },
+    "Failed to create buffer for cluster rendering\n\n" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能为面部聚合渲染分配内存"
+          }
+        }
+      }
+    },
+    "Failed to create command buffer or encoder" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建GPU缓冲失败"
           }
         }
       }
@@ -159,12 +367,52 @@
         }
       }
     },
+    "Failed to load Facenet model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能加载Facenet模型"
+          }
+        }
+      }
+    },
     "Failed to load PNet model" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "不能加载PNet模型"
+          }
+        }
+      }
+    },
+    "Failed to save clusters.\n" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能保存聚合。"
+          }
+        }
+      }
+    },
+    "Failed to save face update for " : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能更新面部"
+          }
+        }
+      }
+    },
+    "Failed to save thumbnail for frame %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能为%@帧保存预览图"
           }
         }
       }
@@ -185,12 +433,32 @@
         }
       }
     },
+    "Frame downsampling: %f%%" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帧图缩放：%f%%"
+          }
+        }
+      }
+    },
     "Frame scaling:" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "图像缩放："
+          }
+        }
+      }
+    },
+    "Frames" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帧截图"
           }
         }
       }
@@ -227,6 +495,16 @@
         }
       }
     },
+    "Hidden" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
+        }
+      }
+    },
     "Import Video File" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -240,6 +518,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "导入视频"
+          }
+        }
+      }
+    },
+    "Landmark Indices" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特征点编号"
+          }
+        }
+      }
+    },
+    "Landmark Lines" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特征点连线"
+          }
+        }
+      }
+    },
+    "Lines" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线条"
+          }
+        }
+      }
+    },
+    "Load a network before reading clusters" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取脸部聚合需要依赖于网络"
           }
         }
       }
@@ -271,6 +589,26 @@
         }
       }
     },
+    "Media file: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "媒体文件：%@"
+          }
+        }
+      }
+    },
+    "Media Properties" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "媒体属性"
+          }
+        }
+      }
+    },
     "MTCNN" : {
       "localizations" : {
         "zh-Hans" : {
@@ -291,6 +629,26 @@
         }
       }
     },
+    "Network display positioning attribute:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络可视化位置参考："
+          }
+        }
+      }
+    },
+    "Network Overview" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络预览"
+          }
+        }
+      }
+    },
     "No face images found in all extracted video frames.\nRedirecting to the import menu." : {
       "localizations" : {
         "zh-Hans" : {
@@ -301,12 +659,42 @@
         }
       }
     },
+    "None" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不显示"
+          }
+        }
+      }
+    },
     "Overview" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "概览"
+          }
+        }
+      }
+    },
+    "Path: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路径：%@"
+          }
+        }
+      }
+    },
+    "Polygon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多边形"
           }
         }
       }
@@ -337,6 +725,16 @@
         }
       }
     },
+    "Reset" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置视点"
+          }
+        }
+      }
+    },
     "Resolution" : {
       "localizations" : {
         "zh-Hans" : {
@@ -353,6 +751,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分辨率 0x0, 24 fps"
+          }
+        }
+      }
+    },
+    "Sampling interval: %f sec" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "采样区间：%f秒"
+          }
+        }
+      }
+    },
+    "Saved frame images: %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存的帧图片：%lld"
           }
         }
       }
@@ -383,6 +801,16 @@
         }
       }
     },
+    "Show deactivated" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示已禁用面部"
+          }
+        }
+      }
+    },
     "Terminate" : {
       "localizations" : {
         "zh-Hans" : {
@@ -403,6 +831,16 @@
         }
       }
     },
+    "Time lapse %lf" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用时%lf"
+          }
+        }
+      }
+    },
     "Video Preview Frame" : {
       "localizations" : {
         "en" : {
@@ -415,6 +853,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "视频预览范围"
+          }
+        }
+      }
+    },
+    "View: %@, %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "View: %1$@, %2$@, %3$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视点：%1$@, %2$@, %3$@"
           }
         }
       }

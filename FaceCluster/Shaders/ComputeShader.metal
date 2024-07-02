@@ -10,7 +10,7 @@ using namespace metal;
 
 #include "C-Bridging.h"
 
-kernel void pointsEuclidean(const device float2* points [[ buffer(0) ]],
+kernel void pointsEuclidean(const device FaceMap* points [[ buffer(0) ]],
                             device PairedDistance* results [[ buffer(1) ]],
                             const device float& ths [[ buffer(2) ]],
                             const device uint& count [[ buffer(3) ]],
@@ -34,11 +34,21 @@ kernel void pointsEuclidean(const device float2* points [[ buffer(0) ]],
         index.x = count - id.y - 1;
         index.y = count - id.x - 1;
     }
-    p1 = points[ index.x ];
-    p2 = points[ index.y ];
-    float dis = distance(p1, p2);
     
-    out.paired = dis < ths;
+    bool deactivated = points[ index.x ].disabled || points[ index.y ].disabled;
+    if(deactivated) {
+        
+        out.paired = false;
+        
+    } else {
+        
+        p1 = points[ index.x ].pos;
+        p2 = points[ index.y ].pos;
+        float dis = distance(p1, p2);
+        
+        out.paired = dis < ths;
+        
+    }
     out.index = index;
     
     results[id.x + id.y * count] = out;

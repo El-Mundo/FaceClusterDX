@@ -10,22 +10,23 @@ import SwiftUI
 struct Editor: View {
     @State var state = 0
     @State var preview = false
+    var freezeNetworkView = false
     
     var body: some View {
         VStack {
             if(state == 0) {
-                NetworkEditor(preview: preview)
+                NetworkEditor(preview: preview, context: self)
             } else if(state == 1) {
-                Rectangle()
+                FrameView(network: MediaManager.instance!.getEditFaceNetwork()!)
             } else {
-                Circle()
+                Overview(network: MediaManager.instance!.getEditFaceNetwork()!, context: self)
             }
             
             HStack {
                 HStack {
                     Picker("", selection: $state) {
                         Text("Network").tag(0 as Int)
-                        Text("Faces").tag(1 as Int)
+                        Text("Frames").tag(1 as Int)
                         Text("Overview").tag(2 as Int)
                     }
                     .pickerStyle(SegmentedPickerStyle())
@@ -42,8 +43,13 @@ struct Editor: View {
     
     func changeState() {
         if(state != 0) {
-            NetworkEditor.networkDisplayedFacemapBuffer = nil
-            NetworkEditor.networkDisplayedPointDistanceBuffer = nil
+            if(freezeNetworkView) {
+                state = 0
+                networkEditorInstance?.console += String(localized: "Cannot switch mode when generating clusters\n\n")
+            } else {
+                NetworkEditor.networkDisplayedFacemapBuffer = nil
+                NetworkEditor.networkDisplayedPointDistanceBuffer = nil
+            }
         }
         //print(state)
     }

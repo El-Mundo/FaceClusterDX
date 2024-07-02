@@ -12,6 +12,7 @@ class Face: Codable {
     let detectedAttributes: DetectedFace
     var thumbnail: CGImage? = nil
     var attributes = [String : any FaceAttribute]()
+    var disabled: Bool
     
     var network: FaceNetwork? = nil
     var texture: MTLTexture? = nil
@@ -19,15 +20,20 @@ class Face: Codable {
     var textureId: Int = -8
     var displayPos: DoublePoint = DoublePoint(x: 0, y: 0)
     var clusterIndex: Int = -1
+    /// Call update in network before referencing
+    var indexInNet: Int = -1
+    var clusterName: String?
     
     enum CodingKeys: String, CodingKey {
         case detectedAttributes
         case attributes
+        case disabled
     }
     
     init(detectedAttributes: DetectedFace, network: FaceNetwork?) {
         self.detectedAttributes = detectedAttributes
         self.network = network
+        self.disabled = false
     }
     
     func save(fileURL: URL) throws {
@@ -42,10 +48,19 @@ class Face: Codable {
         }
     }
     
+    func updateSaveFileAtOriginalLocation() {
+        do {
+            try save(fileURL: self.path!)
+        } catch {
+            print(error)
+        }
+    }
+    
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(detectedAttributes, forKey: .detectedAttributes)
         var ac = c.nestedUnkeyedContainer(forKey: .attributes)
+        try c.encode(disabled, forKey: .disabled)
         for a in attributes.values {
             if let point = a as? FacePoint {
                 try ac.encode(point)
@@ -63,11 +78,16 @@ class Face: Codable {
         }
     }
     
+    func setDisabled(disabled: Bool) {
+        self.disabled = disabled
+    }
+    
     required init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.detectedAttributes = try c.decode(DetectedFace.self, forKey: .detectedAttributes)
         var ac = try c.nestedUnkeyedContainer(forKey: .attributes)
         self.attributes = [String : any FaceAttribute]()
+        self.disabled = try c.decode(Bool.self, forKey: .disabled)
         while(!ac.isAtEnd) {
             if let point = try? ac.decode(FacePoint.self) {
                 self.attributes.updateValue(point, forKey: point.key)
@@ -99,15 +119,15 @@ class Face: Codable {
         return SavableFace(detectedAttributes: self.detectedAttributes, attributes: self.attributes)
     }*/
     
-    func createDescription() -> String {
+    func createDescription() -> [String] {
         let frame = detectedAttributes.frameIdentifier
         guard var pathShort = path?.path(percentEncoded: false) else {
-            return "Frame: \(frame)\nSaved at:"
+            return ["Frame: \(frame)", "Saved at:"]
         }
-        pathShort = pathShort.count > 48 ? "...".appending(String(pathShort.suffix(47))) : pathShort
+        pathShort = pathShort.count > 36 ? "...".appending(String(pathShort.suffix(35))) : pathShort
         let roundedX = round(displayPos.x * 100) / 100
         let roundedY = round(displayPos.y * 100) / 100
-        return "Frame: \(frame)\nSaved at: \(pathShort)\nAttribute: \(network?.layoutKey ?? "")\nValue: \(roundedX), \(roundedY)"
+        return ["Frame: \(frame)", "Saved at: \(pathShort)".replacingOccurrences(of: " ", with: "_"), "Attribute: \(network?.layoutKey ?? "")", "Value: \(roundedX), \(roundedY)", "Cluster: \(clusterName ?? "N/A")"]
     }
     
     func createAttribute<T: FaceAttribute>(for: T.Type, key: String, value: any FaceAttribute) -> Bool {
@@ -121,6 +141,27 @@ class Face: Codable {
     
     func forceUpdateAttribute<T: FaceAttribute>(for: T.Type, key: String, value: any FaceAttribute) {
         attributes.updateValue(value, forKey: key)
+    }
+    
+    func getFullSizeImage() -> CGImage? {
+        guard let framePath = network?.savedPath.appending(path: "Frames/\(detectedAttributes.frameIdentifier).jpg")else {
+            return nil
+        }
+        
+        if let img = ImageUtils.loadJPG(url: framePath) {
+            return ImageUtils.cropCGImageNormalised(img, normalisedBox: detectedAttributes.box)
+        } else {
+            print("Frame image \(detectedAttributes.frameIdentifier).jpg lost, returning thumbnail...")
+            return self.thumbnail
+        }
+    }
+    
+    func getFrameAsImage() -> CGImage? {
+        guard let framePath = network?.savedPath.appending(path: "Frames/\(detectedAttributes.frameIdentifier).jpg")else {
+            return nil
+        }
+        
+        return ImageUtils.loadJPG(url: framePath)
     }
     
 }

@@ -9,6 +9,7 @@
 #include <simd/simd.h>
 using namespace metal;
 
+#import "Misc/ClusterPalette.h"
 #import "C-Bridging.h"
 
 static constexpr constant uint16_t MAX_MESHLET_VERTICES = 8;
@@ -20,6 +21,7 @@ typedef struct
     float2 texCoord;
     uint16_t texIndex;
     bool selected;
+    bool darken;
 } MeshletVertex;
 
 typedef struct
@@ -31,6 +33,7 @@ typedef struct {
     packed_uint3 mapPosition;
     uint16_t type;
     bool selected;
+    bool darken;
     //float4x4 modelMatrix;
     simd_float3 aspectRatio;
     uint16_t primitiveCount;
@@ -51,7 +54,7 @@ using AAPLTriangleMeshType = metal::mesh<MeshletVertex, MeshletPrimitive, MAX_ME
 void faceObjectShader(object_data ChunkPayload& payload [[payload]],
                          mesh_grid_properties meshGridProperties,
                          constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-                         constant simd_float2* faceMap [[ buffer(BufferIndexObject) ]],
+                         constant FaceMap* faceMaps [[ buffer(BufferIndexObject) ]],
                          constant unsigned int* facesCount [[ buffer(BufferIndexFaceCount)]],
                          uint3 positionInGrid [[threadgroup_position_in_grid]])
 {
@@ -60,6 +63,17 @@ void faceObjectShader(object_data ChunkPayload& payload [[payload]],
     if (faceIndex >= facesCount[0])
         return;
     
+    if(faceMaps[faceIndex].disabled) {
+        if(!uniforms.showDisabled) {
+            return;
+        } else {
+            payload.darken = true;
+        }
+    } else {
+        payload.darken = false;
+    }
+    
+    float2 pos = faceMaps[faceIndex].pos;
     payload.textureIndex = positionInGrid.x;
     
     payload.primitiveCount = 2;
@@ -73,8 +87,8 @@ void faceObjectShader(object_data ChunkPayload& payload [[payload]],
     payload.indices[4] = 2;
     payload.indices[5] = 3;
     
-    float2 off2d = faceMap[faceIndex] - uniforms.camera;
-    float3 offset =  {off2d[0], off2d[1], 0.0};
+    float2 off2d = pos - uniforms.camera;
+    float3 offset =  {off2d[0], off2d[1], 0.01};
 
     // Copy the vertex data into the payload.
     for (size_t i = 0; i < payload.vertexCount; i++)
@@ -82,16 +96,20 @@ void faceObjectShader(object_data ChunkPayload& payload [[payload]],
         payload.vertices[i] = (offset + RECTANGLE_MESH[i]) * uniforms.scale;
     }
     
-    if(uniforms.multipleSelect) {
-        float size = 0.5 * uniforms.selectRadius;
-        float mouseX = uniforms.mousePos.x;
-        float mouseY = uniforms.mousePos.y;
-        float faceX = faceMap[faceIndex].x;
-        float faceY = faceMap[faceIndex].y;
-        //payload.modelMatrix = uniforms.projectionMatrix * uniforms.modelViewMatrix;
-        payload.selected = mouseX > faceX - size && mouseY > faceY - size && mouseX < faceX + size && mouseY < faceY + size;
+    if(!payload.darken) {
+        if(uniforms.multipleSelect) {
+            float size = 0.5 * uniforms.selectRadius;
+            float mouseX = uniforms.mousePos.x;
+            float mouseY = uniforms.mousePos.y;
+            float faceX = pos.x;
+            float faceY = pos.y;
+            //payload.modelMatrix = uniforms.projectionMatrix * uniforms.modelViewMatrix;
+            payload.selected = mouseX > faceX - size && mouseY > faceY - size && mouseX < faceX + size && mouseY < faceY + size;
+        } else {
+            payload.selected = uniforms.selectedFaceIndex > -1 && faceIndex == uint(uniforms.selectedFaceIndex);
+        }
     } else {
-        payload.selected = uniforms.selectedFaceIndex > -1 && faceIndex == uint(uniforms.selectedFaceIndex);
+        payload.selected = false;
     }
     meshGridProperties.set_threadgroups_per_grid(uint3(1, 1, 1));
 }
@@ -115,6 +133,7 @@ void faceMeshletShader(AAPLTriangleMeshType output,
         v.texCoord = RECTANGLE_TEX[lid];
         v.texIndex = payload.textureIndex;
         v.selected = payload.selected;
+        v.darken = payload.darken;
         //v.normal = normalize(payload.vertices[lid].normal.xyz);
         output.set_vertex(lid, v);
     }
@@ -144,7 +163,14 @@ fragment float4 fragmentShader(MeshletVertex in [[stage_in]],
 
     half4 colorSample = colorMap.sample(colorSampler, in.texCoord.xy, in.texIndex);
 
-    float tone = in.selected ? 0.5 : 1.0;
+    float tone;
+    if(in.darken) {
+        tone = 0.5;
+    } else if(in.selected) {
+        tone = 1.5;
+    } else {
+        tone = 1.0;
+    }
 
     //return float4(colorSample);
     return float4(colorSample.g * tone, colorSample.r * tone, colorSample.a * tone, colorSample.b);
@@ -160,7 +186,8 @@ vertex VertexOut mouseVertex(uint vertexID [[vertex_id]],
                              constant Uniforms& uniforms [[ buffer(2) ]]) {
     float2 aspectRatio = simd_float2(1 / uniforms.aspect, 1);
     VertexOut out;
-    out.position = float4((mousePosition + RECTANGLE_MESH2D[vertexID] * (uniforms.selectRadius * 0.75) - uniforms.camera.xy) * uniforms.scale * aspectRatio, 0.0, 1.0);
+    float2 centre = (mousePosition - uniforms.camera.xy) * uniforms.scale * aspectRatio;
+    out.position = float4(centre + RECTANGLE_MESH2D[vertexID] * (uniforms.selectRadius - 1) * uniforms.scale * aspectRatio, 0.0, 1.0);
     out.texCoord = RECTANGLE_TEX2D[vertexID];
 
     return out;
@@ -171,5 +198,49 @@ fragment float4 mouseFragment(VertexOut in [[stage_in]], texture2d<half> texture
                                    mag_filter::linear,
                                    min_filter::linear);
     half4 colorSample = texture.sample(colorSampler, in.texCoord.xy);
-    return float4(colorSample.r, colorSample.g, colorSample.b, 0.5);
+    return float4(colorSample.r*0.3, colorSample.g*0.3, colorSample.b*0.3, 0.25);
+}
+
+struct PolygonVertex {
+    float4 position [[position]];
+    uint index;
+};
+
+vertex PolygonVertex polygonVertex(constant FaceMap* faceMaps [[ buffer(0) ]],
+                                constant Uniforms &uniforms [[ buffer(1) ]],
+                                constant uint2* indices [[ buffer(2) ]],
+                                unsigned int vid [[ vertex_id ]]) {
+    PolygonVertex vOut;
+    float2 aspectRatio = simd_float2(1 / uniforms.aspect, 1);
+    uint index = indices[vid].x;
+    float2 p = faceMaps[index].pos;
+    vOut.position = float4((p - uniforms.camera.xy) * uniforms.scale * aspectRatio, 0.0001, 1);
+    vOut.index = indices[vid].y % 24;
+    return vOut;
+}
+
+fragment float4 polygonFragment(PolygonVertex in [[ stage_in ]]) {
+    float3 c = clusterPalette[in.index];
+    return float4(c, 0.1);
+}
+
+vertex PolygonVertex lineVertex(constant FaceMap* faceMaps [[ buffer(0) ]],
+                                constant Uniforms &uniforms [[ buffer(1) ]],
+                                constant uint2* indices [[ buffer(2) ]],
+                                unsigned int vid [[ vertex_id ]]) {
+    PolygonVertex vOut;
+    float2 aspectRatio = simd_float2(1 / uniforms.aspect, 1);
+    uint index = indices[vid].x;
+    float2 p = faceMaps[index].pos;
+    float offX = vid % 8 > 3 ? -0.005 : 0.005;
+    float offY = vid % 4 > 1 ? -0.005 : 0.005;
+    float2 offset = float2(offX, offY);
+    vOut.position = float4((p - uniforms.camera.xy + offset) * uniforms.scale * aspectRatio, 0.0001, 1);
+    vOut.index = indices[vid].y % 24;
+    return vOut;
+}
+
+fragment float4 lineFragment(PolygonVertex in [[ stage_in ]]) {
+    float3 c = clusterPalette[in.index];
+    return float4(c, 0.2);
 }

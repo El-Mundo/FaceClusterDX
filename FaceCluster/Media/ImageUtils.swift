@@ -63,6 +63,21 @@ class ImageUtils {
         return croppedImage
     }
     
+    static func cropCGImageNormalised(_ image: CGImage, normalisedBox: [Double]) -> CGImage? {
+        if(normalisedBox.count != 4) {
+            return nil
+        }
+        let ww = Double(image.width)
+        let wh = Double(image.height)
+        let x = max(0, min(image.width-1, Int(normalisedBox[0] * ww)))
+        let y = max(0, min(image.height-1, Int(normalisedBox[1] * -wh + wh)))
+        let w = min(image.width-1-x, Int(normalisedBox[2] * ww))
+        let h = min(image.height-1-y, Int(normalisedBox[3] * -wh))
+        let rect = CGRect(x: x, y: y, width: w, height: h)
+        let croppedImage = image.cropping(to: rect)
+        return croppedImage
+    }
+    
     static func alignCIImage(_ image_: CIImage?) -> CIImage? {
         guard let image = image_ else {
             return nil
@@ -89,6 +104,26 @@ class ImageUtils {
         } else {
             return false
         }
+    }
+    
+    static func loadJPG(url: URL) -> CGImage? {
+        guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+            print("Failed to create image source")
+            return nil
+        }
+        let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
+        return cgImage
+    }
+    
+    static func getImageSizeFromURL(_ url: URL) -> CGSize? {
+        if let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil) {
+            if let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as Dictionary? {
+                let pixelWidth = imageProperties[kCGImagePropertyPixelWidth] as! Int
+                let pixelHeight = imageProperties[kCGImagePropertyPixelHeight] as! Int
+                return CGSize(width: pixelWidth, height: pixelHeight)
+            }
+        }
+        return nil
     }
     
 }
