@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct NetworkOverview: View {
-    var network: FaceNetwork?
+    @State var network: FaceNetwork?
     @State var files: Int = 0
     @State var allPointFields = [String]()
+    var context: Overview?
     @State var layoutKey: String
     
     var body : some View {
@@ -41,19 +42,26 @@ struct NetworkOverview: View {
             HStack {
                 Text("Network display positioning attribute:")
                     .font(.headline)
-                Picker("", selection: $layoutKey) {
-                    ForEach(0..<allPointFields.count, id: \.self) {i in
-                        let att = allPointFields[i]
-                        Text(att).tag(att)
+                Picker(selection: $layoutKey, label: Text("")) {
+                    ForEach(allPointFields, id: \.self) {p in
+                        //let att = allPointFields[i]
+                        //Text(att).tag(att)
+                        Text(p)
                     }
-                }.frame(width: 160).padding(.vertical, 6).onSubmit {
-                    print(layoutKey)
                 }
+                .onChange(of: layoutKey) {
+                    context?.network.layoutKey = layoutKey
+                }.frame(width: 160).padding(.vertical, 6)
             }
-        }.frame(minWidth: 128, maxWidth: .infinity)
+        }
+        .onChange(of: context?.forceResetTable, {
+            countJPEGFiles()
+        }).frame(minWidth: 128, maxWidth: .infinity)
     }
     
     func countJPEGFiles() {
+        allPointFields.removeAll()
+        
         guard let nt = network else {
             files = 0
             allPointFields = ["Perview", "Menu", "Items"]
@@ -68,7 +76,7 @@ struct NetworkOverview: View {
         
         let fileManager = FileManager.default
         do {
-            let directoryURL = nt.savedPath.appending(component: "Faces/")
+            let directoryURL = nt.savedPath.appending(component: "faces/")
             let contents = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
             let jpegFiles = contents.filter { $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "jpeg" }
             files = jpegFiles.count

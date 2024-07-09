@@ -105,7 +105,7 @@ class MediaManager {
         let videoName = self.importedURL.lastPathComponent
         //videoName = (videoName as NSString).deletingPathExtension
         let saveURL = self.getSaveParentDirectory(name: videoName)!
-        faceNetwork = FaceNetwork(savedPath: saveURL, attributes: [SavableAttribute(name: "Position", type: .Point)])
+        faceNetwork = FaceNetwork(savedPath: saveURL, attributes: [SavableAttribute(name: "Position", type: .Point, dimensions: nil)])
         
         let video = self.getVideoAsset()
         let saveImageURL = saveURL.appending(path: "frames/")

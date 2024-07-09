@@ -121,10 +121,11 @@ class Face: Codable {
     
     func createDescription() -> [String] {
         let frame = detectedAttributes.frameIdentifier
-        guard var pathShort = path?.path(percentEncoded: false) else {
+        guard var pathShort = path?.lastPathComponent else {
             return ["Frame: \(frame)", "Saved at:"]
         }
-        pathShort = pathShort.count > 36 ? "...".appending(String(pathShort.suffix(35))) : pathShort
+        //pathShort = pathShort.count > 36 ? "...".appending(String(pathShort.suffix(35))) : pathShort
+        pathShort = "../faces/" + pathShort
         let roundedX = round(displayPos.x * 100) / 100
         let roundedY = round(displayPos.y * 100) / 100
         return ["Frame: \(frame)", "Saved at: \(pathShort)".replacingOccurrences(of: " ", with: "_"), "Attribute: \(network?.layoutKey ?? "")", "Value: \(roundedX), \(roundedY)", "Cluster: \(clusterName ?? "N/A")"]
@@ -144,7 +145,7 @@ class Face: Codable {
     }
     
     func getFullSizeImage() -> CGImage? {
-        guard let framePath = network?.savedPath.appending(path: "Frames/\(detectedAttributes.frameIdentifier).jpg")else {
+        guard let framePath = network?.savedPath.appending(path: "frames/\(detectedAttributes.frameIdentifier).jpg")else {
             return nil
         }
         
@@ -157,7 +158,7 @@ class Face: Codable {
     }
     
     func getFrameAsImage() -> CGImage? {
-        guard let framePath = network?.savedPath.appending(path: "Frames/\(detectedAttributes.frameIdentifier).jpg")else {
+        guard let framePath = network?.savedPath.appending(path: "frames/\(detectedAttributes.frameIdentifier).jpg")else {
             return nil
         }
         

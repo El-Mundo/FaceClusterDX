@@ -24,7 +24,7 @@ struct NetworkView: NSViewRepresentable {
         mtkView.enableSetNeedsDisplay = false
         mtkView.framebufferOnly = true
         mtkView.device = GPUManager.instance?.getMTLDevice()
-        mtkView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        mtkView.clearColor = MTLClearColor(red: NetworkView.backgroundColour.x, green: NetworkView.backgroundColour.y, blue: NetworkView.backgroundColour.z, alpha: 1.0)
         mtkView.autoResizeDrawable = true
         mtkView.depthStencilPixelFormat = depthPixelFormat
         mtkView.colorPixelFormat = colourPixelFormat
@@ -43,6 +43,7 @@ struct NetworkView: NSViewRepresentable {
     
     func updateNSView(_ nsView: CustomizedMetalView, context: Context) {
         nsView.setNeedsDisplay(NSRect(x: 0, y: 0, width: nsView.frame.width, height: nsView.frame.height))
+        nsView.clearColor = MTLClearColor(red: NetworkView.backgroundColour.x, green: NetworkView.backgroundColour.y, blue: NetworkView.backgroundColour.z, alpha: 1.0)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -57,6 +58,7 @@ struct NetworkView: NSViewRepresentable {
     static var pMouseDown: Bool = false
     static var pRMouseDown: Bool = false
     static var pMousePos = SIMD2<Float>(0, 0)
+    static var backgroundColour = SIMD3<Double>(0, 0, 0)
     
     static var allowMultipleSelection = true
     static var allowEditing = false
@@ -213,10 +215,9 @@ struct NetworkView: NSViewRepresentable {
             }
             pointDistanceBuffer = cptBuffer
             
-            
+            let tag = network.layoutKey
             for i in 0..<n {
                 let face = network.faces[i]
-                let tag = network.layoutKey
                 let pos = face.attributes[tag]
                 if let p = pos as? FacePoint {
                     face.displayPos = p.value

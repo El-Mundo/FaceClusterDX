@@ -83,6 +83,46 @@
         }
       }
     },
+    "Attribute Creation Error" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性创建-错误"
+          }
+        }
+      }
+    },
+    "Attribute Dimensions (Vector only)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "维度（仅向量）"
+          }
+        }
+      }
+    },
+    "Attribute Name" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性名称"
+          }
+        }
+      }
+    },
+    "Attributes:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性："
+          }
+        }
+      }
+    },
     "Attributes: %lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -109,6 +149,16 @@
         }
       }
     },
+    "Background" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景yanse"
+          }
+        }
+      }
+    },
     "Bottom bar" : {
       "localizations" : {
         "zh-Hans" : {
@@ -125,6 +175,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "计算脸部距离......"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Cannot create a vector with negative or zero dimensions" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能创建负数或零维度向量"
+          }
+        }
+      }
+    },
+    "Cannot create an attribute with an empty name" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能创建空白名称属性"
+          }
+        }
+      }
+    },
+    "Cannot decode String \"%@\" as " : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能将文本\"%@\"转换为"
           }
         }
       }
@@ -195,12 +285,72 @@
         }
       }
     },
+    "Conditional Select" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件选区"
+          }
+        }
+      }
+    },
     "Console" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "信息"
+          }
+        }
+      }
+    },
+    "Create" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认创建"
+          }
+        }
+      }
+    },
+    "Create an Empty Face Attribute" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建一个空白的属性栏目"
+          }
+        }
+      }
+    },
+    "Create Empty" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建空白属性"
+          }
+        }
+      }
+    },
+    "Custom CoreML" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地CoreML模型"
+          }
+        }
+      }
+    },
+    "Default (Optional)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认值（可选）"
           }
         }
       }
@@ -225,6 +375,16 @@
         }
       }
     },
+    "Edit Selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑选区"
+          }
+        }
+      }
+    },
     "Editing %@ of %@" : {
       "localizations" : {
         "en" : {
@@ -237,6 +397,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在编辑%2$@面部的%1$@属性 "
+          }
+        }
+      }
+    },
+    "Empty Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空白模版"
           }
         }
       }
@@ -257,6 +427,16 @@
         }
       }
     },
+    "Export CSV" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出CSV"
+          }
+        }
+      }
+    },
     "Export Full Face Images" : {
       "localizations" : {
         "zh-Hans" : {
@@ -267,12 +447,22 @@
         }
       }
     },
-    "Facenet" : {
+    "Facenet512" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facenet"
+            "value" : "Facenet512"
+          }
+        }
+      }
+    },
+    "Faces:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑面部："
           }
         }
       }
@@ -417,6 +607,16 @@
         }
       }
     },
+    "Filled Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参考模版"
+          }
+        }
+      }
+    },
     "frame" : {
       "localizations" : {
         "en" : {
@@ -463,6 +663,16 @@
         }
       }
     },
+    "Full Table" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完整表格文件"
+          }
+        }
+      }
+    },
     "Help ImportProject" : {
       "localizations" : {
         "en" : {
@@ -505,6 +715,16 @@
         }
       }
     },
+    "Import CSV" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入CSV"
+          }
+        }
+      }
+    },
     "Import Video File" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -518,6 +738,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "导入视频"
+          }
+        }
+      }
+    },
+    "Input vector must have more than 1 dimensions for dimension reduction" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入的向量需要两个或以上维度才能进行降维分析"
           }
         }
       }
@@ -649,6 +879,16 @@
         }
       }
     },
+    "No enough data samples to perform dimension reduction" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有足够的数据样本以进行降维分析"
+          }
+        }
+      }
+    },
     "No face images found in all extracted video frames.\nRedirecting to the import menu." : {
       "localizations" : {
         "zh-Hans" : {
@@ -715,12 +955,32 @@
         }
       }
     },
+    "Processing..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在处理..."
+          }
+        }
+      }
+    },
     "Redirect" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "返回"
+          }
+        }
+      }
+    },
+    "Remove" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除"
           }
         }
       }
@@ -811,6 +1071,26 @@
         }
       }
     },
+    "Specified attribute name has been used" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用的变量名称已经被占用"
+          }
+        }
+      }
+    },
+    "T-SNE" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "T-SNE"
+          }
+        }
+      }
+    },
     "Terminate" : {
       "localizations" : {
         "zh-Hans" : {
@@ -837,6 +1117,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用时%lf"
+          }
+        }
+      }
+    },
+    "Type" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据类型"
+          }
+        }
+      }
+    },
+    "Updating references in face files" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating references in face files..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在更新面部数据..."
           }
         }
       }

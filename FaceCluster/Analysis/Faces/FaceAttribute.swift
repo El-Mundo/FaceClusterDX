@@ -15,6 +15,8 @@ let FA_PreservedFields: [String] = [
 struct SavableAttribute: Codable {
     var name: String
     let type: AttributeType
+    /// For vector
+    let dimensions: Int?
 }
 
 protocol FaceAttribute: Codable {
@@ -26,7 +28,7 @@ protocol FaceAttribute: Codable {
     func toString() -> String
 }
 
-enum AttributeType: Codable {
+enum AttributeType: Codable, CaseIterable {
     case Point
     case Integer
     case Decimal
@@ -68,12 +70,19 @@ struct FaceVector: FaceAttribute {
     typealias type = [Double]
     var value: [Double]
     var key: String
-    var names: [String]
+    //var names: [String]
     
-    init(_ value: [Double], for key: String, names: [String]) {
+    init(_ value: [Double], for key: String/*, names: [String]?*/) {
         self.value = value
         self.key = key
-        self.names = names
+        /*if let n = names {
+            self.names = n
+        } else {
+            self.names = [String]()
+            for i in 0..<value.count {
+                self.names.append("#\(i)")
+            }
+        }*/
     }
     
     
@@ -109,12 +118,12 @@ struct FaceIntegerVector: FaceAttribute {
     typealias type = [Int]
     var value: [Int]
     var key: String
-    var names: [String]
+    //var names: [String]
     
-    init(_ value: [Int], for key: String, names: [String]) {
+    init(_ value: [Int], for key: String/*, names: [String]*/) {
         self.value = value
         self.key = key
-        self.names = names
+        //self.names = names
     }
     
     mutating func fromString(string: String) -> Bool {
@@ -208,6 +217,67 @@ struct FaceString: FaceAttribute {
     
     func toString() -> String {
         return self.value
+    }
+}
+
+func getFaceAttributeTypeName(type: AttributeType) -> String {
+    if(type == .Point) {
+        return "Point"
+    } else if(type == .Decimal) {
+        return "Decimal"
+    } else if(type == .IntVector) {
+        return "Integer Vector"
+    } else if(type == .Vector) {
+        return "Vector"
+    } else if(type == .Integer) {
+        return "Integer"
+    } else if(type == .String) {
+        return "String"
+    }
+    return ""
+}
+
+func getFaceAttributeType(type: AttributeType) -> any FaceAttribute.Type {
+    if(type == .Point) {
+        return FacePoint.self
+    } else if(type == .Decimal) {
+        return FaceDecimal.self
+    } else if(type == .IntVector) {
+        return FaceIntegerVector.self
+    } else if(type == .Vector) {
+        return FaceVector.self
+    } else if(type == .Integer) {
+        return FaceInteger.self
+    } else {
+        return FaceString.self
+    }
+}
+
+func decodeStringAsAttribute(as type: AttributeType, _ content: String, for key: String) -> (Bool, any FaceAttribute) {
+    if(type == .Point) {
+        var p = FacePoint(DoublePoint(x: 0, y: 0), for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
+    } else if(type == .Decimal) {
+        var p = FaceDecimal(0.0, for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
+    } else if(type == .IntVector) {
+        var p = FaceIntegerVector([], for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
+    } else if(type == .Vector) {
+        var p = FaceVector([], for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
+    } else if(type == .Integer) {
+        var p = FaceInteger(0, for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
+    } else {
+        var p = FaceString("", for: key)
+        let r = p.fromString(string: content)
+        return (r, p)
     }
 }
 

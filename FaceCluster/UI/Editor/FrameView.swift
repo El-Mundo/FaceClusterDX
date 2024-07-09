@@ -100,7 +100,7 @@ struct FrameView: View {
         
         let fileManager = FileManager.default
         do {
-            let directoryURL = network!.savedPath.appending(component: "Frames/")
+            let directoryURL = network!.savedPath.appending(component: "frames/")
             let contents = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
             files = contents.filter { $0.pathExtension.lowercased() == "jpg" ||  $0.pathExtension.lowercased() == "jpeg"}.sorted(by: {
                 $0.lastPathComponent < $1.lastPathComponent

@@ -32,10 +32,18 @@ struct FaceNetworkTable: View {
         let columns = (network.attributes.count + 7)
         let vw = CGFloat(CGFloat(columns) * cellWidth)
         
-        List {
+        List() {
             HStack {
                 ForEach(networkAttributes) { column in
                     Text(column.name).frame(width: cellWidth)
+                        .onTapGesture {
+                            if(context.selectedAttribute != column.name) {
+                                context.selectedAttribute = column.name
+                            } else {
+                                context.selectedAttribute = nil
+                            }
+                        }
+                        .background(context.selectedAttribute == column.name ? .blue : .white)
                 }
             }.padding(.leading, self.scrollOffset).frame(height: 12)
         }.frame(height: 32).scrollDisabled(true)
@@ -45,25 +53,18 @@ struct FaceNetworkTable: View {
                 TableRowView(row: row, parent: self).padding(.leading, self.scrollOffset)
             }
         }.onAppear(perform: {
-            for face in network.faces {
-                faces.append(TableFace(face: face))
-            }
-            for attribute in network.attributes {
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[5]))
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[0]))
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[1]))
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[3]))
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[6]))
-                networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[4]))
-                networkAttributes.append(TableAttributeIdentified(name: attribute.name))
-            }
-        }).onChange(of: selectedFaces) {
+            updateNetwork()
+        })/*.onChange(of: selectedFaces) {
             context.selectedFaces.removeAll()
             for face in selectedFaces {
-                let f = faces.first { $0.id == face}
-                context.selectedFaces.append(f!)
+                guard let f = faces.first(where: { $0.id == face}) else {
+                    continue
+                }
+                context.selectedFaces.append(f)
             }
-        }
+        }*/.onChange(of: context.forceResetTable, {
+            updateNetwork()
+        })
         
         ScrollView(.horizontal, showsIndicators: false) {
             GeometryReader { geometry in
@@ -104,19 +105,37 @@ struct FaceNetworkTable: View {
         }
         
         VStack {
-            if(editedString != nil) {
+            if(editedString != nil && editedFace != nil) {
                 Text("Editing \(editedAttribute!.wrappedValue) of \(editedFace!.path)").lineLimit(1)
                 TextField("", text: editedString!)
                     .onSubmit {
-                        let updated = editedFace?.requestUpdate(for: editedAttribute!.wrappedValue, newValue: editedString!.wrappedValue)
-                        if((updated ?? false) == false) {
+                        let updated = editedFace!.requestUpdate(for: editedAttribute!.wrappedValue, newValue: editedString!.wrappedValue)
+                        if(updated == false) {
                             editedString = Binding($preEditionString)
                         } else {
                             editedString = nil
+                            editedFace = nil
                         }
                     }
             }
         }.frame(minWidth: 128, maxWidth: .infinity, minHeight: 48, maxHeight: 48)
+    }
+    
+    func updateNetwork() {
+        faces = []
+        networkAttributes = []
+        for face in network.faces {
+            faces.append(TableFace(face: face))
+        }
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[5]))
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[0]))
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[1]))
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[3]))
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[6]))
+        networkAttributes.append(TableAttributeIdentified(name: FA_PreservedFields[4]))
+        for attribute in network.attributes {
+            networkAttributes.append(TableAttributeIdentified(name: attribute.name))
+        }
     }
     
     struct TableRowView: View {
@@ -135,7 +154,7 @@ struct FaceNetworkTable: View {
                 // Add more fields as needed
                 ForEach($row.attributes) { att in
                     Text(att.wrappedValue.content).frame(width: parent.cellWidth).lineLimit(1)
-                        .onTapGesture(count: 2, perform: {
+                        .onTapGesture(count: 1, perform: {
                             parent.editedFace = row
                             parent.editedString = att.content
                             parent.editedAttribute = att.key

@@ -46,9 +46,20 @@ struct TableFace: Identifiable {
         self.cluster = face.clusterName ?? "N/A"
         self.obj = face
         self.attributes = [TableAttribute]()
+        guard let nwAttributes = face.network?.attributes else {
+            return
+        }
         
-        for a in face.attributes {
-            attributes.append(TableAttribute(content: a.value.toString(), key: a.key))
+        for a in nwAttributes {
+            let key = a.name
+            let val = face.attributes[key]
+            var content: String
+            if(val == nil) {
+                content = "Missing"
+            } else {
+                content = val!.toString()
+            }
+            self.attributes.append(TableAttribute(content: content, key: a.name))
         }
     }
     

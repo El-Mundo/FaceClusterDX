@@ -12,6 +12,9 @@ import AppKit
 class FacenetWrapper {
     let model: VNCoreMLModel
     var tasks: [FacenetTask]
+    var completed = 0
+    
+    static var progress: CGFloat = 0
     
     init() {
         guard let facenet512 = try? Facenet512(),
@@ -36,6 +39,8 @@ class FacenetWrapper {
                     print("Failed to perform face detection: \(error)")
                     return
                 }
+                
+                self.completed += 1
             }
             tasks.append(task)
         }
@@ -44,6 +49,7 @@ class FacenetWrapper {
     func detectFacesSync(in network: FaceNetwork, batchSize: Int) {
         let fa = FaceAlignment()
         let faces = network.faces
+        FacenetWrapper.progress = 0
         if(faces.count < 1) {
             return
         }
@@ -72,6 +78,7 @@ class FacenetWrapper {
                 b = b + 1
                 while(!self.isCompleted()) {
                     sleep(1)
+                    FacenetWrapper.progress = CGFloat(completed) / CGFloat(sortedFaces.count)
                 }
                 batchedImages.removeAll()
             }
@@ -90,6 +97,25 @@ class FacenetWrapper {
             }
             batchedImages.removeAll()
         }
+    }
+    
+    func writeResults(key1: String, key2: String) {
+        //var output: [([Double], Double, Face)] = []
+        for task in tasks {
+            if(task.completed) {
+                guard let tOut = task.output,
+                      let confidence = task.confidence else {
+                    continue
+                }
+                //output.append((tOut, Double(confidence), task.obj))
+                let vector = FaceVector(tOut, for: key1)
+                let con = FaceDecimal(Double(confidence), for: key2)
+                task.obj.forceUpdateAttribute(for: FaceVector.self, key: key1, value: vector)
+                task.obj.forceUpdateAttribute(for: FaceDecimal.self, key: key2, value: con)
+                task.obj.updateSaveFileAtOriginalLocation()
+            }
+        }
+        //return output
     }
     
     func isCompleted() -> Bool {

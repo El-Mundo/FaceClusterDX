@@ -53,4 +53,3 @@ kernel void pointsEuclidean(const device FaceMap* points [[ buffer(0) ]],
     
     results[id.x + id.y * count] = out;
 }
-

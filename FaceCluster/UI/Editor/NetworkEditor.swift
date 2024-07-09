@@ -10,6 +10,8 @@ import SwiftUI
 var networkEditorInstance: NetworkEditor?
 
 struct NetworkEditor: View {
+    @Environment(\.self) var environment
+    
     @State var preview = false
     //var toolbar = NetworkToolbar()
     @State var faceInfo = [String]()
@@ -22,6 +24,7 @@ struct NetworkEditor: View {
     @State var clusteringThreshold: Float = 10.0
     @State var showDisabled = true
     @State var clusterDisplayMode = 2
+    @State private var backgroundColour: Color = Color(red: 0, green: 0, blue: 0)
     var context: Editor?
     var clusterUpdateReqruied: Bool = false
     
@@ -128,6 +131,12 @@ struct NetworkEditor: View {
                             .onChange(of: showDisabled, {
                                 NetworkView.showDisabledFaces = showDisabled
                             })
+                    
+                    ColorPicker("Background", selection: $backgroundColour)
+                        .onChange(of: backgroundColour, {
+                            let colour = backgroundColour.resolve(in: environment)
+                            NetworkView.backgroundColour = SIMD3<Double>(Double(colour.red), Double(colour.green), Double(colour.blue))
+                        })
                     
                     Text("Console")
                         .padding(.top, 12)

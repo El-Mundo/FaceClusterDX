@@ -194,6 +194,10 @@ class FaceNetwork {
         } else {
             for y in 0..<faces.count {
                 for x in y+1..<faces.count {
+                    if(faces[x].disabled || faces[y].disabled) {
+                        pairs.append(PairedDistance(paired: false, index: SIMD2<UInt32>(UInt32(x), UInt32(y))))
+                        continue
+                    }
                     let f1 = faces[x].displayPos
                     let f2 = faces[y].displayPos
                     let dis = distance(SIMD2<Double>(f1.x, f1.y), SIMD2<Double>(f2.x, f2.y))
@@ -261,6 +265,31 @@ class FaceNetwork {
         } catch {
             networkEditorInstance?.console += String(localized: "Failed to save clusters.\n").appending("\(error)") + "\n\n"
             print(error)
+        }
+    }
+    
+    func forceAppendAttribute(key: String, type: AttributeType, dimensions: Int?) {
+        if(attributes.contains(where: {$0.name == key})) {
+            attributes.removeAll(where: {$0.name == key})
+        }
+        if(type == .Vector || type == .IntVector) {
+            attributes.append(SavableAttribute(name: key, type: type, dimensions: dimensions))
+        } else {
+            attributes.append(SavableAttribute(name: key, type: type, dimensions: nil))
+        }
+    }
+    
+    func getUniqueKeyName(name: String) -> String {
+        if(attributes.contains(where: {$0.name == name})) {
+            var na = name + "_0"
+            var n = 0
+            while(attributes.contains(where: {$0.name == na})) {
+                n += 1
+                na = name + "_" + String(n)
+            }
+            return na
+        } else {
+            return name
         }
     }
     
