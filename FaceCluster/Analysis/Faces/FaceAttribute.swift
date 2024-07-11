@@ -237,6 +237,25 @@ func getFaceAttributeTypeName(type: AttributeType) -> String {
     return ""
 }
 
+func getFaceAttributeTypeFromName(name: String) -> AttributeType? {
+    let n = name.lowercased()
+    if(n == "point") {
+        return .Point
+    } else if(n == "decimal") {
+        return .Decimal
+    } else if(n == "integer vector") {
+        return .IntVector
+    } else if(n == "vector") {
+        return .Vector
+    } else if(n == "integer") {
+        return .Integer
+    } else if(n == "string") {
+        return .String
+    } else {
+        return nil
+    }
+}
+
 func getFaceAttributeType(type: AttributeType) -> any FaceAttribute.Type {
     if(type == .Point) {
         return FacePoint.self

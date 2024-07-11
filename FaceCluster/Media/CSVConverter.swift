@@ -11,12 +11,21 @@ class CSVConverter {
     func getCSVString(string: String) -> String {
         let noSlash = string.replacingOccurrences(of: "\\", with: "\\\\")
         let noQuote = noSlash.replacingOccurrences(of: "\"", with: "\\“")
-        return "\"" + noQuote + "\""
+        let noComma = noQuote.replacingOccurrences(of: ",", with: "\\，")
+        return "\"" + noComma + "\""
     }
     
     func revertCSVString(csvString: String) -> String {
-        let withQuote = csvString.replacingOccurrences(of: "\\“", with: "\"")
-        let withSlash = withQuote.replacingOccurrences(of: "\\\\", with: "\\")
+        var string = csvString
+        if(csvString.hasPrefix("\"") && csvString.hasSuffix("\"") && string.count > 1) {
+            string.removeFirst()
+            string.removeLast()
+        } else {
+            string = csvString
+        }
+        let withQuote = string.replacingOccurrences(of: "\\“", with: "\"")
+        let withComma = withQuote.replacingOccurrences(of: "\\，", with: ",")
+        let withSlash = withComma.replacingOccurrences(of: "\\\\", with: "\\")
         return withSlash
     }
     
@@ -24,12 +33,12 @@ class CSVConverter {
         var string = ""
         var string2 = ""
         
-        string.append(FA_PreservedFields[5] + ",")
-        string.append(FA_PreservedFields[0] + ",")
-        string.append(FA_PreservedFields[1] + ",")
-        string.append(FA_PreservedFields[3] + ",")
-        string.append(FA_PreservedFields[6] + ",")
-        string.append(FA_PreservedFields[4] + ",")
+        string.append(getCSVString(string: FA_PreservedFields[5]) + ",")
+        string.append(getCSVString(string: FA_PreservedFields[0]) + ",")
+        string.append(getCSVString(string: FA_PreservedFields[1]) + ",")
+        string.append(getCSVString(string: FA_PreservedFields[3]) + ",")
+        string.append(getCSVString(string: FA_PreservedFields[6]) + ",")
+        string.append(getCSVString(string: FA_PreservedFields[4]) + ",")
         
         string2.append("Preserved,Preserved,Preserved,Preserved,Preserved,Preserved")
         
@@ -52,7 +61,7 @@ class CSVConverter {
         return text
     }
     
-    func converteNetworkFull(_ network: FaceNetwork, save: URL) {
+    func converteNetworkFull(_ network: FaceNetwork, save: URL) -> (Bool, String) {
         var con = ""
         con.append(getNetworkAttributes(network: network))
         con.append("\n")
@@ -66,18 +75,20 @@ class CSVConverter {
         
         do {
             try con.write(to: save, atomically: true, encoding: .utf8)
+            return (true, "")
         } catch {
             print("Error creating file")
+            return (false, error.localizedDescription)
         }
     }
     
-    func generateEmptyTemplateForNetwork(_ network: FaceNetwork, save: URL) {
+    func generateEmptyTemplateForNetwork(_ network: FaceNetwork, save: URL) -> (Bool, String) {
         var con = ""
         con.append(FA_PreservedFields[6])
         con.append(",\nPreserved,\n")
         
         for face in network.faces {
-            con.append(getCSVString(string: "faces/" + (face.path?.lastPathComponent ?? "")) + ",\n")
+            con.append(getCSVString(string: getTableShortFacePath(face: face)) + ",\n")
         }
         if(con.hasSuffix("\n")) {
             con.remove(at: con.lastIndex(of: "\n")!)
@@ -85,12 +96,18 @@ class CSVConverter {
         
         do {
             try con.write(to: save, atomically: true, encoding: .utf8)
+            return (true, "")
         } catch {
             print("Error creating file")
+            return (false, error.localizedDescription)
         }
     }
     
-    func generateSampleTemplateForNetwork(_ network: FaceNetwork, save: URL) {
+    func getTableShortFacePath(face: Face) -> String {
+        return "faces/" + (face.path?.lastPathComponent ?? "")
+    }
+    
+    func generateSampleTemplateForNetwork(_ network: FaceNetwork, save: URL) -> (Bool, String) {
         var con = ""
         var field = ""
         var sample = ""
@@ -107,7 +124,7 @@ class CSVConverter {
         con.append("\n")
         
         for face in network.faces {
-            con.append(getCSVString(string: "faces/" + (face.path?.lastPathComponent ?? "")) + sample + "\n")
+            con.append(getCSVString(string: getTableShortFacePath(face: face)) + sample + "\n")
         }
         if(con.hasSuffix("\n")) {
             con.remove(at: con.lastIndex(of: "\n")!)
@@ -115,8 +132,10 @@ class CSVConverter {
         
         do {
             try con.write(to: save, atomically: true, encoding: .utf8)
+            return (true, "")
         } catch {
             print("Error creating file")
+            return (false, error.localizedDescription)
         }
     }
     
@@ -134,5 +153,152 @@ class CSVConverter {
         } else {
             return FaceString("Text", for: "")
         }
+    }
+    
+    struct CSVLog {
+        var preservedFields = [String]()
+        var skippedCells = [(Int, Int)]()
+        var skippedLines = [Int]()
+    }
+    var importLog: CSVLog?
+    
+    func importCSV(_ network: FaceNetwork, url: URL) -> (Bool, String) {
+        importLog = CSVLog()
+        guard let csv = try? String(contentsOf: url) else {
+            return (false, String(localized: "Failed to read file as text."))
+        }
+        
+        struct CSVCell {
+            let value: any FaceAttribute
+            let loc: Int
+        }
+        
+        struct CSVLine {
+            let cells: [CSVCell]
+            let identifier: String
+            let loc: Int
+        }
+        
+        class CSVCol {
+            let name: String
+            let type: AttributeType
+            var dim: Int
+            
+            init(name: String, type: AttributeType, dim: Int) {
+                self.name = name
+                self.type = type
+                self.dim = dim
+            }
+        }
+        
+        let identifier = FA_PreservedFields[6]
+        var idLoc = -1
+        
+        let lines = csv.split(whereSeparator: \.isNewline)
+        var importedAttributes: [Int: CSVCol] = [:]
+        var importedValues: [CSVLine] = []
+        let err = String(localized: "Cannot import a table without the first two lines recodring attributes")
+        
+        if(lines.count < 2) {
+            return (false, err)
+        }
+        
+        let field = lines[0].split(separator: ",")
+        let type = lines[1].split(separator: ",")
+        
+        if(type.count < field.count) {
+            return (false, err)
+        }
+        
+        for i in 0..<field.count {
+            let newType = String(type[i])
+            let newField = revertCSVString(csvString: String(field[i]))
+            
+            if(newType.lowercased() == "preserved") {
+                if(newField == identifier) {
+                    idLoc = i
+                } else {
+                    importLog!.preservedFields.append(newField)
+                }
+                continue
+            }
+            
+            if(newField.trimmingCharacters(in: [" "]).isEmpty) {
+                return (false, String(localized: "Failed to import due to empty column name at column \(i)."))
+            }
+            
+            if(network.attributes.contains(where: {$0.name == newField})) {
+                return (false, String(localized: "Cannot import the attribute name \"\(newField)\" because it conflicts with an existing attribute in the network."))
+            }
+            
+            if(FA_PreservedFields.contains(newField)) {
+                return (false, String(localized: "Cannot import an attribute with a preserved name and a non-preserved type for \"\(newType)\"."))
+            }
+            
+            guard let t = getFaceAttributeTypeFromName(name: newType) else {
+                return (false, String(localized: "Unidentifiable attribute type \"\(newType)\""))
+            }
+            
+            importedAttributes.updateValue(CSVCol(name: String(field[i]), type: t, dim: -1), forKey: i)
+        }
+        
+        if(idLoc < 0) {
+            return (false, String(localized: "An imported table must have the identifier attribute \"\(identifier)\" as preserved type."))
+        }
+        
+        for y in 2..<lines.count {
+            let line = lines[y].split(separator: ",")
+            var identifier: String?
+            var cells = [CSVCell]()
+            for x in 0..<line.count {
+                if(x == idLoc) {
+                    identifier = revertCSVString(csvString: String(line[x]))
+                } else {
+                    let a = line[x]
+                    let rev = revertCSVString(csvString: String(a))
+                    guard let type = importedAttributes[x] else {
+                        continue
+                    }
+                    let val = decodeStringAsAttribute(as: type.type, rev, for: type.name)
+                    if(val.0) {
+                        cells.append(CSVCell(value: val.1, loc: x))
+                        
+                        if(type.type == .IntVector || type.type == .Vector) {
+                            let curDim = rev.split(separator: ",").count
+                            if(curDim > type.dim) {
+                                type.dim = curDim
+                            }
+                        }
+                    } else {
+                        importLog!.skippedCells.append((y+1, x+1))
+                    }
+                }
+            }
+            
+            guard let id = identifier else {
+                importLog!.skippedLines.append(y+1)
+                continue
+            }
+            importedValues.append(CSVLine(cells: cells, identifier: id, loc: y))
+        }
+        
+        for attribute in importedAttributes.values {
+            network.forceAppendAttribute(key: attribute.name, type: attribute.type, dimensions: attribute.dim)
+        }
+        for value in importedValues {
+            guard let faceObj = network.faces.first(where: { getTableShortFacePath(face: $0) == value.identifier }) else {
+                importLog?.skippedLines.append(value.loc+1)
+                continue
+            }
+            
+            for cell in value.cells {
+                let key = importedAttributes[cell.loc]!
+                let type = getFaceAttributeType(type: key.type)
+                faceObj.forceUpdateAttribute(for: type, key: key.name, value: cell.value)
+                faceObj.updateSaveFileAtOriginalLocation()
+            }
+        }
+        
+        return (true, String(localized: "Successfully imported \(importedAttributes.count) attribute(s) into the network, with \(importLog?.preservedFields.count ?? 0) attribute(s), \(importLog?.skippedLines.count ?? 0) line(s), and \(importLog?.skippedCells.count ?? 0) cell(s) skipped."))
     }
 }

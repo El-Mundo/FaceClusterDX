@@ -144,6 +144,10 @@ class Face: Codable {
         attributes.updateValue(value, forKey: key)
     }
     
+    func forceUpdateAttribute(key: String, value: any FaceAttribute) {
+        attributes.updateValue(value, forKey: key)
+    }
+    
     func getFullSizeImage() -> CGImage? {
         guard let framePath = network?.savedPath.appending(path: "frames/\(detectedAttributes.frameIdentifier).jpg")else {
             return nil

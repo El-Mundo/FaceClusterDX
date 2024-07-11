@@ -92,7 +92,7 @@ extension Overview {
                 try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
                 confirmSavingHDImages()
             } catch {
-                showGeneralMessageOnlyAlert(error.localizedDescription, title: "Warning")
+                showGeneralMessageOnlyAlert(error.localizedDescription)
                 return
             }
         } else {
@@ -108,7 +108,7 @@ extension Overview {
                     confirmSavingHDImages()
                 }
             } catch {
-                showGeneralMessageOnlyAlert(error.localizedDescription, title: "Warning")
+                showGeneralMessageOnlyAlert(error.localizedDescription)
                 return
             }
         }
@@ -150,21 +150,102 @@ extension Overview {
     }
     
     func exportCSVFull() {
+        showWaitingCircle(message: String(localized: "Saving CSV..."))
         let t = network.savedPath.appending(path: "Table Full (\(AppDelegate.getDateString())).csv")
-        CSVConverter().converteNetworkFull(network, save: t)
-        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+        let (saved, info) = CSVConverter().converteNetworkFull(network, save: t)
+        hideWaitingCircle()
+        if(saved) {
+            showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false), title: String(localized: "Success"))
+        } else {
+            showGeneralMessageOnlyAlert(String(localized: "Failed to save updated table, message: ") + info)
+        }
     }
     
     func exportCSVEmpty() {
+        showWaitingCircle(message: String(localized: "Saving CSV..."))
         let t = network.savedPath.appending(path: "Table Empty (\(AppDelegate.getDateString())).csv")
-        CSVConverter().generateEmptyTemplateForNetwork(network, save: t)
-        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+        let (saved, info) = CSVConverter().generateEmptyTemplateForNetwork(network, save: t)
+        hideWaitingCircle()
+        if(saved) {
+            showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false), title: String(localized: "Success"))
+        } else {
+            showGeneralMessageOnlyAlert(String(localized: "Failed to save updated table, message: ") + info)
+        }
     }
     
     func exportCSVExample() {
+        showWaitingCircle(message: String(localized: "Saving CSV..."))
         let t = network.savedPath.appending(path: "Table Filled (\(AppDelegate.getDateString())).csv")
-        CSVConverter().generateSampleTemplateForNetwork(network, save: t)
-        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+        let (saved, info) = CSVConverter().generateSampleTemplateForNetwork(network, save: t)
+        hideWaitingCircle()
+        if(saved) {
+            showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false), title: String(localized: "Success"))
+        } else {
+            showGeneralMessageOnlyAlert(String(localized: "Failed to save updated table, message: ") + info)
+        }
+    }
+    
+    func importFieldsFromCSVFile(url: Result<URL, Error>) {
+        switch url {
+        case .success:
+            showWaitingCircle(message: String(localized: "Decoding URL file..."))
+            guard let u = try? url.get() else { break }
+            let c = CSVConverter()
+            let result = c.importCSV(network, url: u)
+            hideWaitingCircle()
+            if(result.0) {
+                cachedCSVConsole = c.importLog
+                showSelectableMessageAlert(result.1, title: String(localized: "Success"), action: logCSVImportConsole, proceedButton: String(localized: "Details..."), cancelAction: clearCSVImportConsole, cancelButoon: String(localized: "OK"))
+                c.importLog = nil
+                forceResetTable.toggle()
+            } else {
+                showGeneralMessageOnlyAlert(result.1)
+            }
+            break
+        case .failure:
+            break
+        }
+    }
+    
+    func clearCSVImportConsole() {
+        self.cachedCSVConsole = nil
+        self.tempTextField = ""
+        self.tempTextField1 = ""
+        self.showAlert = false
+    }
+    
+    func logCSVImportConsole() {
+        var string = String(localized: "Skipping following attributes due to its type being preserved: \n")
+        guard let console = cachedCSVConsole else {
+            return
+        }
+        for p in console.preservedFields {
+            string.append(p + ", ")
+        }
+        if(string.hasSuffix(", ")) {
+            string.removeLast()
+            string.removeLast()
+        }
+        string.append("\n\n" + String(localized: "Skipping following lines due to missing identifier attribute (\(FA_PreservedFields[6])): \n"))
+        for p in console.skippedLines {
+            string.append("\(p), ")
+        }
+        if(string.hasSuffix(", ")) {
+            string.removeLast()
+            string.removeLast()
+        }
+        string.append("\n\n" + String(localized: "Skipping following cells due to corrupted data format: \n"))
+        for p in console.skippedCells {
+            string.append("\(p), ")
+        }
+        if(string.hasSuffix(", ")) {
+            string.removeLast()
+            string.removeLast()
+        }
+        
+        self.showAlert = false
+        showSecondaryMessage(string, title: "Details")
+        self.cachedCSVConsole = nil
     }
     
 }

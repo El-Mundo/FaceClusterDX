@@ -61,7 +61,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     public static func getDateString() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd(HH:mm:ss)"
+        dateFormatter.dateFormat = "yyyy-MM-dd(HH-mm-ss)"
         let currentTime = Date.now
         let formattedTime = dateFormatter.string(from: currentTime)
         return formattedTime

@@ -20,6 +20,7 @@ struct Overview: View {
     @State var alertMessage: String = ""
     @State var alertTitle: String = ""
     @State var alertedAction: (()->Void)?
+    @State var alertCancelAction: (()->Void)?
     @State var waitingMessage: String = "Eating Spaghetti with chopsticks..."
     
     @State var addEmptyAttribute: Bool = false
@@ -28,13 +29,16 @@ struct Overview: View {
     @State var showAlert: Bool = false
     @State var alertType: OverviewAlertType = .general
     @State var showMessageSheet: Bool = false
+    @State var showSelectableAlert: Bool = false
     /// This variables forces the variables referenced by a Sheet to be updated one frame previous to the Sheet initialisation.
     /// It's added to solve SwiftUI's issue where variables in Sheet cannot be updated timely.
     ///
     /// Values: 0- None, 1- Circle progress, 2- Sheet message.
     @State var messageSheetFlag: Int = 0
+    @State var showCSVImporter: Bool = false
     
     enum OverviewAlertType {
+        case selectable
         case destructive
         case general
     }
@@ -120,9 +124,9 @@ struct Overview: View {
                         }
                         
                         Button("Import CSV") {
-                            
+                            showCSVImporter.toggle()
                         }
-                        
+                
                         
                         Button("Create Empty") {
                             clearTempInput()
@@ -167,25 +171,36 @@ struct Overview: View {
                 }.frame(width: 350, height: 240)
             }
             .sheet(isPresented: $showMessageSheet) {
-                VStack {
-                    Text(tempTextField1)
-                        .font(.headline)
-                    Text(tempTextField).frame(minWidth: 320, maxWidth: 640).padding(.horizontal, 12)
-                    Button("OK") {
-                        messageSheetFlag = 0
-                        tempTextField = ""
-                        tempTextField1 = ""
-                        showMessageSheet = false
-                    }.controlSize(.large)
-                }.frame(minWidth: 350, maxWidth: .infinity, minHeight: 240, maxHeight: .infinity)
+                ScrollView {
+                    VStack {
+                        Text(tempTextField1)
+                            .font(.headline)
+                        Text(tempTextField).frame(minWidth: 320, maxWidth: 640).padding(.horizontal, 12)
+                        Button("OK") {
+                            messageSheetFlag = 0
+                            tempTextField = ""
+                            tempTextField1 = ""
+                            showMessageSheet = false
+                        }.controlSize(.large)
+                    }.frame(minWidth: 350, maxWidth: 960, minHeight: 240, maxHeight: 960)
+                }
             }
             .alert(isPresented: $showAlert) {
                 if(alertType == .destructive) {
                     Alert(title: Text(alertTitle), message: Text(alertMessage), primaryButton: .destructive(Text("Proceed"), action: alertedAction), secondaryButton: .cancel())
+                } else if (alertType == .selectable) {
+                    if(alertCancelAction == nil) {
+                        Alert(title: Text(alertTitle), message: Text(alertMessage), primaryButton: .default(Text("Proceed"), action: alertedAction), secondaryButton: .cancel())
+                    } else {
+                        Alert(title: Text(alertTitle), message: Text(alertMessage), primaryButton: .default(Text(tempTextField), action: alertedAction), secondaryButton: .default(Text(tempTextField1), action: alertCancelAction))
+                    }
                 } else {
                     Alert(title: Text(alertTitle), message: Text(alertMessage))
                 }
-            }
+            }.fileImporter(isPresented: $showCSVImporter, allowedContentTypes: [.commaSeparatedText], onCompletion: {
+                result in
+                importFieldsFromCSVFile(url: result)
+            })
         }
             
         FaceNetworkTable(network: network, context: self)
@@ -260,7 +275,7 @@ struct Overview: View {
         pasteboard.setString(string, forType: .string)
     }
     
-    func showWaitingCircle(message: String="Updating network...") {
+    func showWaitingCircle(message: String=String(localized: "Updating network...")) {
         waitingMessage = message
         messageSheetFlag = 1
         messageSheetFlag = 0
@@ -270,14 +285,14 @@ struct Overview: View {
         showCircleProgress = false
     }
     
-    func showGeneralMessageOnlyAlert(_ message: String="Failed to update face network.", title: String="Warning") {
+    func showGeneralMessageOnlyAlert(_ message: String=String(localized: "Failed to update face network."), title: String=String(localized: "Warning")) {
         alertMessage = message
         alertTitle = title
         alertType = .general
         showAlert = true
     }
     
-    func showDestructiveMessageAlert(_ message: String="Proceed to perform a destructive action", title: String="Warning", action: @escaping ()->Void) {
+    func showDestructiveMessageAlert(_ message: String="Proceed to perform a destructive action", title: String=String(localized: "Warning"), action: @escaping ()->Void) {
         alertMessage = message
         alertTitle = title
         alertedAction = action
@@ -285,10 +300,23 @@ struct Overview: View {
         showAlert = true
     }
     
-    func showSecondaryMessage(_ msg: String, title: String="Message") {
+    func showSecondaryMessage(_ msg: String, title: String=String(localized: "Message")) {
         tempTextField = msg
         tempTextField1 = title
         messageSheetFlag = 2
+    }
+    
+    
+    @State var cachedCSVConsole: CSVConverter.CSVLog?
+    func showSelectableMessageAlert(_ message: String="Selection reqruied", title: String=String(localized: "Warning"), action: @escaping ()->Void, proceedButton: String=String(localized: "OK"), cancelAction: (()->Void)?=nil, cancelButoon: String=String(localized: "Cancel")) {
+        alertMessage = message
+        alertTitle = title
+        alertedAction = action
+        alertCancelAction = cancelAction
+        alertType = .selectable
+        tempTextField = proceedButton
+        tempTextField1 = cancelButoon
+        showAlert = true
     }
 
 }

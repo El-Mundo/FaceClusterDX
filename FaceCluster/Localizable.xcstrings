@@ -67,6 +67,9 @@
         }
       }
     },
+    "An imported table must have the identifier attribute \"%@\" as preserved type." : {
+
+    },
     "Analyze every:" : {
       "localizations" : {
         "en" : {
@@ -219,6 +222,15 @@
         }
       }
     },
+    "Cannot import a table without the first two lines recodring attributes" : {
+
+    },
+    "Cannot import an attribute with a preserved name and a non-preserved type for \"%@\"." : {
+
+    },
+    "Cannot import the attribute name \"%@\" because it conflicts with an existing attribute in the network." : {
+
+    },
     "Cannot switch mode when generating clusters\n\n" : {
       "localizations" : {
         "en" : {
@@ -345,6 +357,9 @@
         }
       }
     },
+    "Decoding URL file..." : {
+
+    },
     "Default (Optional)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -354,6 +369,9 @@
           }
         }
       }
+    },
+    "Details..." : {
+
     },
     "df" : {
       "localizations" : {
@@ -517,6 +535,9 @@
         }
       }
     },
+    "Failed to import due to empty column name at column %lld." : {
+
+    },
     "Failed to initialise Metal 3 environment." : {
       "localizations" : {
         "zh-Hans" : {
@@ -577,6 +598,9 @@
         }
       }
     },
+    "Failed to read file as text." : {
+
+    },
     "Failed to save clusters.\n" : {
       "localizations" : {
         "zh-Hans" : {
@@ -603,6 +627,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不能为%@帧保存预览图"
+          }
+        }
+      }
+    },
+    "Failed to save updated table, message: " : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存表格失败，错误信息："
+          }
+        }
+      }
+    },
+    "Failed to update face network." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络更新失败。"
           }
         }
       }
@@ -839,6 +883,16 @@
         }
       }
     },
+    "Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信息"
+          }
+        }
+      }
+    },
     "MTCNN" : {
       "localizations" : {
         "zh-Hans" : {
@@ -910,7 +964,14 @@
       }
     },
     "OK" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        }
+      }
     },
     "Overview" : {
       "localizations" : {
@@ -943,7 +1004,14 @@
       }
     },
     "Proceed" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
+        }
+      }
     },
     "Process" : {
       "localizations" : {
@@ -992,7 +1060,14 @@
       }
     },
     "Replacing Existing Files" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在移除之前的文件"
+          }
+        }
+      }
     },
     "Reset" : {
       "localizations" : {
@@ -1045,10 +1120,27 @@
       }
     },
     "Saved table at " : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表格保存至："
+          }
+        }
+      }
+    },
+    "Saving CSV..." : {
 
     },
     "Saving full size face images..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在保存完整面部图像..."
+          }
+        }
+      }
     },
     "second" : {
       "localizations" : {
@@ -1086,6 +1178,15 @@
         }
       }
     },
+    "Skipping following attributes due to its type being preserved: \n" : {
+
+    },
+    "Skipping following cells due to corrupted data format: \n" : {
+
+    },
+    "Skipping following lines due to missing identifier attribute (%@): \n" : {
+
+    },
     "Specified attribute name has been used" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1096,8 +1197,35 @@
         }
       }
     },
+    "Success" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功"
+          }
+        }
+      }
+    },
     "Successful" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作成功"
+          }
+        }
+      }
+    },
+    "Successfully imported %lld attribute(s) into the network, with %lld attribute(s), %lld line(s), and %lld cell(s) skipped." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Successfully imported %1$lld attribute(s) into the network, with %2$lld attribute(s), %3$lld line(s), and %4$lld cell(s) skipped."
+          }
+        }
+      }
     },
     "Successfully saved %lld images at %@." : {
       "localizations" : {
@@ -1105,6 +1233,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Successfully saved %1$lld images at %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功将%1$lld张图片保存于%2$@"
           }
         }
       }
@@ -1146,6 +1280,12 @@
             "state" : "new",
             "value" : "This action will replace the %1$lld jpg files in %2$@. Confirm to proceed?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输出图像将导致%2$@文件夹中的%1$lld个jpg文件被移除，确认继续吗？"
+          }
         }
       }
     },
@@ -1165,6 +1305,19 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "数据类型"
+          }
+        }
+      }
+    },
+    "Unidentifiable attribute type \"%@\"" : {
+
+    },
+    "Updating network..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在更新网络..."
           }
         }
       }
@@ -1223,6 +1376,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
+          }
+        }
+      }
+    },
+    "Warning" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警告"
           }
         }
       }
