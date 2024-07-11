@@ -82,4 +82,89 @@ extension Overview {
             }
         }
     }
+    
+    
+    
+    func requestSavingHDImages() {
+        let path = network.savedPath.appending(path: "HD Faces")
+        if(!AppDelegate.checkIfDirectoryExists(url: path)) {
+            do {
+                try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
+                confirmSavingHDImages()
+            } catch {
+                showGeneralMessageOnlyAlert(error.localizedDescription, title: "Warning")
+                return
+            }
+        } else {
+            do {
+                let contents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil)
+                let jpgFiles = contents.filter { $0.pathExtension.lowercased() == "jpg" }
+                let jpgCount = jpgFiles.count
+                if(jpgCount > 0) {
+                    cachedUrls = jpgFiles
+                    let p = path.path(percentEncoded: false)
+                    showDestructiveMessageAlert(String(localized: "This action will replace the \(jpgCount) jpg files in \(p). Confirm to proceed?"), title: String(localized: "Replacing Existing Files"), action: confirmSavingHDImages)
+                } else {
+                    confirmSavingHDImages()
+                }
+            } catch {
+                showGeneralMessageOnlyAlert(error.localizedDescription, title: "Warning")
+                return
+            }
+        }
+    }
+    
+    func confirmSavingHDImages() {
+        showWaitingCircle(message: String(localized: "Saving full size face images..."))
+        
+        if(cachedUrls != nil) {
+            let f = FileManager.default
+            for url in cachedUrls! {
+                do {
+                    try f.removeItem(at: url)
+                    print(url.absoluteString + " removed")
+                } catch {
+                    print(error)
+                    continue
+                }
+            }
+            cachedUrls = nil
+        }
+        
+        var saved = 0
+        for face in network.faces {
+            guard let img = face.getFullSizeImage() else {
+                continue
+            }
+            let name = face.path!.lastPathComponent
+            let s = ImageUtils.saveImageAsJPG(img, at: network.savedPath.appending(path: "HD Faces/\(name).jpg"))
+            if(s) {
+                saved += 1
+            }
+        }
+        
+        hideWaitingCircle()
+        let path = network.savedPath.appending(path: "HD Faces/").path(percentEncoded: false)
+        showSecondaryMessage(String(localized: "Successfully saved \(saved) images at \(path)."), title: String(localized: "Successful"))
+        //showGeneralMessageOnlyAlert(String(localized: "Successfully saved \(saved) images at \(path)."), title: String(localized: "Successful"))
+    }
+    
+    func exportCSVFull() {
+        let t = network.savedPath.appending(path: "Table Full (\(AppDelegate.getDateString())).csv")
+        CSVConverter().converteNetworkFull(network, save: t)
+        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+    }
+    
+    func exportCSVEmpty() {
+        let t = network.savedPath.appending(path: "Table Empty (\(AppDelegate.getDateString())).csv")
+        CSVConverter().generateEmptyTemplateForNetwork(network, save: t)
+        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+    }
+    
+    func exportCSVExample() {
+        let t = network.savedPath.appending(path: "Table Filled (\(AppDelegate.getDateString())).csv")
+        CSVConverter().generateSampleTemplateForNetwork(network, save: t)
+        showGeneralMessageOnlyAlert(String(localized: "Saved table at ") + t.path(percentEncoded: false))
+    }
+    
 }

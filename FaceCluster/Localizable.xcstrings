@@ -909,6 +909,9 @@
         }
       }
     },
+    "OK" : {
+
+    },
     "Overview" : {
       "localizations" : {
         "zh-Hans" : {
@@ -938,6 +941,9 @@
           }
         }
       }
+    },
+    "Proceed" : {
+
     },
     "Process" : {
       "localizations" : {
@@ -984,6 +990,9 @@
           }
         }
       }
+    },
+    "Replacing Existing Files" : {
+
     },
     "Reset" : {
       "localizations" : {
@@ -1035,6 +1044,12 @@
         }
       }
     },
+    "Saved table at " : {
+
+    },
+    "Saving full size face images..." : {
+
+    },
     "second" : {
       "localizations" : {
         "en" : {
@@ -1081,6 +1096,19 @@
         }
       }
     },
+    "Successful" : {
+
+    },
+    "Successfully saved %lld images at %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Successfully saved %1$lld images at %2$@."
+          }
+        }
+      }
+    },
     "T-SNE" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1107,6 +1135,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "视频工作目录中已经创建了过多%@的结果文件。请在继续前清理视频工作目录。"
+          }
+        }
+      }
+    },
+    "This action will replace the %lld jpg files in %@. Confirm to proceed?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This action will replace the %1$lld jpg files in %2$@. Confirm to proceed?"
           }
         }
       }

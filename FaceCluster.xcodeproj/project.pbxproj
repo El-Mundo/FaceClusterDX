@@ -35,6 +35,7 @@
 		8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7792C15BBBD00758AE8 /* ImageUtils.swift */; };
 		86952F7C2C346A2800519FEF /* T_SNE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86952F7B2C346A2800519FEF /* T_SNE.swift */; };
 		869D87222C302BE70005BD80 /* FrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869D87212C302BE70005BD80 /* FrameView.swift */; };
+		86ABF1D52C3FF043004D5857 /* CSVConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86ABF1D42C3FF043004D5857 /* CSVConverter.swift */; };
 		86BA0A1E2C26CC03007BEAB3 /* Facenet512.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A1D2C26CC03007BEAB3 /* Facenet512.mlpackage */; };
 		86BA0A202C272F56007BEAB3 /* FacenetWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A1F2C272F56007BEAB3 /* FacenetWrapper.swift */; };
 		86BA0A222C27312E007BEAB3 /* ComputeShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 86BA0A212C27312E007BEAB3 /* ComputeShader.metal */; };
@@ -53,6 +54,7 @@
 		86DCF3FD2C285FA70093EC3F /* FaceCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */; };
 		86E63D602C0B58B200C683F2 /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */; };
 		86E921F62C2EF0A100412B59 /* NetworkOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E921F52C2EF0A100412B59 /* NetworkOverview.swift */; };
+		86EB22AE2C3DCFA0002661B6 /* SwiftTSNE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,7 @@
 		8694A7792C15BBBD00758AE8 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		86952F7B2C346A2800519FEF /* T_SNE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = T_SNE.swift; sourceTree = "<group>"; };
 		869D87212C302BE70005BD80 /* FrameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameView.swift; sourceTree = "<group>"; };
+		86ABF1D42C3FF043004D5857 /* CSVConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVConverter.swift; sourceTree = "<group>"; };
 		86BA0A1D2C26CC03007BEAB3 /* Facenet512.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Facenet512.mlpackage; sourceTree = "<group>"; };
 		86BA0A1F2C272F56007BEAB3 /* FacenetWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacenetWrapper.swift; sourceTree = "<group>"; };
 		86BA0A212C27312E007BEAB3 /* ComputeShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ComputeShader.metal; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 		86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceCluster.swift; sourceTree = "<group>"; };
 		86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
 		86E921F52C2EF0A100412B59 /* NetworkOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOverview.swift; sourceTree = "<group>"; };
+		86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTSNE.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +210,7 @@
 			children = (
 				866433822C209F4500792590 /* Faces */,
 				86952F7B2C346A2800519FEF /* T_SNE.swift */,
+				86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */,
 			);
 			path = Analysis;
 			sourceTree = "<group>";
@@ -304,6 +309,7 @@
 				86C3D3EA2C0E48DA00704629 /* FaceRectangle.swift */,
 				8694A7792C15BBBD00758AE8 /* ImageUtils.swift */,
 				863C5D732C31B86400F8D408 /* FaceAlignment.swift */,
+				86ABF1D42C3FF043004D5857 /* CSVConverter.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -496,6 +502,8 @@
 				86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */,
 				8669137E2C2F2C87000CA8DF /* Overview.swift in Sources */,
 				86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */,
+				86EB22AE2C3DCFA0002661B6 /* SwiftTSNE.swift in Sources */,
+				86ABF1D52C3FF043004D5857 /* CSVConverter.swift in Sources */,
 				86BA0A222C27312E007BEAB3 /* ComputeShader.metal in Sources */,
 				86BFB5252C1F7D67007EDA8A /* MTCNN.swift in Sources */,
 				86E921F62C2EF0A100412B59 /* NetworkOverview.swift in Sources */,
