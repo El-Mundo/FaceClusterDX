@@ -8,6 +8,7 @@
 import Foundation
 import Vision
 import AppKit
+import SwiftUI
 
 class FacenetWrapper {
     let model: VNCoreMLModel
@@ -46,11 +47,12 @@ class FacenetWrapper {
         }
     }
     
-    func detectFacesSync(in network: FaceNetwork, batchSize: Int) {
+    func detectFacesSync(in network: FaceNetwork, batchSize: Int, progress: Binding<CGFloat>?=nil, semaphore: DispatchSemaphore?=nil) {
         let fa = FaceAlignment()
         let faces = network.faces
         FacenetWrapper.progress = 0
         if(faces.count < 1) {
+            semaphore?.signal()
             return
         }
         
@@ -79,6 +81,7 @@ class FacenetWrapper {
                 while(!self.isCompleted()) {
                     sleep(1)
                     FacenetWrapper.progress = CGFloat(completed) / CGFloat(sortedFaces.count)
+                    progress?.wrappedValue = FacenetWrapper.progress
                 }
                 batchedImages.removeAll()
             }
@@ -94,9 +97,12 @@ class FacenetWrapper {
             print("Processing batch #\(b)")
             while(!self.isCompleted()) {
                 sleep(1)
+                FacenetWrapper.progress = CGFloat(completed) / CGFloat(sortedFaces.count)
+                progress?.wrappedValue = FacenetWrapper.progress
             }
             batchedImages.removeAll()
         }
+        semaphore?.signal()
     }
     
     func writeResults(key1: String, key2: String) {

@@ -302,7 +302,42 @@ class FaceNetwork {
             ptr[i] = faceMap
         }
     }
+    
+    func attributeVectorsToDoubleArray(name: String) -> ([[Double]]?, [Int], Int, String) {
+        guard let att = attributes.first(where: { name == $0.name }) else {
+            return (nil, [], -2, String(localized: "Invalid input attribute"))
+        }
+        if(att.type != .Vector) {
+            return (nil, [], -3, String(localized: "Input attribute must a vector"))
+        }
+        var d = [[Double]]()
+        var i = [Int]()
+        var corruptedData = 0
         
+        for j in 0..<faces.count {
+            let face = faces[j]
+            guard let a = face.attributes[att.name] as? FaceVector else {
+                corruptedData += 1
+                continue
+            }
+            d.append(a.value)
+            i.append(j)
+        }
+        
+        return (d, i, corruptedData, "")
+    }
+       
+    func getVectorDimension(name: String) -> Int {
+        guard let att = attributes.first(where: { name == $0.name }),
+              let dim = att.dimensions else {
+            return -1
+        }
+        if(att.type != .Vector && att.type != .IntVector) {
+            return -1
+        }
+        
+        return dim
+    }
 }
 
 extension FaceNetwork {

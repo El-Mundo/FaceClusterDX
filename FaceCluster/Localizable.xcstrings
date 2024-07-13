@@ -11,6 +11,12 @@
         }
       }
     },
+    ", with %lld fails." : {
+
+    },
+    "." : {
+
+    },
     "%lld faces detected from the video" : {
       "localizations" : {
         "zh-Hans" : {
@@ -47,6 +53,18 @@
         }
       }
     },
+    "1D" : {
+
+    },
+    "2D" : {
+
+    },
+    "3D" : {
+
+    },
+    "Align Faces" : {
+
+    },
     "Aligned Image" : {
       "localizations" : {
         "zh-Hans" : {
@@ -67,7 +85,20 @@
         }
       }
     },
+    "An error occurred when fitting the CoreML model for Vision framework." : {
+
+    },
     "An imported table must have the identifier attribute \"%@\" as preserved type." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入的表格必须有标记为Preserved类型的ID属性“%@”。"
+          }
+        }
+      }
+    },
+    "Analyse" : {
 
     },
     "Analyze every:" : {
@@ -85,6 +116,9 @@
           }
         }
       }
+    },
+    "Atrribute Name:" : {
+
     },
     "Attribute Creation Error" : {
       "localizations" : {
@@ -115,6 +149,9 @@
           }
         }
       }
+    },
+    "Attribute name cannot be empty" : {
+
     },
     "Attributes:" : {
       "localizations" : {
@@ -162,6 +199,9 @@
         }
       }
     },
+    "Batch size:" : {
+
+    },
     "Bottom bar" : {
       "localizations" : {
         "zh-Hans" : {
@@ -171,6 +211,9 @@
           }
         }
       }
+    },
+    "Browse" : {
+
     },
     "Calculating face distances...\n" : {
       "localizations" : {
@@ -222,13 +265,46 @@
         }
       }
     },
-    "Cannot import a table without the first two lines recodring attributes" : {
+    "Cannot delete the field used for display position in the network view." : {
 
+    },
+    "Cannot import a table without the first two lines recodring attributes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot import a table without the first two lines recodring attributes."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能导入一个前两行未完整记录属性名称和类型的表格。"
+          }
+        }
+      }
     },
     "Cannot import an attribute with a preserved name and a non-preserved type for \"%@\"." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能导入一个占有预留属性名称但类型不属于预留的数据列\"%@\"。"
+          }
+        }
+      }
     },
     "Cannot import the attribute name \"%@\" because it conflicts with an existing attribute in the network." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能导入属性\"%@\"，该名称已被网络已有属性使用。"
+          }
+        }
+      }
+    },
+    "Cannot remove a preserved field from the network." : {
 
     },
     "Cannot switch mode when generating clusters\n\n" : {
@@ -307,6 +383,9 @@
         }
       }
     },
+    "Confidence:" : {
+
+    },
     "Console" : {
       "localizations" : {
         "zh-Hans" : {
@@ -358,7 +437,14 @@
       }
     },
     "Decoding URL file..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在读取URL文件..."
+          }
+        }
+      }
     },
     "Default (Optional)" : {
       "localizations" : {
@@ -370,8 +456,21 @@
         }
       }
     },
-    "Details..." : {
+    "Default 1" : {
 
+    },
+    "Deleting attribute and its references in faces" : {
+
+    },
+    "Details..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "详细信息..."
+          }
+        }
+      }
     },
     "df" : {
       "localizations" : {
@@ -392,6 +491,9 @@
           }
         }
       }
+    },
+    "Do you really wish to remove the field %@ from the network? This action is irreversible and will delete all references to the field in face files." : {
+
     },
     "Edit Selected" : {
       "localizations" : {
@@ -428,6 +530,9 @@
           }
         }
       }
+    },
+    "Error: " : {
+
     },
     "Exit " : {
       "localizations" : {
@@ -536,7 +641,14 @@
       }
     },
     "Failed to import due to empty column name at column %lld." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能导入有空白列名称的表格（位置%lld）"
+          }
+        }
+      }
     },
     "Failed to initialise Metal 3 environment." : {
       "localizations" : {
@@ -599,7 +711,14 @@
       }
     },
     "Failed to read file as text." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能讲文件读取为文本。"
+          }
+        }
+      }
     },
     "Failed to save clusters.\n" : {
       "localizations" : {
@@ -717,6 +836,9 @@
         }
       }
     },
+    "Height" : {
+
+    },
     "Help ImportProject" : {
       "localizations" : {
         "en" : {
@@ -786,6 +908,12 @@
         }
       }
     },
+    "In pixel, optional" : {
+
+    },
+    "Input attribute must a vector" : {
+
+    },
     "Input vector must have more than 1 dimensions for dimension reduction" : {
       "localizations" : {
         "zh-Hans" : {
@@ -795,6 +923,9 @@
           }
         }
       }
+    },
+    "Invalid input attribute" : {
+
     },
     "Landmark Indices" : {
       "localizations" : {
@@ -825,6 +956,9 @@
           }
         }
       }
+    },
+    "Load a Local CoreML Model" : {
+
     },
     "Load a network before reading clusters" : {
       "localizations" : {
@@ -893,6 +1027,9 @@
         }
       }
     },
+    "Model:" : {
+
+    },
     "MTCNN" : {
       "localizations" : {
         "zh-Hans" : {
@@ -902,6 +1039,15 @@
           }
         }
       }
+    },
+    "Name for confidence attribute" : {
+
+    },
+    "Name for result attribute" : {
+
+    },
+    "Name root for saved attributes" : {
+
     },
     "Network" : {
       "localizations" : {
@@ -993,6 +1139,18 @@
         }
       }
     },
+    "Perform T-SNE dimension reduction for \"%@\"" : {
+
+    },
+    "Performing Facenet512 prediction..." : {
+
+    },
+    "Please load a local CoreML file first" : {
+
+    },
+    "Please select a Vector attribute in the table header to perform T-SNE on." : {
+
+    },
     "Polygon" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1029,7 +1187,11 @@
         }
       }
     },
+    "Processing faces with %@..." : {
+
+    },
     "Processing..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1079,6 +1241,9 @@
         }
       }
     },
+    "Resize face to:" : {
+
+    },
     "Resolution" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1099,6 +1264,9 @@
         }
       }
     },
+    "Results for %lld faces successfully saved" : {
+
+    },
     "Sampling interval: %f sec" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1108,6 +1276,9 @@
           }
         }
       }
+    },
+    "Save attributes as:" : {
+
     },
     "Saved frame images: %lld" : {
       "localizations" : {
@@ -1130,7 +1301,14 @@
       }
     },
     "Saving CSV..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在保存CSV…"
+          }
+        }
+      }
     },
     "Saving full size face images..." : {
       "localizations" : {
@@ -1179,13 +1357,34 @@
       }
     },
     "Skipping following attributes due to its type being preserved: \n" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下列因标记为预留类型，已被跳过："
+          }
+        }
+      }
     },
     "Skipping following cells due to corrupted data format: \n" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下表格因格式错误，已被跳过："
+          }
+        }
+      }
     },
     "Skipping following lines due to missing identifier attribute (%@): \n" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下行因缺失有效ID(列：\"%@\")，已被跳过："
+          }
+        }
+      }
     },
     "Specified attribute name has been used" : {
       "localizations" : {
@@ -1217,12 +1416,21 @@
         }
       }
     },
+    "Successfully compiled" : {
+
+    },
     "Successfully imported %lld attribute(s) into the network, with %lld attribute(s), %lld line(s), and %lld cell(s) skipped." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Successfully imported %1$lld attribute(s) into the network, with %2$lld attribute(s), %3$lld line(s), and %4$lld cell(s) skipped."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功导入%1$lld组数据至网络，已跳过%2$lld列、%3lld行、%4$lld格。"
           }
         }
       }
@@ -1243,6 +1451,16 @@
         }
       }
     },
+    "Successfully saved T-SNE %lldD reduction for %@ as attribute %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Successfully saved T-SNE %1$lldD reduction for %2$@ as attribute %3$@."
+          }
+        }
+      }
+    },
     "T-SNE" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1252,6 +1470,9 @@
           }
         }
       }
+    },
+    "Target dimension:" : {
+
     },
     "Terminate" : {
       "localizations" : {
@@ -1263,6 +1484,12 @@
         }
       }
     },
+    "The selected attribute is not of Vector type." : {
+
+    },
+    "There are one or more attribute names conflicting with existing attributes in the network. Confirming this action will result in these attributes to be replaced. Continue?" : {
+
+    },
     "There are too many folder created for video %@ in the workspace. Please clear the workspace before processing." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1272,6 +1499,9 @@
           }
         }
       }
+    },
+    "There is an error when compiling the CoreML model: %@" : {
+
     },
     "This action will replace the %lld jpg files in %@. Confirm to proceed?" : {
       "localizations" : {
@@ -1310,7 +1540,14 @@
       }
     },
     "Unidentifiable attribute type \"%@\"" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能识别变量类型\"%@\""
+          }
+        }
+      }
     },
     "Updating network..." : {
       "localizations" : {
@@ -1389,6 +1626,12 @@
           }
         }
       }
+    },
+    "Width" : {
+
+    },
+    "Writing results..." : {
+
     }
   },
   "version" : "1.0"
