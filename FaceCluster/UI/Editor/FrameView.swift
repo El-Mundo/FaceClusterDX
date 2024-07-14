@@ -10,11 +10,17 @@ import SwiftUI
 
 struct FrameView: View {
     var network: FaceNetwork?
+    @State var showFileImport: Bool = false
     @State var files: [URL] = []
     @State var frames: [FramePreview] = []
     let imageWidth: CGFloat = 128, columns: Int = 3, spacing: CGFloat = 12
     let pageSize = 60
     @State var hoveredGrid: FramePreview?
+    @State var showDeleteAlert: Bool = false
+    @State var waitingFlag: Bool = false
+    @State var showWaiting: Bool = false
+    @State var progressVal: CGFloat = 0
+    @State var waitingMSG: String = ""
     @State var pageIndicator = "Page"
     @State var selectedFrame: FramePreview?
     @State var detailViewWidth: CGFloat = 320
@@ -23,7 +29,22 @@ struct FrameView: View {
     var body : some View {
         HStack {
             VStack {
-                Text(pageIndicator).font(.title3).padding(.top, 12)
+                HStack {
+                    Text(pageIndicator).font(.title3).padding(.top, 12)
+                    Button("Import JPG/PNG"){
+                        showFileImport = true
+                    }.fileImporter(isPresented: $showFileImport, allowedContentTypes: [.jpeg, .png], allowsMultipleSelection: true, onCompletion: { r in
+                        importFrameImage(r: r)
+                    }).padding(.top, 12).padding(.leading, 24).controlSize(.large).buttonStyle(.borderedProminent).tint(.blue)
+                    
+                    Button() {
+                        if(selectedFrame != nil) {
+                            showDeleteAlert = true
+                        }
+                    } label: {
+                        Image(systemName: "trash.slash.fill")
+                    }.padding(.top, 12).padding(.leading, 24).controlSize(.large).buttonStyle(.borderedProminent).tint(.red)
+                }
                 
                 let col = Array(repeating: GridItem(.fixed(imageWidth), spacing: spacing), count: columns)
                 let gridW = imageWidth * CGFloat(columns) + spacing * 6
@@ -91,9 +112,28 @@ struct FrameView: View {
                     }
                 }
         }
+        .onChange(of: waitingFlag, { showWaiting = true })
+        .sheet(isPresented: $showWaiting, content: {
+            VStack {
+                Text(waitingMSG)
+                ProgressView(value: progressVal)
+            }.frame(width: 200, height: 160)
+        })
+        .alert(isPresented: $showDeleteAlert) {
+            Alert(title: Text(String(localized: "Delete Frame")), message: Text(String(localized: "Confirm to delete \(selectedFrame == nil ? "this frame" : "frame \"\(selectedFrame!.shortName)\"")? This will make all faces attached to this frame removed from the network.")), primaryButton: .destructive(Text("Confirm"), action: deleteSelectedFrame), secondaryButton: .cancel())
+        }
     }
     
-    func getAllJpegNamesInWorkspace() {
+    private func deleteSelectedFrame() {
+        guard let net = network,
+            let sf = selectedFrame else {
+            return
+        }
+        net.deleteFrame(frameIdentifier: sf.shortName)
+        getAllJpegNamesInWorkspace()
+    }
+    
+    private func getAllJpegNamesInWorkspace() {
         if(network == nil) {
             return
         }
@@ -112,7 +152,7 @@ struct FrameView: View {
         }
     }
     
-    func loadPage(_ num: Int) {
+    private func loadPage(_ num: Int) {
         frames.removeAll()
         let start = pageSize * num
         var end = pageSize * (num + 1)
@@ -121,8 +161,7 @@ struct FrameView: View {
             if(i < files.count) {
                 let url = files[i]
                 let fi = url.deletingPathExtension().lastPathComponent
-                let faces = network!.faces.filter({ $0.detectedAttributes.frameIdentifier == fi
-                })
+                let faces = network!.faces.filter({ $0.detectedAttributes.frameIdentifier == fi })
                 frames.append(FramePreview(url: url, shortName: fi, faces: faces))
             } else {
                 end = i
@@ -133,7 +172,29 @@ struct FrameView: View {
         pageIndicator = "Showing frames \(start+1)-\(end) (\(files.count) in total)"
     }
     
-    func extractSubstring(from input: String) -> String? {
+    private func reloadFramePreview(frame: FramePreview?) {
+        guard let sf = frame else { return }
+        guard let index = frames.firstIndex(of: sf) else { return }
+        let url = sf.url
+        let name = sf.shortName
+        let faces = network?.faces.filter({ $0.detectedAttributes.frameIdentifier == name }) ?? []
+        frames[index] = FramePreview(url: url, shortName: name, faces: faces)
+        selectedFrame = frames[index]
+    }
+    
+    private func redetectFacesForSelectedFrame(frame: FramePreview?) {
+        guard let sf = frame, let net = network else { return }
+        let url = sf.url
+        net.deleteFrame(frameIdentifier: sf.shortName, deleteImage: false)
+        MediaManager.instance?.importImageSequence(info: $waitingMSG, progress: $progressVal, urls: [ url ], network: net)
+        guard let index = frames.firstIndex(of: sf) else { return }
+        let name = sf.shortName
+        let faces = network?.faces.filter({ $0.detectedAttributes.frameIdentifier == name }) ?? []
+        frames[index] = FramePreview(url: url, shortName: name, faces: faces)
+        selectedFrame = frames[index]
+    }
+    
+    private func extractSubstring(from input: String) -> String? {
         guard input.count > 1 else {
             print("Input string is too short.")
             return nil
@@ -148,6 +209,44 @@ struct FrameView: View {
             return nil
         }
         return String(input[start..<end])
+    }
+    
+    private func importFrameImage(r: Result<[URL], Error>) {
+        switch r {
+        case .success:
+            guard let urls = try? r.get() else {
+                break
+            }
+            guard let net = network else {
+                break
+            }
+            let dir = net.savedPath.appendingPathComponent("Frames/")
+            waitingMSG = String(localized: "Importing frame images...")
+            waitingFlag.toggle()
+            Task {
+                var availableUrls: [URL] = []
+                for url in urls {
+                    let h = url.lastPathComponent.lowercased()
+                    if(h.hasSuffix(".jpg") || h.hasPrefix(".jpeg")) {
+                        let (s, u) = AppDelegate.secureCopyItem(at: url, to: dir, forceExtension: "jpg")
+                        if(s && u != nil) {
+                            availableUrls.append(u!)
+                        }
+                    } else if(h.hasSuffix(".png")) {
+                        let (s, u) = ImageUtils.convertPNGToJPG(from: url, to: dir)
+                        if(s && u != nil) {
+                            availableUrls.append(u!)
+                        }
+                    }
+                }
+                MediaManager.instance?.importImageSequence(info: $waitingMSG, progress: $progressVal, urls: availableUrls, network: net)
+                showWaiting = false
+                getAllJpegNamesInWorkspace()
+            }
+            break
+        case .failure:
+            break
+        }
     }
     
     struct FramedFace: Identifiable {
@@ -345,6 +444,28 @@ struct FrameView: View {
                         Text("Landmark Indices").tag(3 as Int)
                         Text("Aligned Image").tag(2 as Int)
                     }.frame(width: 120)
+                    
+                    Button() {
+                        context.redetectFacesForSelectedFrame(frame: frameView)
+                    } label: {
+                        Label("Redetect", systemImage: "faceid")
+                    }
+                    .padding(.leading, 48)
+                    
+                    Button("Delete Face") {
+                        guard let fin = tableFaces.firstIndex(where: { return $0.id == selectedFace }) else { return }
+                        let f = tableFaces[fin]
+                        f.requestDeletion()
+                        if(selectedFace == hoverFace) {
+                            hoverFace = nil
+                        }
+                        selectedFace = nil
+                        tableFaces.remove(at: fin)
+                        context.reloadFramePreview(frame: frameView)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red)
+                    .padding(.leading, 12)
                 }
                 
                 Table(tableFaces, selection: $selectedFace, sortOrder: $sortingOrder) {

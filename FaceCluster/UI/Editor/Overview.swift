@@ -41,6 +41,9 @@ struct Overview: View {
     @State var showCSVImporter: Bool = false
     @State var requestFacenet: Bool = false
     
+    @State var forceTableDisableSelection: Bool = false
+    @State var forceTableDeletingSelection: Bool = false
+    
     enum OverviewAlertType {
         case selectable
         case destructive
@@ -84,14 +87,26 @@ struct Overview: View {
                 
                 Text("Faces:").frame(height: 16).padding(.top, 12)
                 VStack {
-                    Button("Conditional Select") {
+                    HStack {
+                        Button("Conditional Select") {
+                            
+                        }
                         
+                        Button() {
+                            forceTableDisableSelection.toggle()
+                        } label: {
+                            Image(systemName: "wrongwaysign")
+                        }
                     }
                     
-                    Button() {
+                    HStack {
+                        Button() {
+                            
+                        } label: {
+                            Label("Edit Selected", systemImage: "pencil")
+                        }
                         
-                    } label: {
-                        Label("Edit Selected", systemImage: "pencil")
+                        Button(role: .destructive, action: { forceTableDeletingSelection.toggle() }, label: { Image(systemName: "trash.slash.fill")}).buttonStyle(.borderedProminent).tint(.red)
                     }
                 }.controlSize(.large)
                 

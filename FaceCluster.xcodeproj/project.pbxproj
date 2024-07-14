@@ -55,6 +55,7 @@
 		86DCF3FD2C285FA70093EC3F /* FaceCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */; };
 		86E63D602C0B58B200C683F2 /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */; };
 		86E921F62C2EF0A100412B59 /* NetworkOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E921F52C2EF0A100412B59 /* NetworkOverview.swift */; };
+		86EA979F2C42D54B00839CC8 /* FaceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86EA979E2C42D54B00839CC8 /* FaceSelector.swift */; };
 		86EB22AE2C3DCFA0002661B6 /* SwiftTSNE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */; };
 /* End PBXBuildFile section */
 
@@ -130,6 +131,7 @@
 		86DCF3FC2C285FA70093EC3F /* FaceCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceCluster.swift; sourceTree = "<group>"; };
 		86E63D5F2C0B58B200C683F2 /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
 		86E921F52C2EF0A100412B59 /* NetworkOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOverview.swift; sourceTree = "<group>"; };
+		86EA979E2C42D54B00839CC8 /* FaceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceSelector.swift; sourceTree = "<group>"; };
 		86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTSNE.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -180,6 +182,7 @@
 				8669137D2C2F2C87000CA8DF /* Overview.swift */,
 				86621AB52C3D75CA004D45F4 /* OverviewSubpanels.swift */,
 				869D87212C302BE70005BD80 /* FrameView.swift */,
+				86EA979E2C42D54B00839CC8 /* FaceSelector.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				86BFB5232C1F7D67007EDA8A /* ONet.mlmodel in Sources */,
 				866433842C209F5400792590 /* Face.swift in Sources */,
 				864E63FF2C22EBA30070EC5E /* NetworkEditor.swift in Sources */,
+				86EA979F2C42D54B00839CC8 /* FaceSelector.swift in Sources */,
 				86BA0A202C272F56007BEAB3 /* FacenetWrapper.swift in Sources */,
 				866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */,
 				86952F7C2C346A2800519FEF /* T_SNE.swift in Sources */,

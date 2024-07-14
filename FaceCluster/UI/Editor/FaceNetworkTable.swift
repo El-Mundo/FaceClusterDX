@@ -64,6 +64,10 @@ struct FaceNetworkTable: View {
             }
         }*/.onChange(of: context.forceResetTable, {
             updateNetwork()
+        }).onChange(of: context.forceTableDisableSelection, {
+            disableSelectedFaces()
+        }).onChange(of: context.forceTableDeletingSelection, {
+            deleteSelectedFaces()
         })
         
         ScrollView(.horizontal, showsIndicators: false) {
@@ -124,6 +128,8 @@ struct FaceNetworkTable: View {
     func updateNetwork() {
         faces = []
         networkAttributes = []
+        selectedFaces = []
+        
         for face in network.faces {
             faces.append(TableFace(face: face))
         }
@@ -138,22 +144,62 @@ struct FaceNetworkTable: View {
         }
     }
     
+    private func disableSelectedFaces() {
+        let selFaces = $faces.filter() { f in
+            return selectedFaces.contains(f.id)
+        }
+        let nonActive = selFaces.filter() { f in
+            return f.wrappedValue.disabled
+        }.count
+        
+        var disabling = true
+        if(nonActive == selFaces.count) {
+            disabling = false
+        }
+        
+        for f in selFaces {
+            f.wrappedValue.activate(forceValue: disabling)
+        }
+        
+        context.forceResetTable.toggle()
+    }
+    
+    private func deleteSelectedFaces() {
+        if(selectedFaces.count < 1) { return }
+        context.showDestructiveMessageAlert(String(localized: "Confirm to delete \(selectedFaces.count) selected faces from the network?"), title: String(localized: "Delete"), action: confirmDeletion)
+    }
+    
+    private func confirmDeletion() {
+        let selFaces = faces.filter() { f in
+            return selectedFaces.contains(f.id)
+        }
+        
+        for f in selFaces {
+            f.requestDeletion()
+        }
+        
+        context.forceResetTable = !context.forceResetTable
+    }
+    
+    static let dColor = Color(red: 0.87, green: 0.87, blue: 0.87)
+    
     struct TableRowView: View {
         @State var row: TableFace
         @State var parent: FaceNetworkTable
 
         var body: some View {
             HStack {
-                Text(row.frame).frame(width: parent.cellWidth).lineLimit(1)
-                Text(row.faceBox).frame(width: parent.cellWidth).lineLimit(1)
-                Text(row.confidence).frame(width: parent.cellWidth).lineLimit(1)
-                Text(row.faceRotation).frame(width: parent.cellWidth).lineLimit(1)
-                Text(row.path).frame(width: parent.cellWidth).lineLimit(1)
-                Text(row.cluster).frame(width: parent.cellWidth).lineLimit(1)
+                let colour = row.disabled ? FaceNetworkTable.dColor : Color.black
+                Text(row.frame).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
+                Text(row.faceBox).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
+                Text(row.confidence).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
+                Text(row.faceRotation).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
+                Text(row.path).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
+                Text(row.cluster).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
 
                 // Add more fields as needed
                 ForEach($row.attributes) { att in
-                    Text(att.wrappedValue.content).frame(width: parent.cellWidth).lineLimit(1)
+                    Text(att.wrappedValue.content).frame(width: parent.cellWidth).lineLimit(1).foregroundStyle(colour)
                         .onTapGesture(count: 1, perform: {
                             parent.editedFace = row
                             parent.editedString = att.content
@@ -174,6 +220,7 @@ struct FaceNetworkTable: View {
             self.faces.append(TableFace(face: face))
         }
     }
+    
 }
 
 /*#Preview {

@@ -173,7 +173,7 @@ fragment float4 fragmentShader(MeshletVertex in [[stage_in]],
     }
 
     //return float4(colorSample);
-    return float4(colorSample.g * tone, colorSample.r * tone, colorSample.a * tone, colorSample.b);
+    return float4(colorSample.b * tone, colorSample.g * tone, colorSample.r * tone, colorSample.a);
 }
 
 struct VertexOut {

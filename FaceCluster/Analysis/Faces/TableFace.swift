@@ -24,6 +24,7 @@ struct TableFace: Identifiable {
     var faceBox: String
     var faceRotation: String
     var cluster: String
+    var disabled: Bool
     
     var attributes: [TableAttribute]
 
@@ -46,6 +47,8 @@ struct TableFace: Identifiable {
         self.cluster = face.clusterName ?? "N/A"
         self.obj = face
         self.attributes = [TableAttribute]()
+        self.disabled = face.disabled
+        
         guard let nwAttributes = face.network?.attributes else {
             return
         }
@@ -75,6 +78,35 @@ struct TableFace: Identifiable {
         } else {
             return false
         }
+    }
+    
+    mutating func deactivate(toggle: Bool) {
+        if(toggle) {
+            self.disabled = !self.disabled
+        } else {
+            self.disabled = true
+        }
+        updateObjectState()
+    }
+    
+    mutating func activate(forceValue: Bool?=nil) {
+        guard let f = forceValue else {
+            self.disabled = false
+            updateObjectState()
+            return
+        }
+        
+        self.disabled = f
+        updateObjectState()
+    }
+    
+    private func updateObjectState() {
+        obj.disabled = self.disabled
+        obj.updateSaveFileAtOriginalLocation()
+    }
+    
+    func requestDeletion() {
+        obj.network?.deleteFace(face: obj)
     }
     
 }

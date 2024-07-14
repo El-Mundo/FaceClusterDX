@@ -2,7 +2,7 @@
 //  FaceSelector.swift
 //  FaceCluster
 //
-//  Created by 曹双源 on 13/07/2024.
+//  Created by El-Mundo on 13/07/2024.
 //
 
 import SwiftUI

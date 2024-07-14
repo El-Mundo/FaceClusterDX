@@ -12,10 +12,24 @@
       }
     },
     ", with %lld fails." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "，但%lld张面部的处理时出现错误。"
+          }
+        }
+      }
     },
     "." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
     },
     "%lld faces detected from the video" : {
       "localizations" : {
@@ -54,16 +68,44 @@
       }
     },
     "1D" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1D"
+          }
+        }
+      }
     },
     "2D" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2D"
+          }
+        }
+      }
     },
     "3D" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3D"
+          }
+        }
+      }
     },
     "Align Faces" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "校正面部图像"
+          }
+        }
+      }
     },
     "Aligned Image" : {
       "localizations" : {
@@ -86,7 +128,14 @@
       }
     },
     "An error occurred when fitting the CoreML model for Vision framework." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于CoreML模型注册Vision框架代理时出现不可预料的错误，分析失败。"
+          }
+        }
+      }
     },
     "An imported table must have the identifier attribute \"%@\" as preserved type." : {
       "localizations" : {
@@ -99,6 +148,16 @@
       }
     },
     "Analyse" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分析"
+          }
+        }
+      }
+    },
+    "Analysing images..." : {
 
     },
     "Analyze every:" : {
@@ -118,7 +177,14 @@
       }
     },
     "Atrribute Name:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性名称："
+          }
+        }
+      }
     },
     "Attribute Creation Error" : {
       "localizations" : {
@@ -151,7 +217,14 @@
       }
     },
     "Attribute name cannot be empty" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性名称不能为空"
+          }
+        }
+      }
     },
     "Attributes:" : {
       "localizations" : {
@@ -200,7 +273,14 @@
       }
     },
     "Batch size:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "批处理大小："
+          }
+        }
+      }
     },
     "Bottom bar" : {
       "localizations" : {
@@ -213,7 +293,14 @@
       }
     },
     "Browse" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浏览"
+          }
+        }
+      }
     },
     "Calculating face distances...\n" : {
       "localizations" : {
@@ -266,7 +353,14 @@
       }
     },
     "Cannot delete the field used for display position in the network view." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能删除作为网络可视化定位参数的属性。"
+          }
+        }
+      }
     },
     "Cannot import a table without the first two lines recodring attributes" : {
       "localizations" : {
@@ -305,7 +399,14 @@
       }
     },
     "Cannot remove a preserved field from the network." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能网络中的移除预留类型。"
+          }
+        }
+      }
     },
     "Cannot switch mode when generating clusters\n\n" : {
       "localizations" : {
@@ -384,6 +485,22 @@
       }
     },
     "Confidence:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置信度："
+          }
+        }
+      }
+    },
+    "Confirm" : {
+
+    },
+    "Confirm to delete %@? This will make all faces attached to this frame removed from the network." : {
+
+    },
+    "Confirm to delete %lld selected faces from the network?" : {
 
     },
     "Console" : {
@@ -457,10 +574,33 @@
       }
     },
     "Default 1" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认为1"
+          }
+        }
+      }
+    },
+    "Delete" : {
+
+    },
+    "Delete Face" : {
+
+    },
+    "Delete Frame" : {
 
     },
     "Deleting attribute and its references in faces" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在删除属性和面部数据中的参考"
+          }
+        }
+      }
     },
     "Details..." : {
       "localizations" : {
@@ -493,7 +633,14 @@
       }
     },
     "Do you really wish to remove the field %@ from the network? This action is irreversible and will delete all references to the field in face files." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要将属性%@从网络中移除吗？这个操作会造成不可逆的结果并且会导致面部数据中对该属性的参考全部被删除。"
+          }
+        }
+      }
     },
     "Edit Selected" : {
       "localizations" : {
@@ -532,7 +679,14 @@
       }
     },
     "Error: " : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误信息："
+          }
+        }
+      }
     },
     "Exit " : {
       "localizations" : {
@@ -837,6 +991,16 @@
       }
     },
     "Height" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高"
+          }
+        }
+      }
+    },
+    "Hello, World!" : {
 
     },
     "Help ImportProject" : {
@@ -891,6 +1055,9 @@
         }
       }
     },
+    "Import JPG/PNG" : {
+
+    },
     "Import Video File" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -908,11 +1075,28 @@
         }
       }
     },
-    "In pixel, optional" : {
+    "Importing frame images..." : {
 
     },
+    "In pixel, optional" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以像素为单位，可空"
+          }
+        }
+      }
+    },
     "Input attribute must a vector" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入的属性必须是向量"
+          }
+        }
+      }
     },
     "Input vector must have more than 1 dimensions for dimension reduction" : {
       "localizations" : {
@@ -925,7 +1109,14 @@
       }
     },
     "Invalid input attribute" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的输入属性"
+          }
+        }
+      }
     },
     "Landmark Indices" : {
       "localizations" : {
@@ -958,7 +1149,14 @@
       }
     },
     "Load a Local CoreML Model" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载一个本地的CoreML模型"
+          }
+        }
+      }
     },
     "Load a network before reading clusters" : {
       "localizations" : {
@@ -1028,7 +1226,14 @@
       }
     },
     "Model:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CoreML模型："
+          }
+        }
+      }
     },
     "MTCNN" : {
       "localizations" : {
@@ -1041,13 +1246,34 @@
       }
     },
     "Name for confidence attribute" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存置信度数据的属性名称"
+          }
+        }
+      }
     },
     "Name for result attribute" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存属性的名称"
+          }
+        }
+      }
     },
     "Name root for saved attributes" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存属性参考的名称前缀"
+          }
+        }
+      }
     },
     "Network" : {
       "localizations" : {
@@ -1140,16 +1366,44 @@
       }
     },
     "Perform T-SNE dimension reduction for \"%@\"" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为“%@”向量进行降维分析（T-SNE）"
+          }
+        }
+      }
     },
     "Performing Facenet512 prediction..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在使用Facenet512分析面部..."
+          }
+        }
+      }
     },
     "Please load a local CoreML file first" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先加载一个本地的CoreML模型"
+          }
+        }
+      }
     },
     "Please select a Vector attribute in the table header to perform T-SNE on." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在表格上方的属性列表中选择一个向量类型的数据来进行T-SNE分析。"
+          }
+        }
+      }
     },
     "Polygon" : {
       "localizations" : {
@@ -1188,18 +1442,17 @@
       }
     },
     "Processing faces with %@..." : {
-
-    },
-    "Processing..." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在处理..."
+            "value" : "正在使用%@分析面部数据..."
           }
         }
       }
+    },
+    "Redetect" : {
+
     },
     "Redirect" : {
       "localizations" : {
@@ -1242,7 +1495,14 @@
       }
     },
     "Resize face to:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将面部大小调整为："
+          }
+        }
+      }
     },
     "Resolution" : {
       "localizations" : {
@@ -1265,7 +1525,14 @@
       }
     },
     "Results for %lld faces successfully saved" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld张面部的分析结果保存成功"
+          }
+        }
+      }
     },
     "Sampling interval: %f sec" : {
       "localizations" : {
@@ -1278,7 +1545,14 @@
       }
     },
     "Save attributes as:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将属性保存为："
+          }
+        }
+      }
     },
     "Saved frame images: %lld" : {
       "localizations" : {
@@ -1417,7 +1691,14 @@
       }
     },
     "Successfully compiled" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编译成功"
+          }
+        }
+      }
     },
     "Successfully imported %lld attribute(s) into the network, with %lld attribute(s), %lld line(s), and %lld cell(s) skipped." : {
       "localizations" : {
@@ -1458,6 +1739,12 @@
             "state" : "new",
             "value" : "Successfully saved T-SNE %1$lldD reduction for %2$@ as attribute %3$@."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功保存了%2$a的%1$lld维T-SNE降维处理结果至网络属性“%3$@”"
+          }
         }
       }
     },
@@ -1472,7 +1759,14 @@
       }
     },
     "Target dimension:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标维数："
+          }
+        }
+      }
     },
     "Terminate" : {
       "localizations" : {
@@ -1485,10 +1779,24 @@
       }
     },
     "The selected attribute is not of Vector type." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选定的属性不是向量。"
+          }
+        }
+      }
     },
     "There are one or more attribute names conflicting with existing attributes in the network. Confirming this action will result in these attributes to be replaced. Continue?" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新输入的属性名称中有一个或多个与网络中现有属性的名称冲突，继续当前操作会导致这些属性被替换。是否继续？"
+          }
+        }
+      }
     },
     "There are too many folder created for video %@ in the workspace. Please clear the workspace before processing." : {
       "localizations" : {
@@ -1501,7 +1809,14 @@
       }
     },
     "There is an error when compiling the CoreML model: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CoreML模型编译错误：%@"
+          }
+        }
+      }
     },
     "This action will replace the %lld jpg files in %@. Confirm to proceed?" : {
       "localizations" : {
@@ -1628,10 +1943,24 @@
       }
     },
     "Width" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽"
+          }
+        }
+      }
     },
     "Writing results..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在保存..."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

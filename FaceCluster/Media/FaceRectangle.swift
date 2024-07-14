@@ -22,13 +22,62 @@ struct DetectedFace: Codable {
 
 private class CustomFaceDetectRequest: VNDetectFaceLandmarksRequest {
     var identifier: String = ""
+    var sourceImage: CGImage?
 }
 
 class FaceRectangle {
-
-    static func detectFacesNative(in cgImage: CGImage, identifier: String) {
+    
+    static func detectFacesNative(cgImage: CGImage, identifier: String) {
         let faceDetectionRequest = CustomFaceDetectRequest { (request, error) in
-            let id = (request as! CustomFaceDetectRequest).identifier
+            let req = (request as! CustomFaceDetectRequest)
+            let id = req.identifier
+            guard let results = request.results as? [VNFaceObservation] else {
+                detectComplete(faces: [], identifier: id)
+                return
+            }
+
+            let faceRectangles = results.map { faceObservation -> DetectedFace in
+                let boundingBox = faceObservation.boundingBox
+                let conf = Double(faceObservation.confidence)
+                
+                let box: [Double] = [
+                    boundingBox.origin.x,
+                    boundingBox.origin.y,
+                    boundingBox.size.width,
+                    boundingBox.size.height
+                ]
+                
+                let landmarks = faceObservation.landmarks
+                let quality = Double(faceObservation.faceCaptureQuality ?? 0)
+                let yaw = Double(truncating: faceObservation.yaw ?? 0)
+                let pitch = Double(truncating: faceObservation.pitch ?? 0)
+                let roll = Double(truncating: faceObservation.roll ?? 0)
+                let lms = nativeLandmarkObjectToArray(landmarks, extra: [pitch, yaw, roll, quality], conf: conf)
+                
+                return DetectedFace(frameIdentifier: id, box: box, conf: conf, landmarks: lms)
+            }
+            
+            detectComplete(faces: faceRectangles, identifier: id, image: req.sourceImage)
+        }
+        faceDetectionRequest.identifier = identifier
+        
+        DispatchQueue.main.async {
+            do {
+                faceDetectionRequest.sourceImage = cgImage
+                let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+                try handler.perform([faceDetectionRequest])
+            } catch {
+                print("Failed to perform face detection: \(error)")
+                detectComplete(faces: [], identifier: identifier)
+            }
+        }
+    }
+
+    static func detectFacesNative(in url: URL, identifier: String) {
+        let faceDetectionRequest = CustomFaceDetectRequest { (request, error) in
+            let req = (request as! CustomFaceDetectRequest)
+            let id = req.identifier
+            let cgImage = req.sourceImage
             guard let results = request.results as? [VNFaceObservation] else {
                 detectComplete(faces: [], identifier: id)
                 return
@@ -57,11 +106,13 @@ class FaceRectangle {
             
             detectComplete(faces: faceRectangles, identifier: id, image: cgImage)
         }
-        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         faceDetectionRequest.identifier = identifier
         
         DispatchQueue.main.async {
             do {
+                guard let cgImage = ImageUtils.loadJPG(url: url) else { throw NSError() }
+                faceDetectionRequest.sourceImage = cgImage
+                let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
                 try handler.perform([faceDetectionRequest])
             } catch {
                 print("Failed to perform face detection: \(error)")
@@ -132,6 +183,52 @@ class FaceRectangle {
                                DoublePoint(x: extra[2], y: extra[3])])
         
         return landmarksArray
+    }
+    
+    
+    
+    static func detectFacesAppendingNative(in cgImage: CGImage, identifier: String) -> ([DetectedFace], String, CGImage)? {
+        var result: ([DetectedFace], String, CGImage)? = nil
+        
+        let faceDetectionRequest = CustomFaceDetectRequest { (request, error) in
+            let id = (request as! CustomFaceDetectRequest).identifier
+            guard let results = request.results as? [VNFaceObservation] else {
+                return
+            }
+
+            let faceRectangles = results.map { faceObservation -> DetectedFace in
+                let boundingBox = faceObservation.boundingBox
+                let conf = Double(faceObservation.confidence)
+                
+                let box: [Double] = [
+                    boundingBox.origin.x,
+                    boundingBox.origin.y,
+                    boundingBox.size.width,
+                    boundingBox.size.height
+                ]
+                
+                let landmarks = faceObservation.landmarks
+                let quality = Double(faceObservation.faceCaptureQuality ?? 0)
+                let yaw = Double(truncating: faceObservation.yaw ?? 0)
+                let pitch = Double(truncating: faceObservation.pitch ?? 0)
+                let roll = Double(truncating: faceObservation.roll ?? 0)
+                let lms = nativeLandmarkObjectToArray(landmarks, extra: [pitch, yaw, roll, quality], conf: conf)
+                
+                return DetectedFace(frameIdentifier: id, box: box, conf: conf, landmarks: lms)
+            }
+            
+            result = (faceRectangles, id, cgImage)
+        }
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        faceDetectionRequest.identifier = identifier
+        
+        do {
+            try handler.perform([faceDetectionRequest])
+            return result
+        } catch {
+            print("Failed to perform face detection: \(error)")
+            return nil
+        }
     }
     
 }

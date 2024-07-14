@@ -42,6 +42,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return URL.documentsDirectory.appending(path: "Face Cluster Toolkit/")
     }
     
+    public static func secureCopyItem(at srcURL: URL, to dstURL: URL, forceExtension: String?) -> (Bool, URL?) {
+        do {
+            var dst = dstURL.appendingPathComponent(srcURL.lastPathComponent)
+            if(forceExtension != nil) {
+                dst = dst.deletingPathExtension().appendingPathExtension(forceExtension!)
+            }
+            let name = srcURL.deletingPathExtension().lastPathComponent
+            let ext = dstURL.pathExtension
+            let fm = FileManager.default
+            var fix = 0
+            while fm.fileExists(atPath: dst.path(percentEncoded: false)) {
+                fix += 1
+                dst = dst.deletingLastPathComponent().appending(component: ("\(name)_\(fix)" + ext)).appendingPathExtension("jpg")
+            }
+            try fm.copyItem(at: srcURL, to: dst)
+            return (true, dst)
+        } catch {
+            print("Cannot copy item at \(srcURL) to \(dstURL): \(error)")
+            return (false, nil)
+        }
+    }
+    
     private func createDirectory(dir: URL) {
         do {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)

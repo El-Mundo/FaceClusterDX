@@ -395,3 +395,29 @@ extension FaceNetwork {
         return images
     }
 }
+
+extension FaceNetwork {
+    func deleteFace(face: Face) {
+        guard let ix = faces.firstIndex(where: { return $0.path == face.path }) else {
+            return
+        }
+        faces.remove(at: ix)
+        face.destroySelf()
+    }
+    
+    func deleteFrame(frameIdentifier: String, deleteImage: Bool=true) {
+        let face = faces.filter({ return $0.detectedAttributes.frameIdentifier == frameIdentifier })
+        for f in face {
+            deleteFace(face: f)
+        }
+        if(deleteImage) {
+            let path1 = savedPath.appending(path: "Frames/\(frameIdentifier).jpg")
+            let path2 = savedPath.appending(path: "Frames/\(frameIdentifier).jpeg")
+            if(FileManager.default.fileExists(atPath: path1.path(percentEncoded: false))) {
+                try? FileManager.default.removeItem(at: path1)
+            } else if(FileManager.default.fileExists(atPath: path2.path(percentEncoded: false))) {
+                try? FileManager.default.removeItem(at: path2)
+            }
+        }
+    }
+}

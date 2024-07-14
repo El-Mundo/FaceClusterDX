@@ -9,6 +9,7 @@ import Foundation
 
 import AppKit
 import AVFoundation
+import SwiftUI
 
 let THUMBNAIL_SIZE: Int = 64
 
@@ -82,7 +83,7 @@ class MediaManager {
                 var thumbnail = ImageUtils.cropCGImageNormalised(frameImg, normalisedBox: faceDet.box)
                 if(thumbnail != nil) {
                     //thumbnail = ImageUtils.resizeCG(image: thumbnail!, scale: (thumbnailSize/Double((max(thumbnail!.width, thumbnail!.height)))))
-                    thumbnail = ImageUtils.resizeCGExactly(thumbnail!, size: CGSize(width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE))
+                    thumbnail = ImageUtils.resizeCGExactly(thumbnail!, size: CGSize(width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE))!
                 }
                 face.generateDefaultPosition(index: Int(identifier) ?? 0)
                 let _ = faceNetwork?.saveSingle(face: face, thumbnail: thumbnail)
@@ -160,19 +161,22 @@ class MediaManager {
                     image = source
                 }
                 
-                // print(processedImages)
-                // if(useMTCNN) {
-                //     FaceRectangle.detectFacesMTCNN(in: image)
-                // } else {
-                FaceRectangle.detectFacesNative(in: image, identifier: identifier)
-                // }
-                index += 1
-                
                 // Save image
-                let saved = ImageUtils.saveImageAsJPG(image, at: saveImageURL.appending(path: "\(identifier).jpg"))
+                let save = saveImageURL.appending(path: "\(identifier).jpg")
+                let saved = ImageUtils.saveImageAsJPG(image, at: save)
                 if(!saved) {
+                    FaceRectangle.detectFacesNative(cgImage: image, identifier: identifier)
+                    index += 1
                     print("Failed to save thumbnail for frame \(identifier)")
                     MediaManager.importMessage += String(localized: "Failed to save thumbnail for frame \(identifier)") + "\n"
+                } else {
+                    // print(processedImages)
+                    // if(useMTCNN) {
+                    //     FaceRectangle.detectFacesMTCNN(in: image)
+                    // } else {
+                    FaceRectangle.detectFacesNative(in: save, identifier: identifier)
+                    // }
+                    index += 1
                 }
             } catch {
                 addProcessedImage(faces: [], identifier: String(index), isError: true)
@@ -184,7 +188,7 @@ class MediaManager {
             timeCursor = CMTimeAdd(timeCursor, extractInterval)
         }
         
-        while(processedImages < framesExpected) {
+        while(processedImages < index) {
             sleep(1)
         }
         
@@ -249,6 +253,51 @@ class MediaManager {
     
     func getEditFaceNetwork() -> FaceNetwork? {
         return faceNetwork
+    }
+    
+    func importImageSequence(info: Binding<String>?, progress: Binding<CGFloat>?, urls: [URL], network: FaceNetwork) {
+        info?.wrappedValue = String(localized: "Analysing images...")
+        var completed = 0
+        
+        for url in urls {
+            guard let source: CGImage = ImageUtils.loadJPG(url: url) else {
+                continue
+            }
+            let identifier = url.deletingPathExtension().lastPathComponent
+            
+            guard let result = FaceRectangle.detectFacesAppendingNative(in: source, identifier: identifier) else {
+                completed += 1
+                continue
+            }
+            
+            let frame = result.2
+            let id = result.1
+            let faces = result.0
+            
+            appendFaceDetection(faces: faces, identifier: id, image: frame, network: network)
+            
+            completed += 1
+            progress?.wrappedValue = CGFloat(completed) / CGFloat(urls.count)
+        }
+    }
+    
+    private func appendFaceDetection(faces: [DetectedFace], identifier: String, image: CGImage?=nil, network: FaceNetwork) {
+        for faceDet in faces {
+            let face = Face(detectedAttributes: faceDet, network: network)
+            network.faces.append(face)
+            
+            guard let frameImg = image else {
+                let _ = faceNetwork?.saveSingle(face: face)
+                continue
+            }
+            
+            var thumbnail = ImageUtils.cropCGImageNormalised(frameImg, normalisedBox: faceDet.box)
+            if(thumbnail != nil) {
+                thumbnail = ImageUtils.resizeCGExactly(thumbnail!, size: CGSize(width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE))
+            }
+            face.forceUpdateAttribute(key: network.layoutKey, value: FacePoint(DoublePoint(x: 0, y: 0), for: network.layoutKey))
+            let _ = faceNetwork?.saveSingle(face: face, thumbnail: thumbnail)
+        }
     }
     
 }

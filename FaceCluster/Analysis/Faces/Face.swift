@@ -108,9 +108,9 @@ class Face: Codable {
     func generateDefaultPosition(index: Int) {
         let time = (network?.media?.interval ?? 1) * Double(index)
         //let angle = Double.random(in: -Double.pi...Double.pi)
-        let angle = Double(index) * Double.pi / 6
-        let x = (cos(angle) * time + detectedAttributes.box[0] - 0.5) * 0.5
-        let y = (sin(angle) * time + detectedAttributes.box[1] - 0.5) * 0.5
+        let angle = Double(index) * Double.pi / 12
+        let x = (cos(angle) * time + detectedAttributes.box[0] - 0.5) * 0.25
+        let y = (sin(angle) * time + detectedAttributes.box[1] - 0.5) * 0.25
 
         self.attributes.updateValue(FacePoint(DoublePoint(x: x, y: y), for: "Position"), forKey: "Position")
     }
@@ -172,9 +172,30 @@ class Face: Codable {
 }
 
 extension Face {
+    func reloadTexture() {
+        guard let t = thumbnail else { return }
+        texture = GPUManager.instance?.createTexture(from: t)
+    }
+    
     func updateDisplayPosition(newPosition: DoublePoint) {
         self.displayPos = newPosition
         network?.requestPositionUpdate(face: self, updatedPosition: newPosition)
+    }
+    
+    func destroySelf() {
+        guard let path = self.path else {
+            return
+        }
+        
+        let thumb = path.deletingPathExtension().appendingPathExtension(".jpg")
+        do {
+            if(thumbnail != nil) {
+                try FileManager.default.removeItem(at: thumb)
+            }
+            try FileManager.default.removeItem(at: path)
+        } catch {
+            print(error)
+        }
     }
 }
 

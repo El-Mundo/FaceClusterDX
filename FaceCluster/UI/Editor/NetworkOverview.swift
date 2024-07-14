@@ -76,7 +76,7 @@ struct NetworkOverview: View {
         
         let fileManager = FileManager.default
         do {
-            let directoryURL = nt.savedPath.appending(component: "faces/")
+            let directoryURL = nt.savedPath.appending(component: "frames/")
             let contents = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
             let jpegFiles = contents.filter { $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "jpeg" }
             files = jpegFiles.count

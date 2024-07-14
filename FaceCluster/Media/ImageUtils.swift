@@ -126,4 +126,37 @@ class ImageUtils {
         return nil
     }
     
+    public static func convertPNGToJPG(from url: URL, to destinationPath: URL) -> (Bool, URL?) {
+        guard let cgImage = loadJPG(url: url) else {
+            print("Failed to create CGImage")
+            return (false, nil)
+        }
+        
+        var fix = 0
+        let fileManager = FileManager.default
+        var dest = destinationPath.appendingPathComponent(url.deletingPathExtension().lastPathComponent + ".jpg")
+        while (fileManager.fileExists(atPath: dest.path(percentEncoded: false))) {
+            fix += 1
+            dest = dest.deletingPathExtension().appendingPathExtension("_\(fix).jpg")
+        }
+        guard let destination = CGImageDestinationCreateWithURL(dest as CFURL, UTType.jpeg.identifier as CFString, 1, nil) else {
+            print("Failed to create image destination")
+            return (false, nil)
+        }
+        
+        let options: [CFString: Any] = [
+            kCGImageDestinationLossyCompressionQuality: 1.0 // Maximum quality
+        ]
+        
+        CGImageDestinationAddImage(destination, cgImage, options as CFDictionary)
+        
+        if CGImageDestinationFinalize(destination) {
+            print("Successfully converted PNG to JPG and saved at \(destinationPath)")
+            return (true, dest)
+        } else {
+            print("Failed to finalize image destination")
+            return (false, nil)
+        }
+    }
+    
 }
