@@ -1,7 +1,7 @@
 import Foundation
 import os.log
 
-struct Tsne {
+struct SwiftTsne {
     
     public init() {}
     

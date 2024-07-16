@@ -15,6 +15,8 @@ struct FrameView: View {
     @State var frames: [FramePreview] = []
     let imageWidth: CGFloat = 128, columns: Int = 3, spacing: CGFloat = 12
     let pageSize = 60
+    @State var page = 0
+    @State var pageTotal = 0
     @State var hoveredGrid: FramePreview?
     @State var showDeleteAlert: Bool = false
     @State var waitingFlag: Bool = false
@@ -44,6 +46,22 @@ struct FrameView: View {
                     } label: {
                         Image(systemName: "trash.slash.fill")
                     }.padding(.top, 12).padding(.leading, 24).controlSize(.large).buttonStyle(.borderedProminent).tint(.red)
+                }
+                
+                HStack {
+                    Button(action: {
+                        if(page > 0) {
+                            page -= 1
+                            loadPage(page)
+                        }
+                    }, label: { Image(systemName: "arrowshape.backward") }) .padding(.trailing, 24)
+                    
+                    Button(action: {
+                        if(page < pageTotal - 1) {
+                            page += 1
+                            loadPage(page)
+                        }
+                    }, label: { Image(systemName: "arrowshape.forward") }) .padding(.leading, 24)
                 }
                 
                 let col = Array(repeating: GridItem(.fixed(imageWidth), spacing: spacing), count: columns)
@@ -146,6 +164,7 @@ struct FrameView: View {
                 $0.lastPathComponent < $1.lastPathComponent
             })
             loadPage(0)
+            pageTotal = files.count / pageSize + 1
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
             files = []
@@ -153,6 +172,7 @@ struct FrameView: View {
     }
     
     private func loadPage(_ num: Int) {
+        page = num
         frames.removeAll()
         let start = pageSize * num
         var end = pageSize * (num + 1)

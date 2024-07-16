@@ -77,7 +77,7 @@ struct FileImporter: View {
                 })
                 .fileImporter(
                     isPresented: $showProjectImporter,
-                    allowedContentTypes: [.json],
+                    allowedContentTypes: [faceClusterProjectFileExtension],
                     allowsMultipleSelection: false
                 ) { result in
                     switch result {

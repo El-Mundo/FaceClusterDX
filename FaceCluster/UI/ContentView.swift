@@ -11,7 +11,7 @@ import AVKit
 struct ContentView: View {
     ///0-Import file, 1-Preview video, 2-Import project
     @State var state = 0
-    @State var pbProgress = 0.0
+    @State var pbProgress: CGFloat = 0.0
     @State var pbInfo = ""
     
     var app: FaceClusterApp?

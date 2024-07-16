@@ -47,6 +47,8 @@ typedef struct
     bool showDisabled;
     int32_t selectedFaceIndex;
     float selectRadius;
+    /// To solve a BUG with MTLTexture colour space
+    bool useBGR;
 } Uniforms;
 
 typedef struct {

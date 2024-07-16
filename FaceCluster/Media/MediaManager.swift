@@ -26,8 +26,8 @@ class MediaManager {
     private var importedURL: URL
     private var isVideo: Bool
     
-    private static let timeoutSeconds = 10
-    private let timeout = Duration.seconds(timeoutSeconds)
+    //private static let timeoutSeconds = 10
+    //private let timeout = Duration.seconds(timeoutSeconds)
     
     private var processedImages = 0
     private var cv: ContentView?
@@ -96,6 +96,17 @@ class MediaManager {
         generator.requestedTimeToleranceAfter = CMTime(seconds: frameDuration, preferredTimescale: timescale)
         generator.requestedTimeToleranceBefore = .zero
         return generator
+    }
+    
+    func loadExistingProject(context: ContentView) {
+        cv = context
+        do {
+            let data = try Data(contentsOf: importedURL, options: .mappedIfSafe)
+            let _ = try JSONDecoder().decode(FaceClusterProject.self, from: data)
+            cv?.state = 5
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func generateFrameSeuqnce(extractValue: Double, extractUnit: ExtractionUnit, context: ContentView?, downsample: Float, useMTCNN: Bool) async throws {
@@ -192,6 +203,8 @@ class MediaManager {
             sleep(1)
         }
         
+        try? faceNetwork?.saveAttributesData()
+        
         let timeLapse = Date.now.timeIntervalSince(startTime)
         print("Time lapse \(timeLapse)")
         MediaManager.importMessage += String(localized: "Time lapse \(timeLapse)") + "\n"
@@ -253,6 +266,10 @@ class MediaManager {
     
     func getEditFaceNetwork() -> FaceNetwork? {
         return faceNetwork
+    }
+    
+    func setEditFaceNetwork(newNetwork: FaceNetwork) {
+        faceNetwork = newNetwork
     }
     
     func importImageSequence(info: Binding<String>?, progress: Binding<CGFloat>?, urls: [URL], network: FaceNetwork) {

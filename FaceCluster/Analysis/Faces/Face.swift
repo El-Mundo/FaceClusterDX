@@ -17,9 +17,14 @@ class Face: Codable {
     var network: FaceNetwork? = nil
     var texture: MTLTexture? = nil
     var path: URL?
+    
+    /// Temporray variable
     var textureId: Int = -8
     var displayPos: DoublePoint = DoublePoint(x: 0, y: 0)
+    
+    /// Temporary variable for arrange clusters in the network
     var clusterIndex: Int = -1
+    
     /// Call update in network before referencing
     var indexInNet: Int = -1
     var clusterName: String?
@@ -34,6 +39,23 @@ class Face: Codable {
         self.detectedAttributes = detectedAttributes
         self.network = network
         self.disabled = false
+    }
+    
+    func reload(network: FaceNetwork, url: URL) {
+        self.network = network
+        let fm = FileManager.default
+        var thumbnailPath = url.deletingPathExtension().appendingPathExtension(".jpg")
+        if(!fm.fileExists(atPath: thumbnailPath.path(percentEncoded: false))) {
+            thumbnailPath = url.deletingPathExtension().appendingPathExtension(".jpeg")
+        }
+        
+        self.thumbnail = ImageUtils.loadJPG(url: thumbnailPath)
+        self.reloadTexture()
+        self.path = url
+    }
+    
+    func assignClusterName(name: String) {
+        self.clusterName = name
     }
     
     func save(fileURL: URL) throws {

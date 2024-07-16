@@ -8,7 +8,7 @@
 import Foundation
 import AppKit
 
-class FaceNetwork {
+class FaceNetwork: Identifiable {
     var faces = [Face]()
     var savedPath: URL
     var media: MediaAttributes?
@@ -19,11 +19,82 @@ class FaceNetwork {
     
     var attributes: [SavableAttribute]
     
+    struct SavableNetwork: Codable {
+        let attributes: [SavableAttribute]
+        let layout: String
+    }
+    
     init(faces: [Face] = [Face](), savedPath: URL, media: MediaAttributes?=nil, attributes: [SavableAttribute]) {
         self.faces = faces
         self.savedPath = savedPath
         self.media = media
         self.attributes = attributes
+    }
+    
+    init(url: URL) throws {
+        self.savedPath = url
+        let fm = FileManager.default
+        let json = JSONDecoder()
+        
+        let mediaPath = url.appending(path: "meta.json")
+        if let data = try? Data(contentsOf: mediaPath, options: .mappedIfSafe) {
+            self.media = try json.decode(MediaAttributes.self, from: data)
+        } else {
+            self.media = nil
+        }
+        
+        let dataPath = url.appending(path: "data.json")
+        if let data = try? Data(contentsOf: dataPath, options: .mappedIfSafe) {
+            let saved = try json.decode(SavableNetwork.self, from: data)
+            self.attributes = saved.attributes
+            self.layoutKey = saved.layout
+        } else {
+            fatalError(String(localized: "Cannot locate the attribute data file"))
+        }
+        
+        let clusterPath = url.appending(path: "clusters.json")
+        if let clusters = try? readClusters(url: clusterPath) {
+            self.clusters = clusters
+        } else {
+            self.clusters = [String : FaceCluster]()
+        }
+        
+        self.faces = []
+        var brokenFaceData: [URL] = []
+        let facesPath = url.appending(path: "faces/")
+        if let contents = try? fm.contentsOfDirectory(at: facesPath, includingPropertiesForKeys: nil) {
+            let jsonPaths = contents.filter { $0.pathExtension == "json" }.sorted(by: {
+                $0.lastPathComponent < $1.lastPathComponent
+            })
+            
+            var completed = 0
+            for jsonFile in jsonPaths {
+                if let data = try? Data(contentsOf: jsonFile, options: .mappedIfSafe),
+                   let face = try? json.decode(Face.self, from: data) {
+                    face.reload(network: self, url: jsonFile)
+                    faces.append(face)
+                } else {
+                    brokenFaceData.append(jsonFile)
+                }
+                completed += 1
+                ProgressBar.progressBinding?.wrappedValue = CGFloat(jsonPaths.count) / CGFloat(completed)
+            }
+        } else {
+            MediaManager.importMessage.append(String(localized: "Warning: Loading a network with no faces"))
+        }
+        
+        ProgressBar.progressBinding?.wrappedValue = 1.0
+        
+        for cluster in self.clusters.values {
+            for face in cluster.faces {
+                face.clusterName = cluster.name
+            }
+        }
+        
+        if(brokenFaceData.count > 0) {
+            MediaManager.importMessage.append(String(localized: "Broken data found: ") + String(describing: brokenFaceData))
+            print("Broken data: ", brokenFaceData)
+        }
     }
     
     public func saveMetadata() {
@@ -36,6 +107,14 @@ class FaceNetwork {
         }
     }
     
+    public func saveAttributesData() throws {
+        let target = savedPath.appending(path: "data.json")
+        let savable = SavableNetwork(attributes: self.attributes, layout: self.layoutKey)
+        let data = try JSONEncoder().encode(savable)
+        try data.write(to: target)
+    }
+    
+    /*
     /// When deleting a face box, make sure to re-index saved images
     public func saveAll() {
         let directory = savedPath.appending(path: "faces/")
@@ -62,6 +141,7 @@ class FaceNetwork {
         
         print("\(total) files saved.")
     }
+     */
     
     func requestPositionUpdate(face: Face, updatedPosition: DoublePoint) {
         let a = face.attributes
@@ -268,6 +348,21 @@ class FaceNetwork {
         }
     }
     
+    private func readClusters(url: URL) throws -> [String : FaceCluster] {
+        FaceClusterSavable.container = self
+        if let data = try? Data(contentsOf: url, options: .mappedIfSafe) {
+            let clusterSavedArray = try JSONDecoder().decode(Array<FaceClusterSavable>.self, from: data)
+            
+            var clusters = [String : FaceCluster]()
+            for cluster in clusterSavedArray {
+                clusters.updateValue(cluster.clt, forKey: cluster.clt.name)
+            }
+            return clusters
+        } else {
+            return [:]
+        }
+    }
+    
     func forceAppendAttribute(key: String, type: AttributeType, dimensions: Int?) {
         if(attributes.contains(where: {$0.name == key})) {
             attributes.removeAll(where: {$0.name == key})
@@ -276,6 +371,12 @@ class FaceNetwork {
             attributes.append(SavableAttribute(name: key, type: type, dimensions: dimensions))
         } else {
             attributes.append(SavableAttribute(name: key, type: type, dimensions: nil))
+        }
+        
+        do {
+            try saveAttributesData()
+        } catch {
+            print(error)
         }
     }
     
@@ -304,9 +405,11 @@ class FaceNetwork {
     }
     
     func attributeVectorsToDoubleArray(name: String) -> ([[Double]]?, [Int], Int, String) {
-        guard let att = attributes.first(where: { name == $0.name }) else {
+        guard let att = attributes.first(where: { name == $0.name }),
+              let dimensions = att.dimensions else {
             return (nil, [], -2, String(localized: "Invalid input attribute"))
         }
+        
         if(att.type != .Vector) {
             return (nil, [], -3, String(localized: "Input attribute must a vector"))
         }
@@ -320,7 +423,24 @@ class FaceNetwork {
                 corruptedData += 1
                 continue
             }
-            d.append(a.value)
+            if(a.value.count == dimensions) {
+                d.append(a.value)
+            } else if(a.value.count < dimensions) {
+                var aa = Array<Double>(repeating: 0, count: dimensions)
+                for i in 0..<a.value.count {
+                    aa[i] = a.value[i]
+                }
+                for i in a.value.count..<dimensions {
+                    aa[i] = 0
+                }
+                d.append(aa)
+            } else {
+                var aa = Array<Double>(repeating: 0, count: dimensions)
+                for i in 0..<dimensions {
+                    aa[i] = a.value[i]
+                }
+                d.append(aa)
+            }
             i.append(j)
         }
         

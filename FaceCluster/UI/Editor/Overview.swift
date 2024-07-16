@@ -30,6 +30,8 @@ struct Overview: View {
     @State var showAlert: Bool = false
     @State var alertType: OverviewAlertType = .general
     @State var showMessageSheet: Bool = false
+    @State var showGroupEditor: Bool = false
+    @State var showCondition: Bool = false
     @State var showSelectableAlert: Bool = false
     /// This variables forces the variables referenced by a Sheet to be updated one frame previous to the Sheet initialisation.
     /// It's added to solve SwiftUI's issue where variables in Sheet cannot be updated timely.
@@ -89,7 +91,7 @@ struct Overview: View {
                 VStack {
                     HStack {
                         Button("Conditional Select") {
-                            
+                            showCondition.toggle()
                         }
                         
                         Button() {
@@ -101,7 +103,7 @@ struct Overview: View {
                     
                     HStack {
                         Button() {
-                            
+                            showGroupEditor.toggle()
                         } label: {
                             Label("Edit Selected", systemImage: "pencil")
                         }

@@ -12,6 +12,8 @@ struct ProgressBar: View {
     @State var preview = false
     var context: ContentView?
     
+    public static var progressBinding: Binding<CGFloat>? = nil
+    
     let pbMinWidth: CGFloat = 128, pbMaxWidth: CGFloat = 256, pbMinHeight: CGFloat = 32, pbMaxHeight: CGFloat = 32
 
     var body: some View {
@@ -34,6 +36,12 @@ struct ProgressBar: View {
                 .tint(.red)
                 .controlSize(.large)
             }
+        }.onAppear() {
+            guard let m = MediaManager.instance else { return }
+            if(!m.getIsVideo()) {
+                MediaManager.instance?.loadExistingProject(context: context!)
+            }
+            ProgressBar.progressBinding = context?.$pbProgress
         }
     }
     

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */; };
+		863069012C45738900A72490 /* GroupedAttributeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863069002C45738900A72490 /* GroupedAttributeEditor.swift */; };
 		863C5D742C31B86400F8D408 /* FaceAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863C5D732C31B86400F8D408 /* FaceAlignment.swift */; };
 		864E63FF2C22EBA30070EC5E /* NetworkEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864E63FE2C22EBA30070EC5E /* NetworkEditor.swift */; };
 		864E64012C22EE070070EC5E /* NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864E64002C22EE070070EC5E /* NetworkView.swift */; };
@@ -30,6 +31,7 @@
 		866D66942C0B28FC009C356F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66932C0B28FC009C356F /* AppDelegate.swift */; };
 		866D66982C0B505C009C356F /* MediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66972C0B505C009C356F /* MediaManager.swift */; };
 		86715F832C26140F00732FAA /* Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86715F822C26140F00732FAA /* Editor.swift */; };
+		8671D6932C466FE6009FE479 /* FaceClusterProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8671D6922C466FE6009FE479 /* FaceClusterProject.swift */; };
 		867833122C41B63C00BEBAC1 /* LocalCoreML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867833112C41B63C00BEBAC1 /* LocalCoreML.swift */; };
 		8687FC312C0CDC4900E97258 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8687FC302C0CDC4900E97258 /* Localizable.xcstrings */; };
 		8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7772C15B4A100758AE8 /* GPUManager.swift */; };
@@ -78,6 +80,7 @@
 
 /* Begin PBXFileReference section */
 		8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAttribute.swift; sourceTree = "<group>"; };
+		863069002C45738900A72490 /* GroupedAttributeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedAttributeEditor.swift; sourceTree = "<group>"; };
 		863C5D732C31B86400F8D408 /* FaceAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAlignment.swift; sourceTree = "<group>"; };
 		864E63FE2C22EBA30070EC5E /* NetworkEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkEditor.swift; sourceTree = "<group>"; };
 		864E64002C22EE070070EC5E /* NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkView.swift; sourceTree = "<group>"; };
@@ -105,6 +108,7 @@
 		866D66932C0B28FC009C356F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		866D66972C0B505C009C356F /* MediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaManager.swift; sourceTree = "<group>"; };
 		86715F822C26140F00732FAA /* Editor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editor.swift; sourceTree = "<group>"; };
+		8671D6922C466FE6009FE479 /* FaceClusterProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceClusterProject.swift; sourceTree = "<group>"; };
 		867833112C41B63C00BEBAC1 /* LocalCoreML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalCoreML.swift; sourceTree = "<group>"; };
 		8687FC302C0CDC4900E97258 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		868E5A212C2B5CC1005A49B8 /* ClusterPalette.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClusterPalette.h; sourceTree = "<group>"; };
@@ -183,6 +187,7 @@
 				86621AB52C3D75CA004D45F4 /* OverviewSubpanels.swift */,
 				869D87212C302BE70005BD80 /* FrameView.swift */,
 				86EA979E2C42D54B00839CC8 /* FaceSelector.swift */,
+				863069002C45738900A72490 /* GroupedAttributeEditor.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -214,6 +219,7 @@
 		866433812C209F2F00792590 /* Analysis */ = {
 			isa = PBXGroup;
 			children = (
+				8671D6912C466FD1009FE479 /* Project */,
 				866433822C209F4500792590 /* Faces */,
 				86952F7B2C346A2800519FEF /* T_SNE.swift */,
 				86EB22AD2C3DCFA0002661B6 /* SwiftTSNE.swift */,
@@ -318,6 +324,14 @@
 				86ABF1D42C3FF043004D5857 /* CSVConverter.swift */,
 			);
 			path = Media;
+			sourceTree = "<group>";
+		};
+		8671D6912C466FD1009FE479 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				8671D6922C466FE6009FE479 /* FaceClusterProject.swift */,
+			);
+			path = Project;
 			sourceTree = "<group>";
 		};
 		868E5A222C2B6267005A49B8 /* Misc */ = {
@@ -499,7 +513,9 @@
 				86BFB5232C1F7D67007EDA8A /* ONet.mlmodel in Sources */,
 				866433842C209F5400792590 /* Face.swift in Sources */,
 				864E63FF2C22EBA30070EC5E /* NetworkEditor.swift in Sources */,
+				8671D6932C466FE6009FE479 /* FaceClusterProject.swift in Sources */,
 				86EA979F2C42D54B00839CC8 /* FaceSelector.swift in Sources */,
+				863069012C45738900A72490 /* GroupedAttributeEditor.swift in Sources */,
 				86BA0A202C272F56007BEAB3 /* FacenetWrapper.swift in Sources */,
 				866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */,
 				86952F7C2C346A2800519FEF /* T_SNE.swift in Sources */,

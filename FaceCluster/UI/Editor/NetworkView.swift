@@ -180,6 +180,8 @@ struct NetworkView: NSViewRepresentable {
             if(net != nil) {
                 setNetwork(network: net!)
             }
+            
+            uniforms[0].useBGR = MediaManager.instance?.getIsVideo() ?? false
             NetworkView.camera = SIMD3<Float>(0, 0, -5)
             NetworkView.mouse = SIMD2<Float>(0, 0)
             NetworkView.mouseDown = false
@@ -224,12 +226,14 @@ struct NetworkView: NSViewRepresentable {
                 } else {
                     face.displayPos = DoublePoint(x: 0, y: 0)
                 }
+                
                 if(face.texture != nil) {
                     face.textureId = network.textures.count
                     network.textures.append(face.texture!)
                 }
                 faceObjPtr![i].pos = simd_float2(x: Float(face.displayPos.x), y: Float(face.displayPos.y))
                 faceObjPtr![i].disabled = face.disabled
+                print(faceObjPtr![i].pos)
             }
             //debugTexture = try? loadBundledTexture(name: "img")
             loadImagesIntoTexture()
@@ -250,7 +254,7 @@ struct NetworkView: NSViewRepresentable {
         }
         
         func draw(in view: MTKView) {
-            if(networkEditorInstance?.context?.freezeNetworkView ?? false) {
+            if(parent.context?.context?.freezeNetworkView ?? false) {
                 return
             }
             guard let faceNetwork = network else {

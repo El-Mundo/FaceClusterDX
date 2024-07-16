@@ -22,6 +22,7 @@ typedef struct
     uint16_t texIndex;
     bool selected;
     bool darken;
+    bool useBGR;
 } MeshletVertex;
 
 typedef struct
@@ -34,6 +35,7 @@ typedef struct {
     uint16_t type;
     bool selected;
     bool darken;
+    bool useBGR;
     //float4x4 modelMatrix;
     simd_float3 aspectRatio;
     uint16_t primitiveCount;
@@ -79,6 +81,8 @@ void faceObjectShader(object_data ChunkPayload& payload [[payload]],
     payload.primitiveCount = 2;
     payload.vertexCount = 4;
     payload.aspectRatio = simd_float3(1 / uniforms.aspect, 1, 1);
+    
+    payload.useBGR = uniforms.useBGR;
     
     payload.indices[0] = 0;
     payload.indices[1] = 1;
@@ -134,6 +138,7 @@ void faceMeshletShader(AAPLTriangleMeshType output,
         v.texIndex = payload.textureIndex;
         v.selected = payload.selected;
         v.darken = payload.darken;
+        v.useBGR = payload.useBGR;
         //v.normal = normalize(payload.vertices[lid].normal.xyz);
         output.set_vertex(lid, v);
     }
@@ -173,7 +178,11 @@ fragment float4 fragmentShader(MeshletVertex in [[stage_in]],
     }
 
     //return float4(colorSample);
-    return float4(colorSample.b * tone, colorSample.g * tone, colorSample.r * tone, colorSample.a);
+    if(in.useBGR) {
+        return float4(colorSample.b * tone, colorSample.g * tone, colorSample.r * tone, colorSample.a);
+    } else {
+        return float4(colorSample.r * tone, colorSample.g * tone, colorSample.b * tone, colorSample.a);
+    }
 }
 
 struct VertexOut {

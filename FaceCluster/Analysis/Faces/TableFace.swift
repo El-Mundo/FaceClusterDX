@@ -109,4 +109,8 @@ struct TableFace: Identifiable {
         obj.network?.deleteFace(face: obj)
     }
     
+    func getFaceObject() -> Face {
+        return obj
+    }
+    
 }

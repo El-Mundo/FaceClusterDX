@@ -6,10 +6,17 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct Editor: View {
     @State var state = 0
     @State var preview = false
+    @State var showExporter = false
+    @State var showMessage = false
+    @State var menuMessage = ""
+    @State var menuMessageHeader = ""
+    @State var cachedDoc: ProjectDocument?
+    
     var freezeNetworkView = false
     
     var body: some View {
@@ -33,12 +40,43 @@ struct Editor: View {
                 }
                 .frame(width: 240, alignment: .bottom)
                 .onChange(of: state, changeState)
+                .padding(.leading, 32)
                 
-                Text("Bottom bar")
+                Spacer()
+                
+                //Text("Bottom bar")
+                Button() {
+                    let proj = FaceClusterProject.getInstance()!
+                    cachedDoc = ProjectDocument(project: proj)
+                    showExporter = true
+                } label: {
+                    Label("Save Project", systemImage: "square.and.arrow.down.fill")
+                }.buttonStyle(.borderedProminent).tint(.cyan)
+                .padding(.trailing, 32)
+                .controlSize(.large)
             }
-            .frame(height: 12)
+            .fileExporter(isPresented: $showExporter, document: cachedDoc, contentType: faceClusterProjectFileExtension) { result in
+                switch result {
+                case .success(let url):
+                    showInfo(String(localized: "Saved project to ") + url.path(percentEncoded: false), title: String(localized: "Success"))
+                    break
+                case .failure(let error):
+                    showInfo(error.localizedDescription, title: String(localized: "Error"))
+                    break
+                }
+                cachedDoc = nil
+            }.frame(height: 24)
             .padding(.bottom, 6)
         }
+        .alert(isPresented: $showMessage) {
+            Alert(title: Text(menuMessageHeader), message: Text(menuMessage), dismissButton: .cancel())
+        }
+    }
+    
+    func showInfo(_ message: String, title: String="Info") {
+        menuMessage = message
+        menuMessageHeader = title
+        showMessage = true
     }
     
     func changeState() {

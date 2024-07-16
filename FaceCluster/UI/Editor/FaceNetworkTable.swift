@@ -21,6 +21,9 @@ struct FaceNetworkTable: View {
     @State var preEditionString: String?
     @State var editedFace: TableFace?
     @State var editedAttribute: Binding<String>?
+    @State var showGroupEditor: Bool = false
+    @State var showCondition: Bool = false
+    @State var cachedFaces = [TableFace]()
     
     @State var scrollOffset: CGFloat = 0
     let cellWidth: CGFloat = 128
@@ -69,6 +72,18 @@ struct FaceNetworkTable: View {
         }).onChange(of: context.forceTableDeletingSelection, {
             deleteSelectedFaces()
         })
+        .onChange(of: context.showGroupEditor, {
+            cachedFaces = faces.filter({ return selectedFaces.contains($0.id) })
+            showGroupEditor = true
+        })
+        .onChange(of: context.showCondition) {
+            showCondition = true
+        }.sheet(isPresented: $showCondition, content: {
+            FaceSelector.FaceSelectorPanel(tableFaces: faces, network: network, context: self, selector: FaceSelector())
+        })
+        .sheet(isPresented: $showGroupEditor, content: {
+            GroupedAttributeEditor.GroupedEditorPanel(network: network, faces: cachedFaces, editor: GroupedAttributeEditor(network: self.network), context: self)
+        })
         
         ScrollView(.horizontal, showsIndicators: false) {
             GeometryReader { geometry in
@@ -115,7 +130,7 @@ struct FaceNetworkTable: View {
                     .onSubmit {
                         let updated = editedFace!.requestUpdate(for: editedAttribute!.wrappedValue, newValue: editedString!.wrappedValue)
                         if(updated == false) {
-                            editedString = Binding($preEditionString)
+                            editedString?.wrappedValue = preEditionString ?? ""
                         } else {
                             editedString = nil
                             editedFace = nil
@@ -167,6 +182,22 @@ struct FaceNetworkTable: View {
     private func deleteSelectedFaces() {
         if(selectedFaces.count < 1) { return }
         context.showDestructiveMessageAlert(String(localized: "Confirm to delete \(selectedFaces.count) selected faces from the network?"), title: String(localized: "Delete"), action: confirmDeletion)
+    }
+    
+    func appendSelection(faces: [TableFace.ID], clearPrevious: Bool, deselecting: Bool) {
+        if(clearPrevious) {
+            selectedFaces.removeAll()
+        }
+        
+        for face in faces {
+            let contains = selectedFaces.contains(face)
+            
+            if(deselecting && contains) {
+                selectedFaces.remove(face)
+            } else if(!deselecting && !contains) {
+                selectedFaces.insert(face)
+            }
+        }
     }
     
     private func confirmDeletion() {

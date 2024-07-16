@@ -51,6 +51,7 @@ struct NetworkOverview: View {
                 }
                 .onChange(of: layoutKey) {
                     context?.network.layoutKey = layoutKey
+                    try? context?.network.saveAttributesData()
                 }.frame(width: 160).padding(.vertical, 6)
             }
         }

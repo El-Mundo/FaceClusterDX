@@ -110,7 +110,7 @@ class FaceRectangle {
         
         DispatchQueue.main.async {
             do {
-                guard let cgImage = ImageUtils.loadJPG(url: url) else { throw NSError() }
+                guard let cgImage = ImageUtils.loadJPG(url: url) else { print("Cannot load \(url)"); return }
                 faceDetectionRequest.sourceImage = cgImage
                 let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
                 try handler.perform([faceDetectionRequest])
