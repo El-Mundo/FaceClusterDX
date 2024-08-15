@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		860E69362C6E4CBD00ACC06D /* MediaTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */; };
 		8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */; };
 		863069012C45738900A72490 /* GroupedAttributeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863069002C45738900A72490 /* GroupedAttributeEditor.swift */; };
 		863C5D742C31B86400F8D408 /* FaceAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863C5D732C31B86400F8D408 /* FaceAlignment.swift */; };
@@ -79,6 +80,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTimeline.swift; sourceTree = "<group>"; };
 		8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAttribute.swift; sourceTree = "<group>"; };
 		863069002C45738900A72490 /* GroupedAttributeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedAttributeEditor.swift; sourceTree = "<group>"; };
 		863C5D732C31B86400F8D408 /* FaceAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAlignment.swift; sourceTree = "<group>"; };
@@ -164,6 +166,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		860E69342C6E4CA900ACC06D /* Visualisation */ = {
+			isa = PBXGroup;
+			children = (
+				860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */,
+			);
+			path = Visualisation;
+			sourceTree = "<group>";
+		};
 		860FD4522C0FBA0A00AA4B39 /* ML */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,6 +315,7 @@
 		866D66952C0B501A009C356F /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				860E69342C6E4CA900ACC06D /* Visualisation */,
 				864E63FD2C22EB8D0070EC5E /* Editor */,
 				866433802C209E8400792590 /* Import */,
 				866D66662C0B1735009C356F /* FaceClusterApp.swift */,
@@ -499,6 +510,7 @@
 				8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */,
 				8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */,
 				864E64062C234C060070EC5E /* GLMatrix.swift in Sources */,
+				860E69362C6E4CBD00ACC06D /* MediaTimeline.swift in Sources */,
 				869D87222C302BE70005BD80 /* FrameView.swift in Sources */,
 				86C3D3EB2C0E48DA00704629 /* FaceRectangle.swift in Sources */,
 				864E64012C22EE070070EC5E /* NetworkView.swift in Sources */,

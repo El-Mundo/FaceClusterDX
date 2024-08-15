@@ -540,4 +540,12 @@ extension FaceNetwork {
             }
         }
     }
+    
+    func getMediaTime(face: Face) -> Double {
+        if let faceFrameIndex = Int(face.detectedAttributes.frameIdentifier) {
+            return Double(faceFrameIndex) * self.media!.interval
+        } else {
+            return -1.0
+        }
+    }
 }

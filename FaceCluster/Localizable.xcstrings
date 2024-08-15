@@ -791,6 +791,9 @@
         }
       }
     },
+    "Continue" : {
+
+    },
     "Create" : {
       "localizations" : {
         "zh-Hans" : {

@@ -207,7 +207,11 @@ fragment float4 mouseFragment(VertexOut in [[stage_in]], texture2d<half> texture
                                    mag_filter::linear,
                                    min_filter::linear);
     half4 colorSample = texture.sample(colorSampler, in.texCoord.xy);
-    return float4(colorSample.r*0.3, colorSample.g*0.3, colorSample.b*0.3, 0.25);
+    if(colorSample.r < 0.05f && colorSample.g < 0.05f && colorSample.b < 0.05f) {
+        // Make background colour transparent
+        return float4(0, 0, 0, 0);
+    }
+    return float4(colorSample.r*0.3, colorSample.g*0.3, colorSample.b*0.3, 0.5);
 }
 
 struct PolygonVertex {

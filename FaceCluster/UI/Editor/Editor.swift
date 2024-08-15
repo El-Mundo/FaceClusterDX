@@ -68,8 +68,15 @@ struct Editor: View {
             }.frame(height: 24)
             .padding(.bottom, 6)
         }
-        .alert(isPresented: $showMessage) {
-            Alert(title: Text(menuMessageHeader), message: Text(menuMessage), dismissButton: .cancel())
+        .sheet(isPresented: $showMessage) {
+            VStack {
+                Text(menuMessageHeader).font(.headline)
+                Text(menuMessage)
+                    .padding(.bottom, 12)
+                    .padding(.horizontal, 24)
+                Button("Continue") { showMessage = false }
+                    .padding(.bottom, 12)
+            }
         }
     }
     
