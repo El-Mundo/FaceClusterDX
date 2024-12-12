@@ -73,6 +73,15 @@ class FaceClusterProject: Codable {
             }
         }
     }
+    
+    func updateActiveNetwork(activeUrl: URL) {
+        if(paths.contains(activeUrl.lastPathComponent)) {
+            self.activePath = activeUrl.lastPathComponent
+            self.activeNetwork = try! FaceNetwork(url: activeUrl)
+            MediaManager.instance?.setEditFaceNetwork(newNetwork: activeNetwork)
+        }
+            
+    }
 }
 
 struct ProjectDocument: FileDocument {

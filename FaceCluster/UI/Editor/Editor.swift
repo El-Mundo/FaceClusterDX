@@ -25,8 +25,12 @@ struct Editor: View {
                 NetworkEditor(preview: preview, context: self)
             } else if(state == 1) {
                 FrameView(network: MediaManager.instance!.getEditFaceNetwork()!)
-            } else {
+            } else if(state == 2) {
                 Overview(network: MediaManager.instance!.getEditFaceNetwork()!, context: self)
+            } else if(state == 3) {
+                ProjectView(project: FaceClusterProject.getInstance())
+            } else {
+                
             }
             
             HStack {
@@ -35,10 +39,12 @@ struct Editor: View {
                         Text("Network").tag(0 as Int)
                         Text("Frames").tag(1 as Int)
                         Text("Overview").tag(2 as Int)
+                        Text("Project").tag(3 as Int)
+                        Text("Timeline").tag(4 as Int)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
-                .frame(width: 240, alignment: .bottom)
+                .frame(width: 280, alignment: .bottom)
                 .onChange(of: state, changeState)
                 .padding(.leading, 32)
                 

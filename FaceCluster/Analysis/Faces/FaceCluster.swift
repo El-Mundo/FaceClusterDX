@@ -77,7 +77,7 @@ struct FaceClusterSavable: Codable {
         let faces = f.faces
         for face in faces {
             for pth in facePaths {
-                if(face.path!.deletingLastPathComponent().lastPathComponent.elementsEqual(pth)) {
+                if(face.path!.deletingPathExtension().lastPathComponent.elementsEqual(pth)) {
                     out.faces.append(face)
                     break
                 }

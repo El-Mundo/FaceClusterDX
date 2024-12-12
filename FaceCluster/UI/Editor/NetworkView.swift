@@ -233,7 +233,7 @@ struct NetworkView: NSViewRepresentable {
                 }
                 faceObjPtr![i].pos = simd_float2(x: Float(face.displayPos.x), y: Float(face.displayPos.y))
                 faceObjPtr![i].disabled = face.disabled
-                print(faceObjPtr![i].pos)
+                //print(faceObjPtr![i].pos)
             }
             //debugTexture = try? loadBundledTexture(name: "img")
             loadImagesIntoTexture()

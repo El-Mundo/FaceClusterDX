@@ -197,6 +197,9 @@
         }
       }
     },
+    "Alert" : {
+
+    },
     "Align Faces" : {
       "localizations" : {
         "zh-Hans" : {
@@ -681,6 +684,9 @@
         }
       }
     },
+    "Clusters" : {
+
+    },
     "Clusters: %lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -934,6 +940,9 @@
         }
       }
     },
+    "Disabled" : {
+
+    },
     "Distance:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1066,6 +1075,9 @@
         }
       }
     },
+    "Face Attributes" : {
+
+    },
     "Facenet512" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1085,6 +1097,9 @@
           }
         }
       }
+    },
+    "Faces: " : {
+
     },
     "Faces: %lld" : {
       "localizations" : {
@@ -1718,6 +1733,9 @@
         }
       }
     },
+    "Name:" : {
+
+    },
     "Network" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1747,6 +1765,9 @@
           }
         }
       }
+    },
+    "Networks" : {
+
     },
     "No enough data samples to perform dimension reduction" : {
       "localizations" : {
@@ -1868,6 +1889,9 @@
         }
       }
     },
+    "Position:" : {
+
+    },
     "Proceed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1903,6 +1927,9 @@
           }
         }
       }
+    },
+    "Project" : {
+
     },
     "Read from dimension:" : {
       "localizations" : {
@@ -2363,6 +2390,9 @@
           }
         }
       }
+    },
+    "Timeline" : {
+
     },
     "To Dimension:" : {
       "localizations" : {

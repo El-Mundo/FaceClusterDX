@@ -35,6 +35,7 @@
 		8671D6932C466FE6009FE479 /* FaceClusterProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8671D6922C466FE6009FE479 /* FaceClusterProject.swift */; };
 		867833122C41B63C00BEBAC1 /* LocalCoreML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867833112C41B63C00BEBAC1 /* LocalCoreML.swift */; };
 		8687FC312C0CDC4900E97258 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8687FC302C0CDC4900E97258 /* Localizable.xcstrings */; };
+		868E32F22D0B19D2006A6153 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868E32F12D0B19D2006A6153 /* ProjectView.swift */; };
 		8694A7782C15B4A100758AE8 /* GPUManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7772C15B4A100758AE8 /* GPUManager.swift */; };
 		8694A77A2C15BBBD00758AE8 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8694A7792C15BBBD00758AE8 /* ImageUtils.swift */; };
 		86952F7C2C346A2800519FEF /* T_SNE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86952F7B2C346A2800519FEF /* T_SNE.swift */; };
@@ -113,6 +114,7 @@
 		8671D6922C466FE6009FE479 /* FaceClusterProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceClusterProject.swift; sourceTree = "<group>"; };
 		867833112C41B63C00BEBAC1 /* LocalCoreML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalCoreML.swift; sourceTree = "<group>"; };
 		8687FC302C0CDC4900E97258 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		868E32F12D0B19D2006A6153 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		868E5A212C2B5CC1005A49B8 /* ClusterPalette.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClusterPalette.h; sourceTree = "<group>"; };
 		8694A7772C15B4A100758AE8 /* GPUManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUManager.swift; sourceTree = "<group>"; };
 		8694A7792C15BBBD00758AE8 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */,
+				868E32F12D0B19D2006A6153 /* ProjectView.swift */,
 			);
 			path = Visualisation;
 			sourceTree = "<group>";
@@ -539,6 +542,7 @@
 				8669137E2C2F2C87000CA8DF /* Overview.swift in Sources */,
 				86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */,
 				86EB22AE2C3DCFA0002661B6 /* SwiftTSNE.swift in Sources */,
+				868E32F22D0B19D2006A6153 /* ProjectView.swift in Sources */,
 				86ABF1D52C3FF043004D5857 /* CSVConverter.swift in Sources */,
 				86BA0A222C27312E007BEAB3 /* ComputeShader.metal in Sources */,
 				86BFB5252C1F7D67007EDA8A /* MTCNN.swift in Sources */,

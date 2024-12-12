@@ -52,13 +52,6 @@ class FaceNetwork: Identifiable {
             fatalError(String(localized: "Cannot locate the attribute data file"))
         }
         
-        let clusterPath = url.appending(path: "clusters.json")
-        if let clusters = try? readClusters(url: clusterPath) {
-            self.clusters = clusters
-        } else {
-            self.clusters = [String : FaceCluster]()
-        }
-        
         self.faces = []
         var brokenFaceData: [URL] = []
         let facesPath = url.appending(path: "faces/")
@@ -81,6 +74,13 @@ class FaceNetwork: Identifiable {
             }
         } else {
             MediaManager.importMessage.append(String(localized: "Warning: Loading a network with no faces"))
+        }
+        
+        let clusterPath = url.appending(path: "clusters.json")
+        if let clusters = try? readClusters(url: clusterPath) {
+            self.clusters = clusters
+        } else {
+            self.clusters = [String : FaceCluster]()
         }
         
         ProgressBar.progressBinding?.wrappedValue = 1.0
@@ -312,6 +312,20 @@ class FaceNetwork: Identifiable {
         networkEditorInstance?.console += String(localized: "Clustered faces, time lapse:").appending(String(describing: t)) + "\n\n"
     }
     
+    func renameCluster(cluster: FaceCluster, newName: String) -> Bool {
+        if(clusters.keys.contains(newName)) {
+            return false
+        }
+        clusters.removeValue(forKey: cluster.name)
+        cluster.name = newName
+        clusters.updateValue(cluster, forKey: newName)
+        for face in cluster.faces {
+            face.clusterName = newName
+        }
+        saveClusters()
+        return true
+    }
+    
     private func arrangeClusters() {
         clusters.removeAll()
         
@@ -362,6 +376,8 @@ class FaceNetwork: Identifiable {
             return [:]
         }
     }
+    
+
     
     func forceAppendAttribute(key: String, type: AttributeType, dimensions: Int?) {
         if(attributes.contains(where: {$0.name == key})) {
