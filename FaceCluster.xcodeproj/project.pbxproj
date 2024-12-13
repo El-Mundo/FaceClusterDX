@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		860734172D0CBF0300E28136 /* GPUFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860734162D0CBF0300E28136 /* GPUFont.swift */; };
 		860E69362C6E4CBD00ACC06D /* MediaTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */; };
 		8621DDFC2C2180BD001BF78E /* FaceAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */; };
 		863069012C45738900A72490 /* GroupedAttributeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863069002C45738900A72490 /* GroupedAttributeEditor.swift */; };
@@ -19,6 +20,8 @@
 		86621AB62C3D75CA004D45F4 /* OverviewSubpanels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86621AB52C3D75CA004D45F4 /* OverviewSubpanels.swift */; };
 		866433842C209F5400792590 /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866433832C209F5400792590 /* Face.swift */; };
 		866433862C20A8DA00792590 /* FaceNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866433852C20A8DA00792590 /* FaceNetwork.swift */; };
+		86681B482D0B804F008B6494 /* TimelineRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86681B472D0B804F008B6494 /* TimelineRenderer.swift */; };
+		86681B4A2D0B8D04008B6494 /* TimelineShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 86681B492D0B8D04008B6494 /* TimelineShader.metal */; };
 		8669137E2C2F2C87000CA8DF /* Overview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8669137D2C2F2C87000CA8DF /* Overview.swift */; };
 		866B9C2F2C2B3A6A00AFDFC6 /* ConvexHull.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866B9C2E2C2B3A6A00AFDFC6 /* ConvexHull.swift */; };
 		866D66672C0B1735009C356F /* FaceClusterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866D66662C0B1735009C356F /* FaceClusterApp.swift */; };
@@ -81,6 +84,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		860734162D0CBF0300E28136 /* GPUFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUFont.swift; sourceTree = "<group>"; };
 		860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTimeline.swift; sourceTree = "<group>"; };
 		8621DDFB2C2180BD001BF78E /* FaceAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAttribute.swift; sourceTree = "<group>"; };
 		863069002C45738900A72490 /* GroupedAttributeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedAttributeEditor.swift; sourceTree = "<group>"; };
@@ -94,6 +98,8 @@
 		86621AB52C3D75CA004D45F4 /* OverviewSubpanels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewSubpanels.swift; sourceTree = "<group>"; };
 		866433832C209F5400792590 /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		866433852C20A8DA00792590 /* FaceNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceNetwork.swift; sourceTree = "<group>"; };
+		86681B472D0B804F008B6494 /* TimelineRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineRenderer.swift; sourceTree = "<group>"; };
+		86681B492D0B8D04008B6494 /* TimelineShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = TimelineShader.metal; sourceTree = "<group>"; };
 		8669137D2C2F2C87000CA8DF /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
 		866B9C2E2C2B3A6A00AFDFC6 /* ConvexHull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvexHull.swift; sourceTree = "<group>"; };
 		866D66632C0B1735009C356F /* FaceCluster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceCluster.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -173,6 +179,7 @@
 			children = (
 				860E69352C6E4CBD00ACC06D /* MediaTimeline.swift */,
 				868E32F12D0B19D2006A6153 /* ProjectView.swift */,
+				86681B472D0B804F008B6494 /* TimelineRenderer.swift */,
 			);
 			path = Visualisation;
 			sourceTree = "<group>";
@@ -336,6 +343,7 @@
 				8694A7792C15BBBD00758AE8 /* ImageUtils.swift */,
 				863C5D732C31B86400F8D408 /* FaceAlignment.swift */,
 				86ABF1D42C3FF043004D5857 /* CSVConverter.swift */,
+				860734162D0CBF0300E28136 /* GPUFont.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -366,6 +374,7 @@
 				864E64022C231C300070EC5E /* NetworkRender.metal */,
 				864E64042C231C700070EC5E /* C-Bridging.h */,
 				86BA0A212C27312E007BEAB3 /* ComputeShader.metal */,
+				86681B492D0B8D04008B6494 /* TimelineShader.metal */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -520,8 +529,10 @@
 				86D7A3382C2C66BF00A738F7 /* FaceNetworkTable.swift in Sources */,
 				866D66692C0B1735009C356F /* ContentView.swift in Sources */,
 				86BA0A1E2C26CC03007BEAB3 /* Facenet512.mlpackage in Sources */,
+				86681B482D0B804F008B6494 /* TimelineRenderer.swift in Sources */,
 				864E64032C231C300070EC5E /* NetworkRender.metal in Sources */,
 				867833122C41B63C00BEBAC1 /* LocalCoreML.swift in Sources */,
+				86681B4A2D0B8D04008B6494 /* TimelineShader.metal in Sources */,
 				863C5D742C31B86400F8D408 /* FaceAlignment.swift in Sources */,
 				86BFB5272C1F7D67007EDA8A /* PNet.mlmodel in Sources */,
 				86555F512C0E011C0046A7C8 /* VideoPreviewToolbar.swift in Sources */,
@@ -540,6 +551,7 @@
 				86BFB5242C1F7D67007EDA8A /* RNet.mlmodel in Sources */,
 				86C9CCA62C0F0DA600B33BFE /* ProgressBar.swift in Sources */,
 				8669137E2C2F2C87000CA8DF /* Overview.swift in Sources */,
+				860734172D0CBF0300E28136 /* GPUFont.swift in Sources */,
 				86C9CCA82C0F269600B33BFE /* FacePreview.swift in Sources */,
 				86EB22AE2C3DCFA0002661B6 /* SwiftTSNE.swift in Sources */,
 				868E32F22D0B19D2006A6153 /* ProjectView.swift in Sources */,

@@ -19,6 +19,7 @@ struct MediaAttributes: Codable {
     let downsample: Float
     let created: Date
     let model: String
+    let duration: Double
 }
 
 class MediaManager {
@@ -136,7 +137,7 @@ class MediaManager {
         print("\(framesExpected) frames expected.")
         MediaManager.importMessage += String(localized: "\(framesExpected) frames expected." ) + "\n"
         
-        faceNetwork?.media = MediaAttributes(path: self.importedURL.lastPathComponent, interval: extractInterval.seconds, downsample: downsample, created: Date.now, model: "Vision")
+        faceNetwork?.media = MediaAttributes(path: self.importedURL.lastPathComponent, interval: extractInterval.seconds, downsample: downsample, created: Date.now, model: "Vision", duration: duration.seconds)
         faceNetwork?.saveMetadata()
         
         var timeCursor: CMTime = CMTimeMakeWithSeconds(0.0, preferredTimescale: timescale)

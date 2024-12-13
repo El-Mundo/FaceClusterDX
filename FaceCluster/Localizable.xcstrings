@@ -41,6 +41,9 @@
         }
       }
     },
+    "%@" : {
+
+    },
     "%lld faces detected from the video" : {
       "localizations" : {
         "zh-Hans" : {
@@ -196,6 +199,9 @@
           }
         }
       }
+    },
+    "Active" : {
+
     },
     "Alert" : {
 
@@ -696,6 +702,9 @@
           }
         }
       }
+    },
+    "Collapsed" : {
+
     },
     "Compare to:" : {
       "localizations" : {
@@ -1673,6 +1682,9 @@
         }
       }
     },
+    "Merged" : {
+
+    },
     "Message" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2131,6 +2143,9 @@
         }
       }
     },
+    "Scaling " : {
+
+    },
     "second" : {
       "localizations" : {
         "en" : {
@@ -2176,6 +2191,9 @@
           }
         }
       }
+    },
+    "Show Face Texture" : {
+
     },
     "Skipping following attributes due to its type being preserved: \n" : {
       "localizations" : {
@@ -2632,6 +2650,12 @@
         }
       }
     },
+    "X Axis" : {
+
+    },
+    "X Stretch " : {
+
+    },
     "y" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2641,6 +2665,9 @@
           }
         }
       }
+    },
+    "Y Axis" : {
+
     },
     "z" : {
       "localizations" : {

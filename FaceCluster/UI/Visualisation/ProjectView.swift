@@ -16,6 +16,7 @@ struct ProjectView: View {
     @State private var newPos: DoublePoint = DoublePoint(x: 0, y: 0)
     @State private var newDisabled: Bool = false
     
+    @State private var activeIndicator: String = ""
     @State private var showFileImporter = false
     @State private var totalFaces = 0
     
@@ -45,6 +46,7 @@ struct ProjectView: View {
                     })
                     .onAppear() {
                         activeNetwork = project?.activePath
+                        activeIndicator = "Active Network: " + (activeNetwork ?? "")
                     }
                 } else {
                     NavigationStack {
@@ -88,36 +90,75 @@ struct ProjectView: View {
                     if(project != nil && selectedNetwork != nil) {
                         project?.updateActiveNetwork(activeUrl: AppDelegate.workspace.appending(component: selectedNetwork!))
                         updateNetworkSelection()
+                        activeNetwork = project?.activePath
+                        activeIndicator = "Active Network: " + (activeNetwork ?? "")
                     }
                 }, label: {
                     Image(systemName: "pencil")
                         .padding(.vertical, 5)
                         .frame(width: 24)
                 })
+                
+                Button(action: {
+                    if(project != nil && selectedNetwork != nil) {
+                        let order = project!.paths.firstIndex(of: selectedNetwork!) ?? 0
+                        if(order > 0) {
+                            let wantedOrder = order - 1
+                            selectedNetwork = nil
+                            project!.paths.swapAt(wantedOrder, order)
+                        }
+                    }
+                }, label: {
+                    Image(systemName: "arrowshape.up")
+                        .padding(.vertical, 5)
+                        .frame(width: 24)
+                })
+                
+                Button(action: {
+                    if(project != nil && selectedNetwork != nil) {
+                        let order = project!.paths.firstIndex(of: selectedNetwork!) ?? project!.paths.count - 1
+                        if(order < project!.paths.count - 1) {
+                            let wantedOrder = order + 1
+                            selectedNetwork = nil
+                            project!.paths.swapAt(wantedOrder, order)
+                        }
+                    }
+                }, label: {
+                    Image(systemName: "arrowshape.down")
+                        .padding(.vertical, 5)
+                        .frame(width: 24)
+                })
             }.padding(.trailing, 24)
             
-            VStack {
-                Text("Clusters").frame(height: 24)
-                if(network != nil && project != nil) {
-                    NavigationStack {
-                        List(clusterPreviews, id: \.self, selection: $selectedCluster) { c in
-                            HStack {
-                                if(c.image != nil) {
-                                    Image(nsImage: c.image!)
+            if(selectedNetwork != nil) {
+                VStack {
+                    Text("Clusters").frame(height: 24)
+                    if(network != nil && project != nil) {
+                        NavigationStack {
+                            List(clusterPreviews, id: \.self, selection: $selectedCluster) { c in
+                                HStack {
+                                    if(c.image != nil) {
+                                        Image(nsImage: c.image!)
+                                    }
+                                    Text(c.cluster.name)
                                 }
-                                Text(c.cluster.name)
+                            }
+                        }
+                        .onChange(of: selectedCluster, updateClusterSelection)
+                    } else {
+                        NavigationStack {
+                            List([""], id: \.self, selection: $selectedCluster) { path in
+                                Text(path)
                             }
                         }
                     }
-                    .onChange(of: selectedCluster, updateClusterSelection)
-                } else {
-                    NavigationStack {
-                        List([""], id: \.self, selection: $selectedCluster) { path in
-                            Text(path)
-                        }
-                    }
-                }
-            }.padding(.trailing, 12)
+                }.padding(.trailing, 12)
+            } else {
+                VStack {
+                    Text("Clusters").frame(height: 24)
+                    Rectangle().fill(.white)
+                }.padding(.trailing, 12)
+            }
             
             VStack {
                 if(selectedCluster != nil) {
@@ -242,11 +283,12 @@ struct ProjectView: View {
             Alert(title: Text("Alert"), message: Text(alertContent))
         }
         
-        Text("Active Network: " + (activeNetwork ?? ""))
+        Text(activeIndicator)
     }
     
     private func updateNetworkSelection() {
         selectedCluster = nil
+        selectedFace = nil
         clusterPreviews = []
         guard let sel = selectedNetwork else { return }
         
@@ -263,7 +305,7 @@ struct ProjectView: View {
         }
         for cl in n.clusters.values {
             //print(cl.faces.count)
-            clusterPreviews.append(FaceClusterPreview(cluster: cl))
+            clusterPreviews.append(FaceClusterPreview(cluster: cl, network: net!))
         }
     }
     
@@ -297,18 +339,21 @@ struct HashableFace: Hashable {
 struct FaceClusterPreview : Hashable {
     var identifier = UUID()
     static func == (lhs: FaceClusterPreview, rhs: FaceClusterPreview) -> Bool {
-        return lhs.cluster.name == rhs.cluster.name
+        return lhs.cluster.name.appending(lhs.networkName) == rhs.cluster.name.appending(rhs.networkName)
     }
     func hash(into hasher: inout Hasher) {
-        return hasher.combine(identifier)
+        return hasher.combine(cluster.name.appending(networkName))
     }
     
     var image: NSImage?
     var cluster: FaceCluster
     var faces: [HashableFace]
     
-    init(cluster: FaceCluster) {
+    var networkName: String
+    
+    init(cluster: FaceCluster, network: FaceNetwork) {
         self.cluster = cluster
+        self.networkName = network.savedPath.lastPathComponent
         self.faces = [HashableFace]()
         for face in cluster.faces {
             faces.append(HashableFace(face: face, key: face.path!.lastPathComponent, nsImage: face.thumbnail == nil ? nil : NSImage(cgImage: face.thumbnail!, size: .zero)))

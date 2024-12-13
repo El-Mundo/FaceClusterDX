@@ -30,7 +30,7 @@ struct Editor: View {
             } else if(state == 3) {
                 ProjectView(project: FaceClusterProject.getInstance())
             } else {
-                
+                MediaTimeline(project: FaceClusterProject.getInstance()!)
             }
             
             HStack {
@@ -101,6 +101,9 @@ struct Editor: View {
                 NetworkEditor.networkDisplayedFacemapBuffer = nil
                 NetworkEditor.networkDisplayedPointDistanceBuffer = nil
             }
+        }
+        if(state != 4) {
+            TimelineRenderer.networks = []
         }
         //print(state)
     }

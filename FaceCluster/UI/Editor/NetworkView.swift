@@ -66,6 +66,21 @@ struct NetworkView: NSViewRepresentable {
     static var showDisabledFaces = true
     static var clusterUpdateRequested = false
     
+    public static func resetCamera() {
+        NetworkView.camera = SIMD3<Float>(0, 0, -5)
+        NetworkView.mouse = SIMD2<Float>(0, 0)
+        NetworkView.mouseDown = false
+        NetworkView.pMouseDown = false
+        NetworkView.rightMouseDown = false
+        NetworkView.pRMouseDown = false
+        NetworkView.pMousePos = SIMD2<Float>(0, 0)
+        NetworkView.allowEditing = false
+        NetworkView.allowMultipleSelection = false
+        NetworkView.showDisabledFaces = true
+        NetworkView.selectRadius = 2.0
+        NetworkView.clusterUpdateRequested = false
+    }
+    
     func mouseDragged(with event: NSEvent) {
         //NetworkView.camera.x = NetworkView.camera.x - Float(event.deltaX) * 0.02
         //NetworkView.camera.y = NetworkView.camera.y - Float(event.deltaY) * -0.02
@@ -182,18 +197,7 @@ struct NetworkView: NSViewRepresentable {
             }
             
             uniforms[0].useBGR = MediaManager.instance?.getIsVideo() ?? false
-            NetworkView.camera = SIMD3<Float>(0, 0, -5)
-            NetworkView.mouse = SIMD2<Float>(0, 0)
-            NetworkView.mouseDown = false
-            NetworkView.pMouseDown = false
-            NetworkView.rightMouseDown = false
-            NetworkView.pRMouseDown = false
-            NetworkView.pMousePos = SIMD2<Float>(0, 0)
-            NetworkView.allowEditing = false
-            NetworkView.allowMultipleSelection = false
-            NetworkView.showDisabledFaces = true
-            NetworkView.selectRadius = 2.0
-            NetworkView.clusterUpdateRequested = false
+            NetworkView.resetCamera()
             
             self.mouseTexture =  try! loadBundledTexture(name: "rectangle1")
         }

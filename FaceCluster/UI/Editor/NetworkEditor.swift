@@ -24,7 +24,7 @@ struct NetworkEditor: View {
     @State var clusteringThreshold: Float = 10.0
     @State var showDisabled = true
     @State var clusterDisplayMode = 2
-    @State private var backgroundColour: Color = Color(red: 0, green: 0, blue: 0)
+    @State private var backgroundColour: Color = Color(red: NetworkView.backgroundColour.x, green: NetworkView.backgroundColour.y, blue: NetworkView.backgroundColour.z)
     var context: Editor?
     var clusterUpdateReqruied: Bool = false
     

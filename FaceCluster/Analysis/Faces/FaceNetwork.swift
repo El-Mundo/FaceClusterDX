@@ -31,7 +31,7 @@ class FaceNetwork: Identifiable {
         self.attributes = attributes
     }
     
-    init(url: URL) throws {
+    init(url: URL, showProgress: Bool=true) throws {
         self.savedPath = url
         let fm = FileManager.default
         let json = JSONDecoder()
@@ -70,7 +70,9 @@ class FaceNetwork: Identifiable {
                     brokenFaceData.append(jsonFile)
                 }
                 completed += 1
-                ProgressBar.progressBinding?.wrappedValue = CGFloat(jsonPaths.count) / CGFloat(completed)
+                if(showProgress) {
+                    ProgressBar.progressBinding?.wrappedValue = CGFloat(jsonPaths.count) / CGFloat(completed)
+                }
             }
         } else {
             MediaManager.importMessage.append(String(localized: "Warning: Loading a network with no faces"))
@@ -83,7 +85,9 @@ class FaceNetwork: Identifiable {
             self.clusters = [String : FaceCluster]()
         }
         
-        ProgressBar.progressBinding?.wrappedValue = 1.0
+        if(showProgress) {
+            ProgressBar.progressBinding?.wrappedValue = 1.0
+        }
         
         for cluster in self.clusters.values {
             for face in cluster.faces {
