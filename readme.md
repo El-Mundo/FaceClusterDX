@@ -36,11 +36,11 @@ After loading a previous project or creating a new project with a video, the use
 
 <img width="480" alt="Screenshot 2024-12-14 at 00 54 04" src="https://github.com/user-attachments/assets/4ac20390-c8a2-4027-ab59-65d3fa8f5128" />
 
-The Network panel is the default view of the editor. It provides a GUI-empowered interface for editing and finetuning the results of face clustering. In this page all faces are positioned based on the point attribute set as the **"display positioning attribute"**, while editing occurring in this panel is directly saved to that attribute's values.
+The Network panel is the default view of the editor. It provides a GUI-empowered interface for editing and fine-tuning the results of face clustering. In this page all faces are positioned based on the point attribute set as the **"display positioning attribute"**, while editing occurring in this panel is directly saved to that attribute's values.
 
 The user can switch between two modes using **the Preview/Edit Button** in the toolbar. In the **Preview** mode, the button writes "Edit", and the user can drag the canvas to navigate the network preview. Mouse wheel is used to zoom in/out the canvas. **The Cluster button** shown in this mode allows the user to regenerate all clusters based on the current positions of all faces and a given distance. In the **Edit** mode, however, dragging will allow the user to move the positions of faces. The Cluster button is replaced with a slider that determines the range of dragging. if the slider is at the minimal value, only one face can be dragged at once, but if a higher range is picked, multiple faces within the cursor can be relocated together.
 
-In both modes, the user can **deactivate** certain faces by right-clicking it. Deactivated faces are not included in data analysis and clustering but still stored within the network and can be recovered by another right-click in the Network panel.
+In both modes, the user can **deactivate** certain faces by right-clicking them. Deactivated faces are not included in data analysis and clustering but still stored within the network and can be recovered by another right-click in the Network panel.
 
 There are also three modes for displaying the cluster results: **none**, **lines**, and **polygons**. The polygon mode is used by default, but it has an issue that when there are only two faces in a cluster, the cluster cannot be displayed. The lines mode addresses this issue by drawing lines between all pairs of faces in a cluster.
 
@@ -122,7 +122,7 @@ The timeline panel is useful for researching certain patterns in relation to the
 
 ### Know Issues
 
-Manually adding jpg and jpeg files with the same file name will result in unexpectable errors with face image identification. Using the import utility in the Frame view will avoid such issue by forcing all jpeg files to be imported as jpg format.
+Manually adding jpg and jpeg files with the same file name will result in unexpected errors with face image identification. Using the import utility in the Frame view will avoid such issue by forcing all jpeg files to be imported as jpg format.
 
 ### To-dos
 
