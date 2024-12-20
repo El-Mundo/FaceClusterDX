@@ -2442,6 +2442,9 @@
         }
       }
     },
+    "UI Scaling" : {
+
+    },
     "Unidentifiable attribute type \"%@\"" : {
       "localizations" : {
         "zh-Hans" : {

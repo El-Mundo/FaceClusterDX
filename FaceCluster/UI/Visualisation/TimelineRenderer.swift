@@ -371,7 +371,7 @@ struct TimelineRenderer: NSViewRepresentable {
                 for textureBatch in self.textureCaches {
                     renderEncoder.setObjectBuffer(self.createFaceCountBuffer(batchIndex: bi), offset: 0, index: 2)
                     renderEncoder.setFragmentTexture(textureBatch, index: TextureIndex.color.rawValue)
-                    renderEncoder.drawMeshThreads(MTLSize(width: faceCount, height: 1, depth: 1),
+                    renderEncoder.drawMeshThreads(MTLSize(width: FACE_TEXTURE_BATCH_SIZE, height: 1, depth: 1),
                                                   threadsPerObjectThreadgroup: MTLSize(width: 1, height: 1, depth: 1),
                                                   threadsPerMeshThreadgroup: MTLSize(width: 8, height: 1, depth: 1))
                     

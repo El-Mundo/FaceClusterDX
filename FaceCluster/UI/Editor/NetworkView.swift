@@ -63,6 +63,7 @@ struct NetworkView: NSViewRepresentable {
     static var allowMultipleSelection = true
     static var allowEditing = false
     static var selectRadius: Float = 2
+    static var uiScaling: Float = 1
     static var showDisabledFaces = true
     static var clusterUpdateRequested = false
     
@@ -77,6 +78,7 @@ struct NetworkView: NSViewRepresentable {
         NetworkView.allowEditing = false
         NetworkView.allowMultipleSelection = false
         NetworkView.showDisabledFaces = true
+        NetworkView.uiScaling = 1.0
         NetworkView.selectRadius = 2.0
         NetworkView.clusterUpdateRequested = false
     }
@@ -315,6 +317,7 @@ struct NetworkView: NSViewRepresentable {
                 var frameMoved: Bool = false
                 
                 var selectedFaces = [FaceSelection]()
+                uniforms[0].uiScaling = parent.context?.uiScaling ?? 1.0
                 
                 if(!allowEditing || !mouseDown) {
                     for i in (0..<faceNetwork.faces.count).reversed() {
@@ -395,7 +398,7 @@ struct NetworkView: NSViewRepresentable {
                 for textureBatch in self.arrayTextures {
                     renderEncoder.setObjectBuffer(self.createFaceCountBuffer(batchIndex: bi), offset: 0, index: BufferIndex.faceCount.rawValue)
                     renderEncoder.setFragmentTexture(textureBatch, index: TextureIndex.color.rawValue)
-                    renderEncoder.drawMeshThreads(MTLSize(width: faceNetwork.faces.count, height: 1, depth: 1),
+                    renderEncoder.drawMeshThreads(MTLSize(width: FACE_TEXTURE_BATCH_SIZE, height: 1, depth: 1),
                                                   threadsPerObjectThreadgroup: MTLSize(width: 1, height: 1, depth: 1),
                                                   threadsPerMeshThreadgroup: MTLSize(width: 8, height: 1, depth: 1))
                     bi += 1

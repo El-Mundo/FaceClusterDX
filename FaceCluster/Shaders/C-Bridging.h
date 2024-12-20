@@ -49,6 +49,7 @@ typedef struct
     float selectRadius;
     /// To solve a BUG with MTLTexture colour space
     bool useBGR;
+    float uiScaling;
 } Uniforms;
 
 typedef struct {

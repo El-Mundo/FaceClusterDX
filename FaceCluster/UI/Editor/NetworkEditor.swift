@@ -19,6 +19,7 @@ struct NetworkEditor: View {
     /// Set this less than 1 for single selection. No greater than 10 for performance
     @State var radius: Float = 2.0
     @State var isEditing = false
+    @State var uiScaling: Float = NetworkView.uiScaling
     @State var console = ""
     @State var camera = SIMD3<Float>(0, 0, -5.0)
     @State var clusteringThreshold: Float = 10.0
@@ -114,6 +115,17 @@ struct NetworkEditor: View {
                         )
                         Text("Select range: ".appending(radius < 0.999 ? "Single" : "\(radius)"))
                             .foregroundColor(isEditing ? .red : .blue)
+                    }
+                    
+                    HStack {
+                        Text("UI Scaling")
+                        Slider(
+                            value: $uiScaling,
+                            in: 1.0...5.0,
+                            onEditingChanged: { editing in
+                                isEditing = editing
+                            }
+                        )
                     }
                     
                     Picker("", selection: $clusterDisplayMode) {

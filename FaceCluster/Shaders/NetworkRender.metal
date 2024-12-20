@@ -97,12 +97,12 @@ void faceObjectShader(object_data ChunkPayload& payload [[payload]],
     // Copy the vertex data into the payload.
     for (size_t i = 0; i < payload.vertexCount; i++)
     {
-        payload.vertices[i] = (offset + RECTANGLE_MESH[i]) * uniforms.scale;
+        payload.vertices[i] = (offset + RECTANGLE_MESH[i] * uniforms.uiScaling) * uniforms.scale;
     }
     
     if(!payload.darken) {
         if(uniforms.multipleSelect) {
-            float size = 0.5 * uniforms.selectRadius;
+            float size = 0.5 * uniforms.selectRadius * uniforms.uiScaling;
             float mouseX = uniforms.mousePos.x;
             float mouseY = uniforms.mousePos.y;
             float faceX = pos.x;
