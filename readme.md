@@ -90,6 +90,8 @@ The Overview panel also provides several utilities in the right-top toolbar incl
 
 ### Project
 
+**Multi-network projects can be instable in current version**
+
 <img width="480" alt="Screenshot 2024-12-14 at 18 24 23" src="https://github.com/user-attachments/assets/964cf55a-8282-4d76-9538-2abac4a6c4c9" />
 
 The project panel is typically used for multi-network projects. While all projects are one-network be default, this panel allows the user to import other networks into a project. Other networks are all saved under the path **Documents/Face Cluster Toolkit** by default as folders. The support for multiple networks is to enhance the timeline visualization component, which can be useful for reducing the demand of computational power for long videos. By dividing a long video into clips, importing them as separate networks, and combining them in the project, the user can perform face clustering for a long video while keeping each network at acceptable size.
@@ -99,6 +101,8 @@ The project panel is typically used for multi-network projects. While all projec
 After selecting a network, the user can also review all clusters in that network. Selecting a cluster displays all faces it contains. In the timeline, all clusters with the same name from different networks will be identified as pointing to the same character.
 
 ### Timeline
+
+**Face texture display in timeline can be instable in current version**
 
 <img width="480" alt="Screenshot 2024-12-14 at 18 41 49" src="https://github.com/user-attachments/assets/0b8bdc78-d14e-42fe-b75d-dd53dc0fd7d8" />
 
