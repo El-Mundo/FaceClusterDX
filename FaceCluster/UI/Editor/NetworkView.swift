@@ -323,7 +323,7 @@ struct NetworkView: NSViewRepresentable {
                     for i in (0..<faceNetwork.faces.count).reversed() {
                         let face = faceNetwork.faces[i]
                         // CPU version
-                        let size: Float = allowMultipleSelection ? 0.5 * NetworkView.selectRadius : 0.5
+                        let size: Float = allowMultipleSelection ? 0.5 * NetworkView.selectRadius * uiScaling : 0.5
                         let faceX = Float(face.displayPos.x)
                         let faceY = Float(face.displayPos.y)
                         let inMouse = mouseInFrameX > faceX - size && mouseInFrameY > faceY - size && mouseInFrameX < faceX + size && mouseInFrameY < faceY + size;
@@ -557,12 +557,13 @@ struct NetworkView: NSViewRepresentable {
         }
         
         func createFaceCountBuffer(batchIndex: Int) -> MTLBuffer? {
-            guard let buffer = metalDevice.makeBuffer(length: MemoryLayout<UInt>.stride, options: [.storageModeShared]) else {
+            guard let buffer = metalDevice.makeBuffer(length: MemoryLayout<UInt32>.stride * 2, options: [.storageModeShared]) else {
                 return nil
             }
-            let faceCountMem = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: UInt.self, capacity:2)
-            faceCountMem[0] = UInt(network!.faces.count)
-            faceCountMem[1] = UInt(batchIndex)
+            let faceCountMem = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: UInt32.self, capacity:2)
+            faceCountMem[0] = UInt32(network!.faces.count)
+            faceCountMem[1] = UInt32(batchIndex)
+            print(faceCountMem[1])
             return buffer
         }
         

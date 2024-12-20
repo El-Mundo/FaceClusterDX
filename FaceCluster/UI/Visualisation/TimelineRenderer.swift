@@ -398,12 +398,12 @@ struct TimelineRenderer: NSViewRepresentable {
         }
         
         func createFaceCountBuffer(batchIndex: Int) -> MTLBuffer? {
-            guard let buffer = device.makeBuffer(length: MemoryLayout<UInt>.stride, options: [.storageModeShared]) else {
+            guard let buffer = device.makeBuffer(length: MemoryLayout<UInt32>.stride * 2, options: [.storageModeShared]) else {
                 return nil
             }
-            let faceCountMem = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: UInt.self, capacity:2)
-            faceCountMem[0] = UInt(faceCount)
-            faceCountMem[1] = UInt(batchIndex)
+            let faceCountMem = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: UInt32.self, capacity:2)
+            faceCountMem[0] = UInt32(faceCount)
+            faceCountMem[1] = UInt32(batchIndex)
             return buffer
         }
         
