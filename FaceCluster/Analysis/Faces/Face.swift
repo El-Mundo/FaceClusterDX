@@ -102,6 +102,7 @@ class Face: Codable {
     
     func setDisabled(disabled: Bool) {
         self.disabled = disabled
+        updateSaveFileAtOriginalLocation()
     }
     
     required init(from decoder: Decoder) throws {
